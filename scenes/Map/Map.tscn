@@ -6,9 +6,10 @@
 
 [node name="Map" type="TileMap"]
 tile_set = ExtResource( 2 )
-cell_size = Vector2( 23, 32 )
+cell_size = Vector2( 24, 32 )
 cell_custom_transform = Transform2D( 32, 0, 0, 32, 0, 0 )
 cell_half_offset = 1
+cell_y_sort = true
 format = 1
 script = ExtResource( 3 )
 
