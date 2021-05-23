@@ -166,7 +166,7 @@ const DIR_S = Vector3(0, -1, 1)
 const DIR_SW = Vector3(-1, 0, 1)
 const DIR_NW = Vector3(-1, 1, 0)
 const DIR_ALL = [DIR_N, DIR_NE, DIR_SE, DIR_S, DIR_SW, DIR_NW]
-const hex_size = Vector2(64,60) # We define how big the tiles for our hexes are
+const hex_size = Vector2(32,32) # We define how big the tiles for our hexes are
 # Pathfinding obstacles {Vector2: cost}
 # A zero cost means impassable
 var path_obstacles = {}
