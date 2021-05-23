@@ -1,7 +1,6 @@
 [gd_resource type="TileSet" load_steps=2 format=2]
 
 [sub_resource type="StreamTexture" id=1]
-flags = 4
 load_path = "res://.import/tileset.png-6475f962844e1c8ba6124e025d777202.stex"
 
 [resource]

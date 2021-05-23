@@ -1,4 +1,4 @@
-extends Container
+extends Popup
 
 func _ready():
 	register_buttons()
@@ -10,7 +10,12 @@ func register_buttons():
 
 func _on_button_pressed(name):
 	match name:
-		"NewGame":
-			get_tree().change_scene("res://scenes/GameView/GameView.tscn")
+		"Continue":
+			self.hide()
+		"SaveGame":
+			$SaveDialog.popup()
+		"MainMenu":
+			SaveSystem.current_save = null
+			get_tree().change_scene("res://scenes/MainMenu/MainMenu.tscn")
 		"ExitGame":
 			get_tree().quit()

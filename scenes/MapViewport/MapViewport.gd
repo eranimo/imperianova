@@ -1,6 +1,17 @@
 extends ViewportContainer
 
-func _ready():
-	var map = get_node("Viewport/Map")
-	map.call("setup_map", 150, 75)
+onready var map = $Viewport/Map
 
+func get_tile_for_cell(world_map: WorldMap, pos: Vector2):
+	var height = world_map.get_cell(pos)
+	if height < 0.5:
+		return 0
+	else:
+		return 1
+
+func setup_map(world_map: WorldMap) -> void:
+	for x in range(world_map.map_width):
+		for y in range(world_map.map_height):
+			var pos = Vector2(x, y)
+			var index = get_tile_for_cell(world_map, pos)
+			map.set_cellv(Vector2(x, y), index)

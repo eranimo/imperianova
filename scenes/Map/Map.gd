@@ -1,10 +1,5 @@
 extends HexMap
 
-func setup_map(map_width, map_height) -> void:
-	for x in range(map_width):
-		for y in range(map_height):
-			self.set_cellv(Vector2(x, y), 0)
-
 func _input(event) -> void:
 	# A simple code to show how to you can manipulate hexes using the mouse.
 	var mouse_offset: Vector2 = Vector2(-11,-6) 
