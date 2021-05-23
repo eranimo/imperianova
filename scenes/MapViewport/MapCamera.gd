@@ -7,7 +7,7 @@ var max_zoom = 2.0
 var pan_speed = 600
 
 var _mouse_captured = false
-func _unhandled_input(event):
+func _input(event):
 	# mousewheel zoom
 	if event is InputEventMouseButton:
 		if event.is_action_pressed("view_zoom_in"):
@@ -20,7 +20,6 @@ func _unhandled_input(event):
 	elif event.is_action_released("view_pan_mouse"):
 		_mouse_captured = false
 	
-	print(zoom)
 	if _mouse_captured && event is InputEventMouseMotion:
 		position -= event.relative * zoom #opposite to relative motion, like we're grabbing the map
 

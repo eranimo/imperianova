@@ -5,7 +5,7 @@ func setup_map(map_width, map_height) -> void:
 		for y in range(map_height):
 			self.set_cellv(Vector2(x, y), 0)
 
-func _unhandled_input(event) -> void:
+func _input(event) -> void:
 	# A simple code to show how to you can manipulate hexes using the mouse.
 	var mouse_offset: Vector2 = Vector2(-11,-6) 
 		# Due to the compressed cells of the TileMap (in order to make the hexes appear to border each other)
