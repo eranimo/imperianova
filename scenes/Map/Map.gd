@@ -1,5 +1,10 @@
 extends HexMap
 
+func setup_map(map_width, map_height) -> void:
+	for x in range(map_width):
+		for y in range(map_height):
+			self.set_cellv(Vector2(x, y), 0)
+
 func _unhandled_input(event) -> void:
 	# A simple code to show how to you can manipulate hexes using the mouse.
 	var mouse_offset: Vector2 = Vector2(-11,-6) 
@@ -15,7 +20,7 @@ func _unhandled_input(event) -> void:
 		# The objective position on the viewport of the starting point of the tile on which this hex is drawn.
 	if event.is_action_pressed("ui_select"): 
 		# Left-click converts current hex to Water.
-		self.set_cellv(hexCell.offset_coords, 0)
+		self.set_cellv(hexCell.offset_coords, 1)
 	elif event.is_action_pressed("ui_cancel"):
 		# Right-click, converts everyone adjacent to current hex to Mountains
 		for neighbourHex in hexCell.get_all_adjacent():

@@ -2,6 +2,11 @@ extends Camera2D
 
 var fixed_toggle_point = Vector2(0,0)
 
+
+func _ready():
+	var map = get_node("Map")
+	map.call("setup_map", 100, 50)
+
 func _process(delta):
 	# This happens once 'move_map' is pressed
 	if Input.is_action_just_pressed('move_map'):
