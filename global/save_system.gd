@@ -1,5 +1,7 @@
 extends Node
 
+signal game_load
+
 var current_save = null
 
 var dir = Directory.new()
@@ -12,9 +14,8 @@ func _init():
 	if not dir.dir_exists(SAVE_PATH):
 		dir.make_dir("user://saves")
 
-func save_game():
-	if not current_save:
-		return false
+func save_game(save_name):
+	current_save = save_name
 	var file = File.new()
 	file.open(SAVE_FILE % current_save, File.WRITE)
 	var save_nodes = get_tree().get_nodes_in_group("persist")
@@ -22,6 +23,17 @@ func save_game():
 		if node.has_method('save'):
 			node.call('save', file)
 	file.close()
+
+func load_game(save_name):
+	current_save = save_name
+	var file = File.new()
+	file.open(SAVE_FILE % current_save, File.READ)
+	var save_nodes = get_tree().get_nodes_in_group("persist")
+	for node in save_nodes:
+		if node.has_method('load'):
+			node.call('load', file)
+	file.close()
+	emit_signal("game_load")
 
 func get_saves():
 	var saves = []

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://resources/pixelfont.tres" type="DynamicFont" id=1]
 [ext_resource path="res://scenes/MapViewport/MapViewport.tscn" type="PackedScene" id=2]
@@ -6,7 +6,8 @@
 [ext_resource path="res://assets/fonts/Minecraftia-Regular.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://scenes/GameView/LoadingContainer.gd" type="Script" id=5]
 [ext_resource path="res://scenes/GameView/GameMenu.gd" type="Script" id=6]
-[ext_resource path="res://scenes/GameView/SaveDialog.gd" type="Script" id=7]
+[ext_resource path="res://scenes/GameView/SaveDialog.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/LoadDialog/LoadDialog.tscn" type="PackedScene" id=8]
 
 [sub_resource type="DynamicFont" id=1]
 resource_local_to_scene = true
@@ -102,94 +103,11 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="SaveDialog" type="WindowDialog" parent="GameMenu"]
-visible = true
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -200.0
-margin_top = -150.0
-margin_right = 200.0
-margin_bottom = 150.0
-window_title = "Save Game"
-resizable = true
-script = ExtResource( 7 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ScrollContainer" type="ScrollContainer" parent="GameMenu/SaveDialog"]
-anchor_right = 1.0
-margin_left = 10.0
-margin_top = 12.0
-margin_right = -10.0
-margin_bottom = 188.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="VBoxContainer" type="Control" parent="GameMenu/SaveDialog/ScrollContainer"]
-
-[node name="NoItemsText" type="Label" parent="GameMenu/SaveDialog/ScrollContainer/VBoxContainer"]
-margin_left = 10.0
-margin_top = 11.6543
-margin_right = 390.0
-margin_bottom = 25.6543
-text = "There are no save games"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ItemList" type="ItemList" parent="GameMenu/SaveDialog/ScrollContainer/VBoxContainer"]
+[node name="LoadDialog" parent="GameMenu" instance=ExtResource( 8 )]
 margin_right = 400.0
-margin_bottom = 200.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+margin_bottom = 300.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GameMenu/SaveDialog"]
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 10.0
-margin_top = -100.0
-margin_right = -10.0
-margin_bottom = -10.0
-custom_constants/separation = 10
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label" type="Label" parent="GameMenu/SaveDialog/VBoxContainer"]
-margin_right = 380.0
-margin_bottom = 14.0
-text = "Save name"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="SaveNameInput" type="LineEdit" parent="GameMenu/SaveDialog/VBoxContainer"]
-margin_top = 24.0
-margin_right = 380.0
-margin_bottom = 48.0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="GameMenu/SaveDialog/VBoxContainer"]
-margin_top = 58.0
-margin_right = 380.0
-margin_bottom = 78.0
-custom_constants/separation = 10
-
-[node name="Cancel" type="Button" parent="GameMenu/SaveDialog/VBoxContainer/HBoxContainer"]
-margin_right = 54.0
-margin_bottom = 20.0
-text = "Cancel"
-
-[node name="Save" type="Button" parent="GameMenu/SaveDialog/VBoxContainer/HBoxContainer"]
-margin_left = 64.0
-margin_right = 105.0
-margin_bottom = 20.0
-text = "Save"
+[node name="SaveDialog" parent="GameMenu" instance=ExtResource( 7 )]
 
 [node name="ColorRect" type="ColorRect" parent="GameMenu"]
 margin_right = 1024.0

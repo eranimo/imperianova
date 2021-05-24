@@ -1,0 +1,124 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://scenes/GameView/SaveDialog.gd" type="Script" id=1]
+
+[node name="SaveDialog" type="WindowDialog"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -512.0
+margin_top = -300.0
+margin_right = -112.0
+rect_min_size = Vector2( 400, 300 )
+window_title = "Save Game"
+resizable = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_bottom = -100.0
+follow_focus = true
+scroll_horizontal_enabled = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/ScrollContainer"]
+margin_right = 400.0
+margin_bottom = 200.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/margin_right = 10
+custom_constants/margin_top = 10
+custom_constants/margin_left = 10
+custom_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/ScrollContainer/MarginContainer"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 390.0
+margin_bottom = 190.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Header" type="Label" parent="Control/ScrollContainer/MarginContainer/VBoxContainer"]
+margin_right = 380.0
+margin_bottom = 14.0
+text = "Select a save to overwrite"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ItemList" type="ItemList" parent="Control/ScrollContainer/MarginContainer/VBoxContainer"]
+margin_top = 18.0
+margin_right = 380.0
+margin_bottom = 27.0
+auto_height = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="Control"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -98.0
+custom_constants/margin_right = 10
+custom_constants/margin_top = 10
+custom_constants/margin_left = 10
+custom_constants/margin_bottom = 10
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 390.0
+margin_bottom = 88.0
+custom_constants/separation = 10
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Label" type="Label" parent="Control/MarginContainer/VBoxContainer"]
+margin_right = 380.0
+margin_bottom = 14.0
+text = "Save name"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SaveNameInput" type="LineEdit" parent="Control/MarginContainer/VBoxContainer"]
+margin_top = 24.0
+margin_right = 380.0
+margin_bottom = 48.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer/VBoxContainer"]
+margin_top = 58.0
+margin_right = 380.0
+margin_bottom = 78.0
+custom_constants/separation = 10
+
+[node name="Cancel" type="Button" parent="Control/MarginContainer/VBoxContainer/HBoxContainer"]
+margin_right = 54.0
+margin_bottom = 20.0
+text = "Cancel"
+
+[node name="Save" type="Button" parent="Control/MarginContainer/VBoxContainer/HBoxContainer"]
+margin_left = 64.0
+margin_right = 105.0
+margin_bottom = 20.0
+text = "Save"

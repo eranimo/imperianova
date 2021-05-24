@@ -1,14 +1,15 @@
 extends Node
 class_name WorldMap
 
-var Heightmap = preload("./Heightmap.gd")
+var Heightmap = preload("res://resources/WorldMap/Heightmap.gd")
 
-var map_seed = 1234
-var heightmap
-var map_width
-var map_height
+export(int) var map_seed
+export(int) var heightmap
+export(int) var map_width
+export(int) var map_height
 
-func _init(size):
+func _init(size, map_seed_):
+	map_seed = map_seed_
 	map_width = size * 2
 	map_height = size
 	heightmap = Heightmap.new(map_width, map_height)

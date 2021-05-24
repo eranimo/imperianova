@@ -1,9 +1,9 @@
 class_name Heightmap
 extends OpenSimplexNoise
 
-var _data
-var _width
-var _height
+export(Dictionary) var _data
+export(int) var _width
+export(int) var _height
 
 func _init(width, height):
 	_width = width
