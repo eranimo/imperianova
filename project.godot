@@ -23,17 +23,11 @@ _global_script_classes=[ {
 "class": "HexMap",
 "language": "GDScript",
 "path": "res://scenes/HexGrid/HexGrid.gd"
-}, {
-"base": "Node",
-"class": "WorldMap",
-"language": "GDScript",
-"path": "res://resources/WorldMap/WorldMap.gd"
 } ]
 _global_script_class_icons={
 "Heightmap": "",
 "HexCell": "",
-"HexMap": "",
-"WorldMap": ""
+"HexMap": ""
 }
 
 [application]
