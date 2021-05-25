@@ -8,12 +8,15 @@ const SAVE_PATH = "user://saves"
 const SAVE_FILE = "user://saves/%s.res"
 
 func _ready():
-	print("GameView")
 	$GameMenu.connect("hide", self, '_on_menu_close')
 	$GameMenu.connect("about_to_show", self, '_on_menu_open')
 	
-	$Game.generate()
-	emit_signal("game_loaded")
+	if SaveSystem.current_save:
+		load_game(SaveSystem.current_save)
+		SaveSystem.current_save = null
+	else:
+		$Game.generate()
+		emit_signal("game_loaded")
 
 # GAME MENU
 func _on_menu_close():
