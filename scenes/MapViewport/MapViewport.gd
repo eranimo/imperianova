@@ -15,3 +15,6 @@ func setup_map(world_map: WorldMap) -> void:
 			var pos = Vector2(x, y)
 			var index = get_tile_for_cell(world_map, pos)
 			map.set_cellv(Vector2(x, y), index)
+
+func set_tile(tile_pos: Vector2, tile_id: int):
+	map.set_cellv(tile_pos, tile_id)

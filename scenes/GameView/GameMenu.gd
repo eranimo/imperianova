@@ -20,7 +20,6 @@ func _on_button_pressed(name):
 		"LoadGame":
 			$LoadDialog.popup_centered()
 		"MainMenu":
-			SaveSystem.current_save = null
 			get_tree().change_scene("res://scenes/MainMenu/MainMenu.tscn")
 		"ExitGame":
 			get_tree().quit()
@@ -28,9 +27,9 @@ func _on_button_pressed(name):
 func _on_save_game(save_name):
 	print("Saved game", save_name)
 	self.hide()
-	SaveSystem.save_game(save_name)
+	get_parent().save_game(save_name)
 
 func _on_load_game(save_name):
 	print("Load game", save_name)
 	self.hide()
-	SaveSystem.load_game(save_name)
+	get_parent().load_game(save_name)

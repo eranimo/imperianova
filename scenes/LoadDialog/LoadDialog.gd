@@ -16,6 +16,7 @@ func _ready():
 	ButtonLoad.connect("pressed", self, "_on_press_load")
 
 func _on_open():
+	ItemList.clear()
 	var saves = SaveSystem.get_saves()
 	for save in saves:
 		ItemList.add_item(save)

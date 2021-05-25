@@ -1,3 +1,5 @@
+# https://github.com/db0/godot-hexgrid_tileset_demo
+
 """
 	A converter between hex and Godot-space coordinate systems.
 	

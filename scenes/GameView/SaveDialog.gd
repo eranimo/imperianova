@@ -22,6 +22,7 @@ func _on_open():
 func update_save_list():
 	# load save games and populate list
 	var saves = SaveSystem.get_saves()
+	ItemList.clear()
 	for save in saves:
 		ItemList.add_item(save)
 	if len(saves) == 0:
