@@ -16,4 +16,4 @@ func get_saves():
 			file_name = dir.get_next()
 	else:
 		print("An error occurred when trying to access the path.")
-	return saves		
+	return saves

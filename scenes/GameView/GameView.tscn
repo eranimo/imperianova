@@ -28,7 +28,6 @@ corner_radius_bottom_left = 2
 [node name="GameView" type="Node2D" groups=[
 "persist",
 ]]
-visible = false
 script = ExtResource( 3 )
 
 [node name="Game" type="Node" parent="."]

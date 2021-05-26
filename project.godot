@@ -12,7 +12,7 @@ _global_script_classes=[ {
 "base": "OpenSimplexNoise",
 "class": "Heightmap",
 "language": "GDScript",
-"path": "res://resources/WorldMap/Heightmap.gd"
+"path": "res://scripts/Heightmap.gd"
 }, {
 "base": "Resource",
 "class": "HexCell",

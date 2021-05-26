@@ -1,6 +1,6 @@
 extends Node
 
-var Heightmap = preload("res://resources/WorldMap/Heightmap.gd")
+var Heightmap = preload("res://scripts/Heightmap.gd")
 
 export(int) var map_seed
 export(int) var map_width
