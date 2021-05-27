@@ -15,6 +15,7 @@ func _ready():
 	render_map()
 
 func render_map():
+	print("Render map ", world_data.size())
 	for pos in world_data:
 		var tile = world_data[pos]
 		$MapViewport.set_tile(pos, tile.tile_id)
@@ -46,10 +47,14 @@ func _create_tile(pos: Vector2, height: float):
 	}
 	
 
-func save():
+func to_dict():
 	return {
-		"world_data": world_data
+		"world_data": world_data,
+		"map_width": map_width,
+		"map_height": map_height,
 	}
 
-func load(dict):
+func from_dict(dict):
 	world_data = dict["world_data"]
+	map_width = dict["map_width"]
+	map_height = dict["map_height"]

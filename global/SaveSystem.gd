@@ -57,13 +57,16 @@ func save_game(save_name):
 			print("persistent node '%s' is not an instanced scene, skipped" % node.name)
 			continue
 		
-		if !node.has_method("save"):
-			print("persistent node '%s' is missing a save() function, skipped" % node.name)
+		if !node.has_method("to_dict"):
+			print("persistent node '%s' is missing a to_dict() function, skipped" % node.name)
 			continue
+		
+		print("Saving node: ", node.name)
+		
 		objects.append({
 			"parent": node.get_parent().get_path(),
 			"filename": node.filename,
-			"data": node.call('save'),
+			"data": node.call('to_dict'),
 		})
 	
 	var save_data = {
@@ -87,7 +90,9 @@ func load_game(save_name):
 	# free old data
 	var nodes = _get_persisted_nodes()
 	for node in nodes:
+		print("Deleting node %s" % node.name)
 		node.queue_free()
+		node.get_parent().remove_child(node)
 
 	# open save file
 	save_file.open(file_path, File.READ)
@@ -105,12 +110,13 @@ func load_game(save_name):
 		var new_object = load(node_data["filename"]).instance()
 		var parent_node = get_node(node_data["parent"])
 		if parent_node == null:
-			print("Failed to load object (filename: %s   parent: %s)" % [node_data["filename"], node_data["parent"]])
+			print("Failed to find parent (filename: %s   parent: %s)" % [node_data["filename"], node_data["parent"]])
 			continue
+		
+		print("Loading node: %s (parent: %s)" % [new_object.name, parent_node.name])
+		
 		parent_node.add_child(new_object)
-
-		for i in node_data["data"]:
-			new_object.set(i, node_data["data"][i])
+		new_object.from_dict(node_data["data"])
 
 	current_save = save_name
 	emit_signal("load_complete")
