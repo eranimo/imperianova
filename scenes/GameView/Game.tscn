@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://resources/pixelfont.tres" type="DynamicFont" id=1]
 [ext_resource path="res://scenes/GameView/World.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/GameView/Game.gd" type="Script" id=3]
+[ext_resource path="res://scenes/GameView/TileData.gd" type="Script" id=4]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.168627, 0.168627, 0.168627, 1 )
@@ -19,6 +20,45 @@ world_data = {
 }
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TileData" type="VBoxContainer" parent="CanvasLayer"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 881.0
+margin_top = -549.0
+margin_bottom = -462.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/TileData"]
+margin_right = 143.0
+margin_bottom = 14.0
+alignment = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="CanvasLayer/TileData/HBoxContainer"]
+margin_left = 112.0
+margin_right = 139.0
+margin_bottom = 14.0
+text = "Tile:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TilePos" type="Label" parent="CanvasLayer/TileData/HBoxContainer"]
+margin_left = 143.0
+margin_right = 143.0
+margin_bottom = 14.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="GameHeader" type="PanelContainer" parent="CanvasLayer"]
 anchor_right = 1.0
@@ -67,15 +107,6 @@ margin_left = 37.0
 margin_right = 37.0
 margin_bottom = 17.0
 custom_fonts/font = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label" type="Label" parent="CanvasLayer"]
-margin_top = 59.8597
-margin_right = 43.0
-margin_bottom = 73.8597
-text = "Foobar"
 __meta__ = {
 "_edit_use_anchors_": false
 }

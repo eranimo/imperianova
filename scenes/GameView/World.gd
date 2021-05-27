@@ -16,6 +16,7 @@ func _ready():
 
 func render_map():
 	print("Render map ", world_data.size())
+	MapManager.connect_world(self)
 	for pos in world_data:
 		var tile = world_data[pos]
 		$MapViewport.set_tile(pos, tile.tile_id)
