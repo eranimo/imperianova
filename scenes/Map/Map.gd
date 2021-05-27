@@ -2,12 +2,7 @@ extends HexMap
 
 func _input(event) -> void:
 	# A simple code to show how to you can manipulate hexes using the mouse.
-	var mouse_offset: Vector2 = Vector2(-11,-6) 
-		# Due to the compressed cells of the TileMap (in order to make the hexes appear to border each other)
-		# the mouse cursor appears to move the highlight hex too early on neighboring hexes
-		# This setting allows the mouse cursor to move the highlight hex a bit closer to their actual visible hex borders. 
-		# In any case however, this cannot be perfect as the godot only understands square dimentions for the tilemap.
-	var grid_pos: Vector2 = world_to_map(get_global_mouse_position() + mouse_offset) 
+	var grid_pos: Vector2 = world_to_map(get_global_mouse_position()) 
 		# The tilemap position of approximately where the mouse cursos if pointing at.
 	var hexCell: HexCell = get_hex_at(grid_pos)
 		# We create a new hex cell object at the mouse position from which we can grab hexmap coordinates

@@ -20,5 +20,5 @@ func _on_button_pressed(name):
 
 func _on_load_game(save_name):
 	self.hide()
-	SaveSystem.current_save = save_name
+	SaveSystem.pending_save = save_name
 	get_tree().change_scene("res://scenes/GameView/GameView.tscn")

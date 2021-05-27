@@ -27,9 +27,9 @@ func _on_button_pressed(name):
 func _on_save_game(save_name):
 	print("Saved game", save_name)
 	self.hide()
-	get_parent().save_game(save_name)
+	SaveSystem.save_game(save_name)
 
 func _on_load_game(save_name):
 	print("Load game", save_name)
 	self.hide()
-	get_parent().load_game(save_name)
+	SaveSystem.load_game(save_name)

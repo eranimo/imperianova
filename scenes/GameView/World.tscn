@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scenes/GameView/World.gd" type="Script" id=1]
+[ext_resource path="res://scenes/MapViewport/MapViewport.tscn" type="PackedScene" id=2]
+
+[node name="World" type="Node" groups=[
+"persist",
+]]
+script = ExtResource( 1 )
+
+[node name="MapViewport" parent="." instance=ExtResource( 2 )]
+margin_right = 1024.0
+margin_bottom = 600.0

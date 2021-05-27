@@ -32,9 +32,10 @@ _global_script_class_icons={
 
 [application]
 
-config/name="ImperiaNova"
+config/name=false
 run/main_scene="res://scenes/MainMenu/MainMenu.tscn"
 config/icon="res://icon.png"
+config/version="0.0.1"
 
 [autoload]
 
@@ -49,6 +50,7 @@ window/stretch/mode="2d"
 
 default_clear_color=true
 margin=false
+line=false
 
 [input]
 
