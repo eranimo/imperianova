@@ -33,6 +33,10 @@ func _exit_tree():
 	if is_menu_open:
 		get_tree().paused = false
 
+func open_menu():
+	$GameMenu.popup()
+
 func _input(event):
 	if event.is_action_pressed("ui_exit"):
-		$GameMenu.popup()
+		open_menu()
+	get_tree().is_input_handled()

@@ -1,8 +1,9 @@
 extends PanelContainer
 
-onready var PlayButton = get_node("MarginContainer/HBoxContainer/PlayButton")
-onready var DateDisplay = get_node("MarginContainer/HBoxContainer/Date")
-onready var ChangeSpeed = get_node("MarginContainer/HBoxContainer/ChangeSpeed")
+onready var PlayButton = get_node("Content/Grid/LeftColumn/PlayButton")
+onready var DateDisplay = get_node("Content/Grid/LeftColumn/Date")
+onready var ChangeSpeed = get_node("Content/Grid/LeftColumn/ChangeSpeed")
+onready var Menu = get_node("Content/Grid/RightColumn/Menu")
 onready var Game = get_parent().get_parent()
 
 func _ready():

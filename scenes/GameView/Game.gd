@@ -9,7 +9,7 @@ enum Speed {
 const speed_ticks = {
 	Speed.SLOW: 8,
 	Speed.NORMAL: 4,
-	Speed.FAST: 2,
+	Speed.FAST: 1,
 }
 
 var ReactiveState = preload("res://scripts/ReactiveState.gd")
@@ -22,7 +22,7 @@ var _ticks_in_day = 0
 func _ready():
 	SaveSystem.connect("load_complete", self, "setup_game")
 
-func _process(delta):
+func _process(_delta):
 	if not is_playing.value:
 		return
 	if _ticks_in_day == 0:
@@ -65,3 +65,6 @@ func to_dict():
 func from_dict(dict):
 	date_ticks.next(dict["date_ticks"])
 	speed.next(dict["speed"])
+
+func _on_menu_pressed():
+	get_parent().open_menu()

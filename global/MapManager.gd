@@ -34,5 +34,4 @@ func _on_tile_hovered(tile_pos: Vector2, world_pos: Vector2):
 	if not is_valid_pos(tile_pos):
 		emit_signal("tile_hovered", null, null)
 		return
-	print("Tile hovered ", tile_pos)
 	emit_signal("tile_hovered", tile_pos, world_pos)
