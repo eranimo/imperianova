@@ -16,7 +16,8 @@ func _input(event) -> void:
 	if event.is_action_pressed("ui_select"): 
 		emit_signal("tile_pressed", hexCell.offset_coords)
 
-	if _last_hovered_tile_pos == null or not hexCell.offset_coords.is_equal_approx(_last_hovered_tile_pos):
+	if _last_hovered_tile_pos == null or \
+		not hexCell.offset_coords.is_equal_approx(_last_hovered_tile_pos):
 		emit_signal("tile_hovered", hexCell.offset_coords, hexWorldPos)
 		_last_hovered_tile_pos = hexCell.offset_coords
 
