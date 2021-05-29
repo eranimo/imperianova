@@ -48,6 +48,7 @@ config/version="0.0.1"
 SaveSystem="*res://global/SaveSystem.gd"
 RefSaver="*res://global/RefSaver.gd"
 MapManager="*res://global/MapManager.gd"
+MapData="*res://global/MapData.gd"
 
 [display]
 
