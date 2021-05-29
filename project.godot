@@ -17,12 +17,12 @@ _global_script_classes=[ {
 "base": "Resource",
 "class": "HexCell",
 "language": "GDScript",
-"path": "res://scenes/HexGrid/HexCell.gd"
+"path": "res://scenes/WorldMap/HexCell.gd"
 }, {
 "base": "TileMap",
 "class": "HexMap",
 "language": "GDScript",
-"path": "res://scenes/HexGrid/HexGrid.gd"
+"path": "res://scenes/WorldMap/HexMap.gd"
 }, {
 "base": "Node",
 "class": "ReactiveState",
