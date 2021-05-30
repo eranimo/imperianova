@@ -16,12 +16,15 @@ func _ready():
 
 func render_map():
 	print("Render map ", world_data.size())
+	MapData.set_world_data(world_data, map_width, map_height)
 	MapManager.connect_world(self)
+	$MapViewport/Viewport/WorldMap.render()
 	for pos in world_data:
 		var tile = world_data[pos]
-		$MapViewport.set_tile(pos, tile.tile_id)
+		$MapViewport.set_tile(pos, tile.terrain_type)
 
 func generate(options):
+	MapData.reset_map()
 	map_seed = options.get('map_seed')
 	var size = options.get('size')
 	map_width = size * 2
@@ -38,15 +41,14 @@ func generate(options):
 	emit_signal("map_generated")
 
 func _create_tile(pos: Vector2, height: float):
-	var tile_id
+	var terrain_type
 	if height < 0.5:
-		tile_id = 0
+		terrain_type = 0
 	else:
-		tile_id = 1
+		terrain_type = 1
 	world_data[pos] = {
-		"tile_id": tile_id,
+		"terrain_type": terrain_type,
 	}
-	
 
 func to_dict():
 	return {

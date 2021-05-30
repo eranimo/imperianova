@@ -27,7 +27,9 @@ func _on_tile_pressed(tile_pos: Vector2):
 	if not is_valid_pos(tile_pos):
 		return
 	print("Tile pressed ", tile_pos)
-	map.set_cellv(tile_pos, 1)
+	# map.set_cellv(tile_pos, 1)
+	print(MapData.tiles[tile_pos])
+	print(MapData.get_terrain_bitmask(tile_pos))
 	emit_signal("tile_pressed", tile_pos)
 
 func _on_tile_hovered(tile_pos: Vector2, world_pos: Vector2):

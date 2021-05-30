@@ -9,6 +9,19 @@ func _ready():
 	MapManager.connect_map(self)
 	MapManager.connect("tile_hovered", self, "_on_tile_hover")
 
+func render():
+	# DEBUG: render bitmask IDs on tiles
+	if true:
+		for x in range(MapData.map_width):
+			for y in range(MapData.map_height):
+				var pos = Vector2(x, y)
+				var label_container = Node2D.new()
+				label_container.position = map_to_world(pos) + Vector2(32, 32)
+				var label = Label.new()
+				label.text = str(MapData.get_terrain_bitmask(pos))
+				label_container.add_child(label)
+				add_child(label_container)
+
 func _input(event) -> void:
 	var grid_pos: Vector2 = world_to_map(get_global_mouse_position()) 
 	var hexCell: HexCell = get_hex_at(grid_pos)
@@ -27,3 +40,6 @@ func _on_tile_hover(tile_pos, world_pos):
 	else:
 		$HexGrid/Highlight.show()
 		$HexGrid.update_highlight_pos(world_pos)
+
+func set_tile(tile_pos, tile_id):
+	$Terrain.set_tile(tile_pos, tile_id)

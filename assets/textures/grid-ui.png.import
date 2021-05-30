@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/ForestGrass.png-8f6daea3614ab21accef717f0f89536c.stex"
+path="res://.import/grid-ui.png-7abf08c16ccaaec1bb919183d5590dd0.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/textures/tilesets/ForestGrass.png"
-dest_files=[ "res://.import/ForestGrass.png-8f6daea3614ab21accef717f0f89536c.stex" ]
+source_file="res://assets/textures/grid-ui.png"
+dest_files=[ "res://.import/grid-ui.png-7abf08c16ccaaec1bb919183d5590dd0.stex" ]
 
 [params]
 
