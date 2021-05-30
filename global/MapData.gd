@@ -1,5 +1,12 @@
 extends Node
 
+var world_data = {} 
+var map_width
+var map_height
+var tiles = {}
+
+
+# Terrain type
 enum TerrainType {
 	OCEAN,
 	GRASSLAND
@@ -9,7 +16,36 @@ const TerrainTypeCount = 2
 
 var terrain_title = {
 	TerrainType.OCEAN: "Ocean",
-	TerrainType.GRASSLAND: "Grassland"
+	TerrainType.GRASSLAND: "Grassland",
+}
+
+const terrain_transitions = {
+	TerrainType.OCEAN: [TerrainType.GRASSLAND]
+}
+
+
+# Feature type
+enum FeatureType {
+	NONE,
+	FOREST
+}
+
+const FeatureTypeCount = 2
+
+var feature_title = {
+	FeatureType.NONE: "None",
+	FeatureType.FOREST: "Forest",
+}
+
+
+# Direction
+enum Direction {
+	SE
+	NE
+	N
+	NW
+	SW
+	S
 }
 
 const oddq_directions = [
@@ -23,18 +59,68 @@ const oddq_directions = [
   ],
 ];
 
-var world_data = {} 
-var map_width
-var map_height
-var tiles = {}
+const adjacent_directions = {
+  Direction.SE: [Direction.NE, Direction.S],
+  Direction.NE: [Direction.N, Direction.SE],
+  Direction.N: [Direction.NW, Direction.NE],
+  Direction.NW: [Direction.SW, Direction.N],
+  Direction.SW: [Direction.S, Direction.NW],
+  Direction.S: [Direction.SE, Direction.SW],
+};
 
-enum Direction {
-	SE
-	NE
-	N
-	NW
-	SW
-	S
+const opposite_directions = {
+  Direction.SE: Direction.NW,
+  Direction.NE: Direction.SW,
+  Direction.N: Direction.S,
+  Direction.NW: Direction.SE,
+  Direction.SW: Direction.NE,
+  Direction.S: Direction.N,
+}
+
+const direction_clockwise = {
+  [Direction.SE]: Direction.S,
+  [Direction.NE]: Direction.SE,
+  [Direction.N]: Direction.NE,
+  [Direction.NW]: Direction.N,
+  [Direction.SW]: Direction.NW,
+  [Direction.S]: Direction.SW,
+};
+
+const direction_counter_clockwise = {
+  Direction.SE: Direction.NE,
+  Direction.NE: Direction.N,
+  Direction.N: Direction.NW,
+  Direction.NW: Direction.SW,
+  Direction.SW: Direction.S,
+  Direction.S: Direction.SE,
+};
+
+enum Section {
+	CENTER,
+	EDGE_SE,
+	EDGE_S,
+	EDGE_SW,
+	EDGE_NW,
+	EDGE_N,
+	EDGE_NE,
+}
+
+const section_to_direction = {
+	Section.EDGE_SE: Direction.SE,
+	Section.EDGE_S: Direction.S,
+	Section.EDGE_SW: Direction.SW,
+	Section.EDGE_NW: Direction.NW,
+	Section.EDGE_N: Direction.N,
+	Section.EDGE_NE: Direction.NE,
+}
+
+const direction_to_section = {
+	Direction.SE: Section.EDGE_SE,
+	Direction.S: Section.EDGE_S,
+	Direction.SW: Section.EDGE_SW,
+	Direction.NW: Section.EDGE_NW,
+	Direction.N: Section.EDGE_N,
+	Direction.NE: Section.EDGE_NE,
 }
 
 func reset_map():
@@ -84,29 +170,47 @@ func set_world_data(_world_data, _map_width, _map_height):
 		var terrain_type = get_terrain_type(pos)
 		tiles[pos] = {
 			"terrain_type": terrain_type,
-			"edge_terrain_type_SE": get_terrain_type(get_neighbor(pos, Direction.SE)),
-			"edge_terrain_type_S": get_terrain_type(get_neighbor(pos, Direction.S)),
-			"edge_terrain_type_SW": get_terrain_type(get_neighbor(pos, Direction.SW)),
-			"edge_terrain_type_NW": get_terrain_type(get_neighbor(pos, Direction.NW)),
-			"edge_terrain_type_N": get_terrain_type(get_neighbor(pos, Direction.N)),
-			"edge_terrain_type_NE": get_terrain_type(get_neighbor(pos, Direction.NE)),
+			"edge": {
+				Direction.SE: get_terrain_type(get_neighbor(pos, Direction.SE)),
+				Direction.S: get_terrain_type(get_neighbor(pos, Direction.S)),
+				Direction.SW: get_terrain_type(get_neighbor(pos, Direction.SW)),
+				Direction.NW: get_terrain_type(get_neighbor(pos, Direction.NW)),
+				Direction.N: get_terrain_type(get_neighbor(pos, Direction.N)),
+				Direction.NE: get_terrain_type(get_neighbor(pos, Direction.NE)),
+			},
 		}
 
-func get_terrain_bitmask(tile_pos):
+func get_tile_bitmask(tile_pos: Vector2):
 	var terrain_type = tiles[tile_pos].terrain_type
-	var terrain_SE = tiles[tile_pos].edge_terrain_type_SE
-	var terrain_S = tiles[tile_pos].edge_terrain_type_S
-	var terrain_SW = tiles[tile_pos].edge_terrain_type_SW
-	var terrain_NW = tiles[tile_pos].edge_terrain_type_NW
-	var terrain_N = tiles[tile_pos].edge_terrain_type_N
-	var terrain_NE = tiles[tile_pos].edge_terrain_type_NE
+	var terrain_SE = tiles[tile_pos].edge[Direction.SE]
+	var terrain_S = tiles[tile_pos].edge[Direction.S]
+	var terrain_SW = tiles[tile_pos].edge[Direction.SW]
+	var terrain_NW = tiles[tile_pos].edge[Direction.NW]
+	var terrain_N = tiles[tile_pos].edge[Direction.N]
+	var terrain_NE = tiles[tile_pos].edge[Direction.NE]
+	
+	# TODO: remove duplicates of non-transitioning terrain combinations
 	
 	return (
-		pow(TerrainTypeCount - 1, 0) * terrain_type +
-		pow(TerrainTypeCount - 1, 1) * terrain_SE +
-		pow(TerrainTypeCount - 1, 2) * terrain_S +
-		pow(TerrainTypeCount - 1, 3) * terrain_SW +
-		pow(TerrainTypeCount - 1, 4) * terrain_NW +
-		pow(TerrainTypeCount - 1, 5) * terrain_N +
-		pow(TerrainTypeCount - 1, 6) * terrain_NE
+		pow(TerrainTypeCount - 1, 0) * terrain_type
+		+ pow(TerrainTypeCount - 1, 1) * terrain_SE
+		+ pow(TerrainTypeCount - 1, 2) * terrain_S
+		+ pow(TerrainTypeCount - 1, 3) * terrain_SW
+		+ pow(TerrainTypeCount - 1, 4) * terrain_NW
+		+ pow(TerrainTypeCount - 1, 5) * terrain_N
+		+ pow(TerrainTypeCount - 1, 6) * terrain_NE
 	)
+
+func get_tile_section_bitmask(tile_pos: Vector2, section):
+	var center_terrain_type = tiles[tile_pos].terrain_type
+	
+	if section == Section.CENTER:
+		return (
+			pow(TerrainTypeCount - 1, 0) * center_terrain_type
+		)
+	else:
+		var edge_terrain_type = tiles[tile_pos].edge[section_to_direction[section]]
+		return (
+			pow(TerrainTypeCount - 1, 0) * center_terrain_type
+			+ pow(TerrainTypeCount - 1, 1) * edge_terrain_type
+		)

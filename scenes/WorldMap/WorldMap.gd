@@ -19,7 +19,7 @@ func render():
 				var label_container = Node2D.new()
 				label_container.position = map_to_world(pos) + Vector2(32, 32)
 				var label = Label.new()
-				label.text = str(MapData.get_terrain_bitmask(pos))
+				label.text = str(MapData.get_tile_bitmask(pos))
 				label_container.add_child(label)
 				add_child(label_container)
 
@@ -37,10 +37,10 @@ func _input(event) -> void:
 
 func _on_tile_hover(tile_pos, world_pos):
 	if tile_pos == null:
-		$HexGrid/Highlight.hide()
+		$TileUI.hide()
 	else:
-		$HexGrid/Highlight.show()
-		$HexGrid.update_highlight_pos(world_pos)
+		$TileUI.show()
+		$TileUI.update_highlight_pos(world_pos)
 
 func set_tile(tile_pos, tile_id):
 	$Terrain.set_tile(tile_pos, tile_id)
