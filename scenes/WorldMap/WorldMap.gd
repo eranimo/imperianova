@@ -10,6 +10,10 @@ func _ready():
 	MapManager.connect("tile_hovered", self, "_on_tile_hover")
 
 func render():
+	for x in range(MapData.map_width):
+		for y in range(MapData.map_height):
+			$Terrain.set_tile(Vector2(x, y))
+	print("Tileset tile count: ", $Terrain.tile_cache.size())
 	# DEBUG: render bitmask IDs on tiles
 	for x in range(MapData.map_width):
 		for y in range(MapData.map_height):
@@ -42,6 +46,3 @@ func _on_tile_hover(tile_pos, world_pos):
 	else:
 		$TileUI.show()
 		$TileUI.update_highlight_pos(world_pos)
-
-func set_tile(tile_pos, tile_id):
-	$Terrain.set_tile(tile_pos)

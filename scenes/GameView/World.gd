@@ -19,9 +19,6 @@ func render_map():
 	MapData.set_world_data(world_data, map_width, map_height)
 	MapManager.connect_world(self)
 	$MapViewport/Viewport/WorldMap.render()
-	for pos in world_data:
-		var tile = world_data[pos]
-		$MapViewport.set_tile(pos, tile.terrain_type)
 
 func generate(options):
 	MapData.reset_map()

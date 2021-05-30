@@ -29,7 +29,7 @@ func get_or_generate_tile(tile_pos: Vector2):
 	var tile_bitmask = MapData.get_tile_bitmask(tile_pos)
 	if tile_cache.has(tile_bitmask):
 		return tile_cache[tile_bitmask]
-	print("Generating tile ", tile_bitmask)
+	# print("Generating tile ", tile_bitmask)
 	# Generate texture for the current tile
 	
 	var terrain_type = MapData.tiles[tile_pos].terrain_type
@@ -40,7 +40,6 @@ func get_or_generate_tile(tile_pos: Vector2):
 	image.create(64, 60, false, base_image.get_format())
 	image.fill(Color(1.0, 1.0, 11.0))
 	image.lock()
-	image.set_pixel(0, 0, Color(1, 1, 1))
 	image.blit_rect(
 		base_image,
 		Rect2(0, 0, 64, 60),
@@ -48,11 +47,8 @@ func get_or_generate_tile(tile_pos: Vector2):
 	)
 	image.unlock()
 	
-	var err = image.save_png("res://debug_images/%d.png" % tile_bitmask)
-	
 	var texture = ImageTexture.new()
-	texture.flags = Texture.FLAG_CONVERT_TO_LINEAR
-	texture.create_from_image(image)
+	texture.create_from_image(image, 0)
 	
 	var current_tile_id = tileset.get_last_unused_tile_id()
 	tileset.create_tile(current_tile_id)
@@ -61,8 +57,6 @@ func get_or_generate_tile(tile_pos: Vector2):
 	return tile_cache[tile_bitmask]
 
 func set_tile(tile_pos):
-	# pass
 	# generate tile texture if it doesn't exist
-	# get tileset texture id and set tilemap
 	var tile_id = get_or_generate_tile(tile_pos)
 	self.set_cellv(tile_pos, tile_id)

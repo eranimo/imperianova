@@ -28,10 +28,12 @@ func _on_tile_pressed(tile_pos: Vector2):
 		return
 	print("Tile pressed: ", tile_pos)
 	# map.set_cellv(tile_pos, 1)
-	# print(MapData.tiles[tile_pos])
-	print('\tTile bitmask: ', MapData.get_tile_bitmask(tile_pos))
-	for section in MapData.Section:
-		print('\tSection %s bitmask: %s' % [section, MapData.get_tile_section_bitmask(tile_pos, MapData.Section[section])])
+	print('Terrain type: ', MapData.terrain_title[MapData.tiles[tile_pos].terrain_type])
+	for dir in MapData.Direction:
+		print('\t%s: %s' % [dir, MapData.terrain_title[MapData.tiles[tile_pos].edge[MapData.Direction[dir]]]])
+	#print('\tTile bitmask: ', MapData.get_tile_bitmask(tile_pos))
+	#for section in MapData.Section:
+	#	print('\tSection %s bitmask: %s' % [section, MapData.get_tile_section_bitmask(tile_pos, MapData.Section[section])])
 	emit_signal("tile_pressed", tile_pos)
 
 func _on_tile_hovered(tile_pos: Vector2, world_pos: Vector2):

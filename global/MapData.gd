@@ -157,9 +157,7 @@ func get_neighbor(pos: Vector2, dir):
 	return n_pos
 
 func get_terrain_type(tile_pos):
-	assert(is_valid_pos(tile_pos))
-	var cell = world_data[tile_pos]
-	return cell.terrain_type
+	return world_data[tile_pos].terrain_type
 
 func set_world_data(_world_data, _map_width, _map_height):
 	world_data = _world_data
@@ -192,13 +190,13 @@ func get_tile_bitmask(tile_pos: Vector2):
 	# TODO: remove duplicates of non-transitioning terrain combinations
 	
 	return (
-		pow(TerrainTypeCount - 1, 0) * terrain_type
-		+ pow(TerrainTypeCount - 1, 1) * terrain_SE
-		+ pow(TerrainTypeCount - 1, 2) * terrain_S
-		+ pow(TerrainTypeCount - 1, 3) * terrain_SW
-		+ pow(TerrainTypeCount - 1, 4) * terrain_NW
-		+ pow(TerrainTypeCount - 1, 5) * terrain_N
-		+ pow(TerrainTypeCount - 1, 6) * terrain_NE
+		pow(TerrainTypeCount, 0) * terrain_type
+		+ pow(TerrainTypeCount, 1) * terrain_SE
+		+ pow(TerrainTypeCount, 2) * terrain_S
+		+ pow(TerrainTypeCount, 3) * terrain_SW
+		+ pow(TerrainTypeCount, 4) * terrain_NW
+		+ pow(TerrainTypeCount, 5) * terrain_N
+		+ pow(TerrainTypeCount, 6) * terrain_NE
 	)
 
 func get_tile_section_bitmask(tile_pos: Vector2, section):
