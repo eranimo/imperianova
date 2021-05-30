@@ -11,11 +11,12 @@ func _ready():
 
 func render():
 	# DEBUG: render bitmask IDs on tiles
-	if true:
-		for x in range(MapData.map_width):
-			for y in range(MapData.map_height):
-				var pos = Vector2(x, y)
-				$GridLines.set_cellv(pos, 0)
+	for x in range(MapData.map_width):
+		for y in range(MapData.map_height):
+			var pos = Vector2(x, y)
+			$GridLines.set_cellv(pos, 0)
+			
+			if false:
 				var label_container = Node2D.new()
 				label_container.position = map_to_world(pos) + Vector2(32, 32)
 				var label = Label.new()
@@ -43,4 +44,4 @@ func _on_tile_hover(tile_pos, world_pos):
 		$TileUI.update_highlight_pos(world_pos)
 
 func set_tile(tile_pos, tile_id):
-	$Terrain.set_tile(tile_pos, tile_id)
+	$Terrain.set_tile(tile_pos)

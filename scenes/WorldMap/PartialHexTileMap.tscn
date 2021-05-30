@@ -1,10 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://scenes/WorldMap/PartialHexTileMap.gd" type="Script" id=2]
-[ext_resource path="res://resources/tilesets/terrain.tres" type="TileSet" id=3]
 
 [node name="PartialHexTileMap" type="TileMap"]
-tile_set = ExtResource( 3 )
 cell_size = Vector2( 49, 60 )
 cell_custom_transform = Transform2D( 64, 0, 0, 60, 0, 0 )
 cell_half_offset = 1

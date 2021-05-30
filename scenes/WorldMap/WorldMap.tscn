@@ -5,7 +5,7 @@
 [ext_resource path="res://scenes/WorldMap/WorldMap.gd" type="Script" id=3]
 [ext_resource path="res://scenes/WorldMap/TileUI.gd" type="Script" id=4]
 [ext_resource path="res://scenes/WorldMap/HexMap.gd" type="Script" id=5]
-[ext_resource path="res://resources/tilesets/terrain.tres" type="TileSet" id=6]
+[ext_resource path="res://resources/tilesets/base-ocean.tres" type="TileSet" id=6]
 [ext_resource path="res://resources/tilesets/grid-ui.tres" type="TileSet" id=7]
 
 [sub_resource type="RectangleShape2D" id=1]
