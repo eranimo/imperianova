@@ -15,6 +15,7 @@ func render():
 		for x in range(MapData.map_width):
 			for y in range(MapData.map_height):
 				var pos = Vector2(x, y)
+				$GridLines.set_cellv(pos, 0)
 				var label_container = Node2D.new()
 				label_container.position = map_to_world(pos) + Vector2(32, 32)
 				var label = Label.new()
