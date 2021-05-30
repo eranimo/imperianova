@@ -18,7 +18,10 @@ func render_map():
 	print("Render map ", world_data.size())
 	MapData.set_world_data(world_data, map_width, map_height)
 	MapManager.connect_world(self)
+	
+	var time_start = OS.get_ticks_msec()
 	$MapViewport/Viewport/WorldMap.render()
+	print("World map rendering: ", OS.get_ticks_msec() - time_start)
 
 func generate(options):
 	MapData.reset_map()

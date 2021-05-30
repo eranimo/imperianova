@@ -27,6 +27,7 @@ func render():
 				label.text = str(MapData.get_tile_bitmask(pos))
 				label_container.add_child(label)
 				add_child(label_container)
+	$Terrain.render()
 
 func _input(event) -> void:
 	var grid_pos: Vector2 = world_to_map(get_global_mouse_position()) 
