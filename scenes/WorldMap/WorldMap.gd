@@ -35,6 +35,12 @@ func _input(event) -> void:
 	var hexWorldPos: Vector2 = map_to_world(hexCell.get_offset_coords())
 	if event.is_action_pressed("ui_select"): 
 		emit_signal("tile_pressed", hexCell.offset_coords)
+	
+	if event.is_action_pressed("map_toggle_grid"):
+		if $GridLines.visible:
+			$GridLines.hide()
+		else:
+			$GridLines.show()
 
 	if _last_hovered_tile_pos == null or \
 		not hexCell.offset_coords.is_equal_approx(_last_hovered_tile_pos):

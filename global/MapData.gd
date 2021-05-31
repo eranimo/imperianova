@@ -78,12 +78,12 @@ const opposite_directions = {
 }
 
 const direction_clockwise = {
-  [Direction.SE]: Direction.S,
-  [Direction.NE]: Direction.SE,
-  [Direction.N]: Direction.NE,
-  [Direction.NW]: Direction.N,
-  [Direction.SW]: Direction.NW,
-  [Direction.S]: Direction.SW,
+  Direction.SE: Direction.S,
+  Direction.NE: Direction.SE,
+  Direction.N: Direction.NE,
+  Direction.NW: Direction.N,
+  Direction.SW: Direction.NW,
+  Direction.S: Direction.SW,
 };
 
 const direction_counter_clockwise = {
@@ -212,3 +212,8 @@ func get_tile_section_bitmask(tile_pos: Vector2, section):
 			pow(TerrainTypeCount - 1, 0) * center_terrain_type
 			+ pow(TerrainTypeCount - 1, 1) * edge_terrain_type
 		)
+
+func has_transition(terrain1, terrain2):
+	if not terrain_transitions.has(terrain1):
+		return false
+	return terrain_transitions.get(terrain1).has(terrain2)
