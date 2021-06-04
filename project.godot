@@ -9,11 +9,6 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "OpenSimplexNoise",
-"class": "Heightmap",
-"language": "GDScript",
-"path": "res://scripts/Heightmap.gd"
-}, {
 "base": "Resource",
 "class": "HexCell",
 "language": "GDScript",
@@ -28,12 +23,17 @@ _global_script_classes=[ {
 "class": "ReactiveState",
 "language": "GDScript",
 "path": "res://scripts/ReactiveState.gd"
+}, {
+"base": "OpenSimplexNoise",
+"class": "WorldNoise",
+"language": "GDScript",
+"path": "res://scripts/WorldNoise.gd"
 } ]
 _global_script_class_icons={
-"Heightmap": "",
 "HexCell": "",
 "HexMap": "",
-"ReactiveState": ""
+"ReactiveState": "",
+"WorldNoise": ""
 }
 
 [application]

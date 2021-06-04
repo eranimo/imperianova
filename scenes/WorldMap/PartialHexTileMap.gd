@@ -3,7 +3,11 @@ extends TileMap
 
 var OceanBase = preload("res://assets/textures/tilesets/Ocean.png")
 var GrasslandBase = preload("res://assets/textures/tilesets/Grass.png")
+var DesertBase = preload("res://assets/textures/tilesets/Desert.png")
 var OceanGrasslandTrans2 = preload("res://assets/textures/tilesets/Ocean-Grass.png")
+var OceanDesertTrans2 = preload("res://assets/textures/tilesets/Ocean-Desert.png")
+var OceanGrasslandDesertTrans3 = preload("res://assets/textures/tilesets/OceanGrass-Desert.png")
+var GrasslandDesertTran2 = preload("res://assets/textures/tilesets/Grass-Desert.png")
 
 var base_column_ids = {
 	MapData.Section.CENTER: 0,
@@ -24,6 +28,30 @@ var transition_column_ids = {
 	MapData.Section.EDGE_NE: 5,
 }
 
+var terrain_type_base_tileset = {
+	MapData.TerrainType.OCEAN: OceanBase.get_data(),
+	MapData.TerrainType.GRASSLAND: GrasslandBase.get_data(),
+	MapData.TerrainType.DESERT: DesertBase.get_data(),
+}
+
+var transition_2_tileset = {
+	MapData.TerrainType.OCEAN: {
+		MapData.TerrainType.GRASSLAND: OceanGrasslandTrans2.get_data(),
+		MapData.TerrainType.DESERT: OceanDesertTrans2.get_data(),
+	},
+	MapData.TerrainType.GRASSLAND: {
+		MapData.TerrainType.DESERT: GrasslandDesertTran2.get_data(),
+	}
+}
+
+var transition_3_tileset = {
+	MapData.TerrainType.OCEAN: {
+		MapData.TerrainType.GRASSLAND: {
+			MapData.TerrainType.DESERT: OceanGrasslandDesertTrans3.get_data()
+		}
+	}
+}
+
 var tileset = TileSet.new()
 var tile_cache = {}
 
@@ -33,8 +61,8 @@ var image
 # generated tileset max size
 # if the number of tile section combinations increases over this number
 # there will be an error
-var COLUMNS = 25
-var ROWS = 25
+var COLUMNS = 100
+var ROWS = 100
 var TILE_WIDTH = 64
 var TILE_HEIGHT = 60
 var PADDING = 20
@@ -59,17 +87,6 @@ func _ready():
 		tileset.tile_set_texture(i, texture)
 		tileset.tile_set_region(i, Rect2(dest.x, dest.y, TILE_WIDTH, TILE_HEIGHT))
 
-var terrain_type_base_tileset = {
-	MapData.TerrainType.OCEAN: OceanBase.get_data(),
-	MapData.TerrainType.GRASSLAND: GrasslandBase.get_data(),
-}
-
-var transition_2_tileset = {
-	MapData.TerrainType.OCEAN: {
-		MapData.TerrainType.GRASSLAND: OceanGrasslandTrans2.get_data(),
-	}
-}
-
 func _get_source_tile(id, columns, padding=0):
 	return Vector2(
 		(id % columns) * (TILE_WIDTH + padding),
@@ -85,6 +102,9 @@ func _render_edge(tile_pos, dest, section):
 	var section_column_id = base_column_ids[section]
 	var dir = MapData.section_to_direction[section]
 	var terrain_type = tile_data.terrain_type
+	if not terrain_type_base_tileset.has(terrain_type):
+		print("Missing tileset for terrain type ", terrain_type)
+		return
 	var base_image = terrain_type_base_tileset[terrain_type]
 	var adj_dir_1 = MapData.direction_clockwise[dir]
 	var adj_dir_2 = MapData.direction_counter_clockwise[dir]
@@ -186,7 +206,11 @@ func _render_edge(tile_pos, dest, section):
 
 func _render_center(tile_pos, dest):
 	var tile_data = MapData.tiles[tile_pos]
-	var base_image = terrain_type_base_tileset[tile_data.terrain_type]
+	var terrain_type = tile_data.terrain_type
+	if not terrain_type_base_tileset.has(terrain_type):
+		print("Missing tileset for terrain type ", terrain_type)
+		return
+	var base_image = terrain_type_base_tileset[terrain_type]
 	image.blit_rect_mask(
 		base_image,
 		base_image,

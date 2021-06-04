@@ -54,6 +54,7 @@ func generate():
 	$World.generate({
 		"map_seed": rand_range(0, 100),
 		"size": size,
+		"sealevel": 140,
 	})
 
 func to_dict():

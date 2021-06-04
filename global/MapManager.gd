@@ -19,7 +19,7 @@ func connect_world(world):
 func is_valid_pos(pos: Vector2):
 	if pos.x < 0 or pos.y < 0:
 		return false
-	if pos.x > map_width or pos.y > map_height:
+	if pos.x >= map_width or pos.y >= map_height:
 		return false
 	return true
 
@@ -27,11 +27,12 @@ func _on_tile_pressed(tile_pos: Vector2):
 	if not is_valid_pos(tile_pos):
 		return
 	print("Tile pressed: ", tile_pos)
+	print('\tTile bitmask: ', MapData.get_tile_bitmask(tile_pos))
 	# map.set_cellv(tile_pos, 1)
 	print('Terrain type: ', MapData.terrain_title[MapData.tiles[tile_pos].terrain_type])
 	for dir in MapData.Direction:
 		print('\t%s: %s' % [dir, MapData.terrain_title[MapData.tiles[tile_pos].edge[MapData.Direction[dir]]]])
-	#print('\tTile bitmask: ', MapData.get_tile_bitmask(tile_pos))
+	
 	#for section in MapData.Section:
 	#	print('\tSection %s bitmask: %s' % [section, MapData.get_tile_section_bitmask(tile_pos, MapData.Section[section])])
 	emit_signal("tile_pressed", tile_pos)

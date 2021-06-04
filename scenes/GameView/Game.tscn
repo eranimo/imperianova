@@ -63,6 +63,58 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/TileData"]
+margin_top = 18.0
+margin_right = 133.0
+margin_bottom = 32.0
+alignment = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="CanvasLayer/TileData/HBoxContainer2"]
+margin_left = 81.0
+margin_right = 129.0
+margin_bottom = 14.0
+text = "Terrain:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TileTerrain" type="Label" parent="CanvasLayer/TileData/HBoxContainer2"]
+margin_left = 133.0
+margin_right = 133.0
+margin_bottom = 14.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="CanvasLayer/TileData"]
+margin_top = 36.0
+margin_right = 133.0
+margin_bottom = 50.0
+alignment = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="CanvasLayer/TileData/HBoxContainer3"]
+margin_left = 83.0
+margin_right = 129.0
+margin_bottom = 14.0
+text = "Height:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TileHeight" type="Label" parent="CanvasLayer/TileData/HBoxContainer3"]
+margin_left = 133.0
+margin_right = 133.0
+margin_bottom = 14.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="GameHeader" type="PanelContainer" parent="CanvasLayer"]
 anchor_right = 1.0
 margin_bottom = 40.0

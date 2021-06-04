@@ -1,6 +1,6 @@
 extends Node
 
-var Heightmap = preload("res://scripts/Heightmap.gd")
+var WorldNoise = preload("res://scripts/WorldNoise.gd")
 
 export(int) var map_seed
 export(int) var map_width
@@ -27,28 +27,38 @@ func generate(options):
 	MapData.reset_map()
 	map_seed = options.get('map_seed')
 	var size = options.get('size')
+	var sealevel = options.get('sealevel')
 	map_width = size * 2
 	map_height = size
-	var heightmap = Heightmap.new(map_width, map_height)
+
+	var heightmap = WorldNoise.new(map_width, map_height)
 	heightmap.generate(map_seed)
+	
+	var temperature_map = WorldNoise.new(map_width, map_height)
+	temperature_map.octaves = 3
+	temperature_map.period = 0.5
+	temperature_map.generate(map_seed)
 	
 	for x in range(map_width):
 		for y in range(map_height):
 			var pos = Vector2(x, y)
-			var height = heightmap.get_cell(pos)
-			_create_tile(pos, height)
+			var height = int(heightmap.get_cell(pos) * 255)
+			var temperature = temperature_map.get_cell(pos)
+			var terrain_type
+			if height < sealevel:
+				terrain_type = MapData.TerrainType.OCEAN
+			else:
+				if temperature < 0.60:
+					terrain_type = MapData.TerrainType.GRASSLAND
+				else:
+					terrain_type = MapData.TerrainType.DESERT
+					
+			world_data[pos] = {
+				"height": height,
+				"terrain_type": terrain_type,
+			}
 	render_map()
 	emit_signal("map_generated")
-
-func _create_tile(pos: Vector2, height: float):
-	var terrain_type
-	if height < 0.5:
-		terrain_type = 0
-	else:
-		terrain_type = 1
-	world_data[pos] = {
-		"terrain_type": terrain_type,
-	}
 
 func to_dict():
 	return {

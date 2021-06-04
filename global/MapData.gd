@@ -9,18 +9,26 @@ var tiles = {}
 # Terrain type
 enum TerrainType {
 	OCEAN,
-	GRASSLAND
+	GRASSLAND,
+	DESERT,
 }
 
-const TerrainTypeCount = 2
+const TerrainTypeCount = 3
 
 var terrain_title = {
 	TerrainType.OCEAN: "Ocean",
 	TerrainType.GRASSLAND: "Grassland",
+	TerrainType.DESERT: "Desert",
 }
 
 const terrain_transitions = {
-	TerrainType.OCEAN: [TerrainType.GRASSLAND]
+	TerrainType.OCEAN: [TerrainType.GRASSLAND, TerrainType.DESERT],
+	TerrainType.GRASSLAND: [TerrainType.DESERT]
+}
+
+const terrain_transitions_reverse = {
+	TerrainType.GRASSLAND: [TerrainType.OCEAN],
+	TerrainType.DESERT: [TerrainType.OCEAN, TerrainType.GRASSLAND],
 }
 
 
@@ -167,6 +175,7 @@ func set_world_data(_world_data, _map_width, _map_height):
 	for pos in world_data:
 		var terrain_type = get_terrain_type(pos)
 		tiles[pos] = {
+			"height": world_data[pos].height,
 			"terrain_type": terrain_type,
 			"edge": {
 				Direction.SE: get_terrain_type(get_neighbor(pos, Direction.SE)),
@@ -199,6 +208,7 @@ func get_tile_bitmask(tile_pos: Vector2):
 		+ pow(TerrainTypeCount, 6) * terrain_NE
 	)
 
+# TODO: remove?
 func get_tile_section_bitmask(tile_pos: Vector2, section):
 	var center_terrain_type = tiles[tile_pos].terrain_type
 	
