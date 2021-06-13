@@ -68,12 +68,12 @@ const oddq_directions = [
 ];
 
 const adjacent_directions = {
-  Direction.SE: [Direction.NE, Direction.S],
-  Direction.NE: [Direction.N, Direction.SE],
-  Direction.N: [Direction.NW, Direction.NE],
-  Direction.NW: [Direction.SW, Direction.N],
-  Direction.SW: [Direction.S, Direction.NW],
-  Direction.S: [Direction.SE, Direction.SW],
+  Direction.SE: [Direction.S, Direction.NE],
+  Direction.NE: [Direction.SE, Direction.N],
+  Direction.N: [Direction.NE, Direction.NW],
+  Direction.NW: [Direction.N, Direction.SW],
+  Direction.SW: [Direction.NW, Direction.S],
+  Direction.S: [Direction.SW, Direction.SE],
 };
 
 const opposite_directions = {

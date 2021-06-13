@@ -93,7 +93,7 @@ func _get_source_tile(id, columns, padding=0):
 		floor(id / columns) * (TILE_HEIGHT + padding)
 	)
 
-func get_transtion_two_tile_id(row, section):
+func get_transtion_tile_id(row, section):
 	var section_column_id = transition_column_ids[section]
 	return ((row - 1) * 6) + section_column_id
 
@@ -111,55 +111,72 @@ func _render_edge(tile_pos, dest, section):
 	var edge_terrain = tile_data.edge[dir]
 	var adj1_terrain = tile_data.edge[adj_dir_1]
 	var adj2_terrain = tile_data.edge[adj_dir_2]
-	if MapData.has_transition(terrain_type, tile_data.edge[dir]):
-		for transition_terrain in MapData.terrain_transitions[terrain_type]:
-			var transition_image = transition_2_tileset[terrain_type][transition_terrain]
-			var rect
-			if edge_terrain == transition_terrain and \
-				adj1_terrain == terrain_type and \
-				adj2_terrain == transition_terrain:
+	
+	var has_trans_edge = MapData.has_transition(terrain_type, tile_data.edge[dir])
+	var has_trans_adj1 = MapData.has_transition(terrain_type, tile_data.edge[adj_dir_1])
+	var has_trans_adj2 = MapData.has_transition(terrain_type, tile_data.edge[adj_dir_2])
+
+	if has_trans_edge:
+		var transition_image
+		var rect
+		if has_trans_adj2 and adj1_terrain != edge_terrain and adj2_terrain == edge_terrain:
+			if MapData.has_transition(edge_terrain, adj1_terrain):
+				# 3-trans Row 6
+				rect = _get_source_tile(get_transtion_tile_id(6, section), 6)
+				transition_image = transition_3_tileset[terrain_type][edge_terrain][adj1_terrain]
+			else:
 				# Row 4: edge = secondary; adj1 = primary; adj2 = secondary
-				rect = _get_source_tile(get_transtion_two_tile_id(4, section), 6, 0)
-			elif edge_terrain == transition_terrain and \
-				adj1_terrain == transition_terrain and \
-				adj2_terrain == terrain_type:
+				rect = _get_source_tile(get_transtion_tile_id(4, section), 6)
+				transition_image = transition_2_tileset[terrain_type][edge_terrain]
+		elif has_trans_adj1 and adj1_terrain == edge_terrain and adj2_terrain != edge_terrain:
+			if MapData.has_transition(edge_terrain, adj2_terrain):
+				# 3-trans Row 7
+				rect = _get_source_tile(get_transtion_tile_id(7, section), 6)
+				transition_image = transition_3_tileset[terrain_type][edge_terrain][adj2_terrain]
+			else:
 				# Row 5: edge = secondary; adj1 = secondary; adj2 = primary
-				rect = _get_source_tile(get_transtion_two_tile_id(5, section), 6)
-			elif edge_terrain == transition_terrain and \
-				adj1_terrain == transition_terrain and \
-				adj2_terrain == transition_terrain:
-				# Row 6: edge = secondary; adj1 = secondary; adj2 = secondary
-				rect = _get_source_tile(get_transtion_two_tile_id(6, section), 6)
-			elif edge_terrain == transition_terrain and \
-				adj1_terrain == terrain_type and \
-				adj2_terrain == terrain_type:
+				rect = _get_source_tile(get_transtion_tile_id(5, section), 6)
+				transition_image = transition_2_tileset[terrain_type][edge_terrain]
+		elif has_trans_adj1 and has_trans_adj2 and adj1_terrain == edge_terrain and adj2_terrain == edge_terrain:
+			# Row 6: edge = secondary; adj1 = secondary; adj2 = secondary
+			rect = _get_source_tile(get_transtion_tile_id(6, section), 6)
+			transition_image = transition_2_tileset[terrain_type][edge_terrain]
+		elif adj1_terrain != edge_terrain and adj2_terrain != edge_terrain:
+			if MapData.has_transition(edge_terrain, adj1_terrain) and not MapData.has_transition(edge_terrain, adj2_terrain):
+				# 3-trans Row 1
+				rect = _get_source_tile(get_transtion_tile_id(1, section), 6)
+				transition_image = transition_3_tileset[terrain_type][edge_terrain][adj1_terrain]
+			elif not MapData.has_transition(edge_terrain, adj1_terrain) and MapData.has_transition(edge_terrain, adj2_terrain):
+				# 3-trans Row 2
+				rect = _get_source_tile(get_transtion_tile_id(2, section), 6)
+				transition_image = transition_3_tileset[terrain_type][edge_terrain][adj2_terrain]
+			elif MapData.has_transition(edge_terrain, adj1_terrain) and MapData.has_transition(edge_terrain, adj2_terrain):
+				# 3-trans Row 3
+				rect = _get_source_tile(get_transtion_tile_id(3, section), 6)
+				transition_image = transition_3_tileset[terrain_type][edge_terrain][adj1_terrain]
+			else:
 				# Row 7: edge = secondary; adj1 = primary; adj2 = primary
-				rect = _get_source_tile(get_transtion_two_tile_id(7, section), 6)
-			else:
-				continue
+				rect = _get_source_tile(get_transtion_tile_id(7, section), 6)
+				transition_image = transition_2_tileset[terrain_type][edge_terrain]
+		if transition_image:
 			image.blit_rect_mask(transition_image, transition_image, Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT), dest)
-	elif MapData.has_transition(terrain_type, tile_data.edge[adj_dir_1]) or \
-		MapData.has_transition(terrain_type, tile_data.edge[adj_dir_2]):
-		for transition_terrain in MapData.terrain_transitions[terrain_type]:
-			var transition_image = transition_2_tileset[terrain_type][transition_terrain]
-			var rect
-			if edge_terrain == terrain_type and \
-				adj1_terrain == transition_terrain and \
-				adj2_terrain == terrain_type:
-				# Row 1: edge = primary; adj1 = secondary; adj2 = primary
-				rect = _get_source_tile(get_transtion_two_tile_id(1, section), 6)
-			elif edge_terrain == terrain_type and \
-				adj1_terrain == terrain_type and \
-				adj2_terrain == transition_terrain:
-				# Row 2: edge = primary; adj1 = primary; adj2 = secondary
-				rect = _get_source_tile(get_transtion_two_tile_id(2, section), 6)
-			elif edge_terrain == terrain_type and \
-				adj1_terrain == transition_terrain and \
-				adj2_terrain == transition_terrain:
-				# Row 3: edge = primary; adj1, adj2 = secondary
-				rect = _get_source_tile(get_transtion_two_tile_id(3, section), 6)
-			else:
-				continue
+	elif has_trans_adj1 or has_trans_adj2:
+		var transition_image
+		var rect
+		if has_trans_adj1 and adj2_terrain != adj1_terrain:
+			# Row 1: edge = primary; adj1 = secondary; adj2 = primary
+			rect = _get_source_tile(get_transtion_tile_id(1, section), 6)
+			transition_image = transition_2_tileset[terrain_type][adj1_terrain]
+		elif has_trans_adj2 and adj1_terrain != adj2_terrain:
+			# Row 2: edge = primary; adj1 = primary; adj2 = secondary
+			rect = _get_source_tile(get_transtion_tile_id(2, section), 6)
+			transition_image = transition_2_tileset[terrain_type][adj2_terrain]
+		elif has_trans_adj1 and has_trans_adj2:
+			# Row 3: edge = primary; adj1, adj2 = secondary
+			rect = _get_source_tile(get_transtion_tile_id(3, section), 6)
+			transition_image = transition_2_tileset[terrain_type][adj1_terrain]
+		
+		if transition_image:
 			image.blit_rect_mask(transition_image, transition_image, Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT), dest)
 	else:
 		var rect = _get_source_tile(section_column_id, 7)
