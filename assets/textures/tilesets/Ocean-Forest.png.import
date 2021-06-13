@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Ocean-ForestGrass.png-1f7d27ed81e476f2b8161c846d66d9cb.stex"
+path="res://.import/Ocean-Forest.png-a4fe4872d8d3968522f43829946ad3f4.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/textures/tilesets/Ocean-ForestGrass.png"
-dest_files=[ "res://.import/Ocean-ForestGrass.png-1f7d27ed81e476f2b8161c846d66d9cb.stex" ]
+source_file="res://assets/textures/tilesets/Ocean-Forest.png"
+dest_files=[ "res://.import/Ocean-Forest.png-a4fe4872d8d3968522f43829946ad3f4.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=false
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

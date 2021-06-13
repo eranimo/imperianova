@@ -11,31 +11,29 @@ enum TerrainType {
 	OCEAN,
 	GRASSLAND,
 	DESERT,
+	FOREST,
 }
 
-const TerrainTypeCount = 3
+const TerrainTypeCount = 4
 
 var terrain_title = {
 	TerrainType.OCEAN: "Ocean",
 	TerrainType.GRASSLAND: "Grassland",
 	TerrainType.DESERT: "Desert",
+	TerrainType.FOREST: "Forest",
 }
 
 const terrain_transitions = {
-	TerrainType.OCEAN: [TerrainType.GRASSLAND, TerrainType.DESERT],
-	TerrainType.GRASSLAND: [TerrainType.DESERT]
+	TerrainType.OCEAN: [TerrainType.GRASSLAND, TerrainType.DESERT, TerrainType.FOREST],
+	TerrainType.GRASSLAND: [TerrainType.DESERT, TerrainType.FOREST],
+	TerrainType.FOREST: [TerrainType.DESERT],
 }
-
-const terrain_transitions_reverse = {
-	TerrainType.GRASSLAND: [TerrainType.OCEAN],
-	TerrainType.DESERT: [TerrainType.OCEAN, TerrainType.GRASSLAND],
-}
-
 
 # Feature type
 enum FeatureType {
 	NONE,
-	FOREST
+	FOREST,
+	# ROAD?
 }
 
 const FeatureTypeCount = 2
@@ -199,29 +197,14 @@ func get_tile_bitmask(tile_pos: Vector2):
 	# TODO: remove duplicates of non-transitioning terrain combinations
 	
 	return (
-		pow(TerrainTypeCount, 0) * terrain_type
-		+ pow(TerrainTypeCount, 1) * terrain_SE
-		+ pow(TerrainTypeCount, 2) * terrain_S
-		+ pow(TerrainTypeCount, 3) * terrain_SW
-		+ pow(TerrainTypeCount, 4) * terrain_NW
-		+ pow(TerrainTypeCount, 5) * terrain_N
-		+ pow(TerrainTypeCount, 6) * terrain_NE
+		pow(TerrainTypeCount, Section.CENTER) * terrain_type
+		+ pow(TerrainTypeCount, Section.EDGE_SE) * terrain_SE
+		+ pow(TerrainTypeCount, Section.EDGE_S) * terrain_S
+		+ pow(TerrainTypeCount, Section.EDGE_SW) * terrain_SW
+		+ pow(TerrainTypeCount, Section.EDGE_NW) * terrain_NW
+		+ pow(TerrainTypeCount, Section.EDGE_N) * terrain_N
+		+ pow(TerrainTypeCount, Section.EDGE_NE) * terrain_NE
 	)
-
-# TODO: remove?
-func get_tile_section_bitmask(tile_pos: Vector2, section):
-	var center_terrain_type = tiles[tile_pos].terrain_type
-	
-	if section == Section.CENTER:
-		return (
-			pow(TerrainTypeCount - 1, 0) * center_terrain_type
-		)
-	else:
-		var edge_terrain_type = tiles[tile_pos].edge[section_to_direction[section]]
-		return (
-			pow(TerrainTypeCount - 1, 0) * center_terrain_type
-			+ pow(TerrainTypeCount - 1, 1) * edge_terrain_type
-		)
 
 func has_transition(terrain1, terrain2):
 	if not terrain_transitions.has(terrain1):

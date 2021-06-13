@@ -4,10 +4,14 @@ extends TileMap
 var OceanBase = preload("res://assets/textures/tilesets/Ocean.png")
 var GrasslandBase = preload("res://assets/textures/tilesets/Grass.png")
 var DesertBase = preload("res://assets/textures/tilesets/Desert.png")
+var ForestBase = preload("res://assets/textures/tilesets/Forest.png")
 var OceanGrasslandTrans2 = preload("res://assets/textures/tilesets/Ocean-Grass.png")
 var OceanDesertTrans2 = preload("res://assets/textures/tilesets/Ocean-Desert.png")
+var OceanForestTrans2 = preload("res://assets/textures/tilesets/Ocean-Forest.png")
 var OceanGrasslandDesertTrans3 = preload("res://assets/textures/tilesets/OceanGrass-Desert.png")
 var GrasslandDesertTran2 = preload("res://assets/textures/tilesets/Grass-Desert.png")
+var GrasslandForestTran2 = preload("res://assets/textures/tilesets/Grass-Forest.png")
+var ForestDesertTran2 = preload("res://assets/textures/tilesets/Forest-Desert.png")
 
 var base_column_ids = {
 	MapData.Section.CENTER: 0,
@@ -32,15 +36,21 @@ var terrain_type_base_tileset = {
 	MapData.TerrainType.OCEAN: OceanBase.get_data(),
 	MapData.TerrainType.GRASSLAND: GrasslandBase.get_data(),
 	MapData.TerrainType.DESERT: DesertBase.get_data(),
+	MapData.TerrainType.FOREST: ForestBase.get_data(),
 }
 
 var transition_2_tileset = {
 	MapData.TerrainType.OCEAN: {
 		MapData.TerrainType.GRASSLAND: OceanGrasslandTrans2.get_data(),
 		MapData.TerrainType.DESERT: OceanDesertTrans2.get_data(),
+		MapData.TerrainType.FOREST: OceanForestTrans2.get_data(),
 	},
 	MapData.TerrainType.GRASSLAND: {
 		MapData.TerrainType.DESERT: GrasslandDesertTran2.get_data(),
+		MapData.TerrainType.FOREST: GrasslandForestTran2.get_data(),
+	},
+	MapData.TerrainType.FOREST: {
+		MapData.TerrainType.DESERT: ForestDesertTran2.get_data()
 	}
 }
 
@@ -52,6 +62,27 @@ var transition_3_tileset = {
 	}
 }
 
+var missing_tilesets = {}
+
+func _get_transition_image(primary, secondary, tertiary=null):
+	if tertiary:
+		if not transition_3_tileset.has(primary) or \
+			not transition_3_tileset.get(primary).has(secondary) or \
+			not transition_3_tileset.get(primary).get(secondary).has(tertiary):
+			var key = '%s-%s-%s' % [MapData.terrain_title[primary], MapData.terrain_title[secondary], MapData.terrain_title[tertiary]]
+			missing_tilesets[key] = missing_tilesets.get(key, 0) + 1
+			return null
+		else:
+			return transition_3_tileset[primary][secondary][tertiary]
+	else:
+		if not transition_2_tileset.has(primary) or \
+			not transition_2_tileset.get(primary).has(secondary):
+			var key = '%s-%s' % [MapData.terrain_title[primary], MapData.terrain_title[secondary]]
+			missing_tilesets[key] = missing_tilesets.get(key, 0) + 1
+			return null
+		else:
+			return transition_2_tileset[primary][secondary]
+
 var tileset = TileSet.new()
 var tile_cache = {}
 
@@ -61,8 +92,8 @@ var image
 # generated tileset max size
 # if the number of tile section combinations increases over this number
 # there will be an error
-var COLUMNS = 100
-var ROWS = 100
+var COLUMNS = 50
+var ROWS = 25
 var TILE_WIDTH = 64
 var TILE_HEIGHT = 60
 var PADDING = 20
@@ -71,8 +102,8 @@ func _ready():
 	self.tile_set = tileset
 	image = Image.new()
 	image.create(
-		ROWS * (TILE_WIDTH + PADDING),
-		COLUMNS * (TILE_HEIGHT + PADDING),
+		COLUMNS * (TILE_WIDTH + PADDING),
+		ROWS * (TILE_HEIGHT + PADDING),
 		false,
 		Image.FORMAT_RGBA8
 	)
@@ -116,76 +147,77 @@ func _render_edge(tile_pos, dest, section):
 	var has_trans_adj1 = MapData.has_transition(terrain_type, tile_data.edge[adj_dir_1])
 	var has_trans_adj2 = MapData.has_transition(terrain_type, tile_data.edge[adj_dir_2])
 
+	var source_img = null
+	var rect = null
 	if has_trans_edge:
-		var transition_image
-		var rect
 		if has_trans_adj2 and adj1_terrain != edge_terrain and adj2_terrain == edge_terrain:
 			if MapData.has_transition(edge_terrain, adj1_terrain):
 				# 3-trans Row 6
 				rect = _get_source_tile(get_transtion_tile_id(6, section), 6)
-				transition_image = transition_3_tileset[terrain_type][edge_terrain][adj1_terrain]
+				source_img = _get_transition_image(terrain_type, edge_terrain, adj1_terrain)
 			else:
 				# Row 4: edge = secondary; adj1 = primary; adj2 = secondary
 				rect = _get_source_tile(get_transtion_tile_id(4, section), 6)
-				transition_image = transition_2_tileset[terrain_type][edge_terrain]
+				source_img = _get_transition_image(terrain_type, edge_terrain)
 		elif has_trans_adj1 and adj1_terrain == edge_terrain and adj2_terrain != edge_terrain:
 			if MapData.has_transition(edge_terrain, adj2_terrain):
 				# 3-trans Row 7
 				rect = _get_source_tile(get_transtion_tile_id(7, section), 6)
-				transition_image = transition_3_tileset[terrain_type][edge_terrain][adj2_terrain]
+				source_img = _get_transition_image(terrain_type, edge_terrain, adj2_terrain)
 			else:
 				# Row 5: edge = secondary; adj1 = secondary; adj2 = primary
 				rect = _get_source_tile(get_transtion_tile_id(5, section), 6)
-				transition_image = transition_2_tileset[terrain_type][edge_terrain]
+				source_img = _get_transition_image(terrain_type, edge_terrain)
 		elif has_trans_adj1 and has_trans_adj2 and adj1_terrain == edge_terrain and adj2_terrain == edge_terrain:
 			# Row 6: edge = secondary; adj1 = secondary; adj2 = secondary
 			rect = _get_source_tile(get_transtion_tile_id(6, section), 6)
-			transition_image = transition_2_tileset[terrain_type][edge_terrain]
+			source_img = _get_transition_image(terrain_type, edge_terrain)
 		elif adj1_terrain != edge_terrain and adj2_terrain != edge_terrain:
 			if MapData.has_transition(edge_terrain, adj1_terrain) and not MapData.has_transition(edge_terrain, adj2_terrain):
 				# 3-trans Row 1
 				rect = _get_source_tile(get_transtion_tile_id(1, section), 6)
-				transition_image = transition_3_tileset[terrain_type][edge_terrain][adj1_terrain]
+				source_img = _get_transition_image(terrain_type, edge_terrain, adj1_terrain)
 			elif not MapData.has_transition(edge_terrain, adj1_terrain) and MapData.has_transition(edge_terrain, adj2_terrain):
 				# 3-trans Row 2
 				rect = _get_source_tile(get_transtion_tile_id(2, section), 6)
-				transition_image = transition_3_tileset[terrain_type][edge_terrain][adj2_terrain]
+				source_img = _get_transition_image(terrain_type, edge_terrain, adj2_terrain)
 			elif MapData.has_transition(edge_terrain, adj1_terrain) and MapData.has_transition(edge_terrain, adj2_terrain):
 				# 3-trans Row 3
 				rect = _get_source_tile(get_transtion_tile_id(3, section), 6)
-				transition_image = transition_3_tileset[terrain_type][edge_terrain][adj1_terrain]
+				source_img = _get_transition_image(terrain_type, edge_terrain, adj1_terrain)
 			else:
 				# Row 7: edge = secondary; adj1 = primary; adj2 = primary
 				rect = _get_source_tile(get_transtion_tile_id(7, section), 6)
-				transition_image = transition_2_tileset[terrain_type][edge_terrain]
-		if transition_image:
-			image.blit_rect_mask(transition_image, transition_image, Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT), dest)
+				source_img = _get_transition_image(terrain_type, edge_terrain)
 	elif has_trans_adj1 or has_trans_adj2:
-		var transition_image
-		var rect
 		if has_trans_adj1 and adj2_terrain != adj1_terrain:
 			# Row 1: edge = primary; adj1 = secondary; adj2 = primary
 			rect = _get_source_tile(get_transtion_tile_id(1, section), 6)
-			transition_image = transition_2_tileset[terrain_type][adj1_terrain]
+			source_img = _get_transition_image(terrain_type, adj1_terrain)
 		elif has_trans_adj2 and adj1_terrain != adj2_terrain:
 			# Row 2: edge = primary; adj1 = primary; adj2 = secondary
 			rect = _get_source_tile(get_transtion_tile_id(2, section), 6)
-			transition_image = transition_2_tileset[terrain_type][adj2_terrain]
+			source_img = _get_transition_image(terrain_type, adj2_terrain)
 		elif has_trans_adj1 and has_trans_adj2:
 			# Row 3: edge = primary; adj1, adj2 = secondary
 			rect = _get_source_tile(get_transtion_tile_id(3, section), 6)
-			transition_image = transition_2_tileset[terrain_type][adj1_terrain]
-		
-		if transition_image:
-			image.blit_rect_mask(transition_image, transition_image, Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT), dest)
+			source_img = _get_transition_image(terrain_type, adj1_terrain)
 	else:
-		var rect = _get_source_tile(section_column_id, 7)
-		image.blit_rect_mask(
-			base_image,
-			base_image,
-			Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT),
-			dest
-		)
+		source_img = base_image
+		rect = _get_source_tile(section_column_id, 7)
+	
+	if rect != null and source_img != null:
+		image.blit_rect_mask(source_img, source_img, Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT), dest)
+		return true
+	else:
+	# 	print("Failed to find section tile for: Section: %s\tTerrain: %s\tEdge: %s\tAdj1: %s\tAdj2: %s" % [
+	# 		section,
+	# 		MapData.terrain_title[terrain_type],
+	# 		MapData.terrain_title[edge_terrain],
+	# 		MapData.terrain_title[adj1_terrain],
+	# 		MapData.terrain_title[adj2_terrain],
+	# 	])
+		return false
 
 func _render_center(tile_pos, dest):
 	var tile_data = MapData.tiles[tile_pos]
@@ -201,29 +233,41 @@ func _render_center(tile_pos, dest):
 		dest
 	)
 
+var current_tile_id = 0
+var tile_id_to_mask = {}
+
 func get_or_generate_tile(tile_pos: Vector2):
 	var tile_bitmask = int(MapData.get_tile_bitmask(tile_pos))
 	if tile_cache.has(tile_bitmask):
 		return tile_cache[tile_bitmask]
 	
+	var tile_id = current_tile_id
+	tile_id_to_mask[tile_id] = tile_bitmask
+	current_tile_id += 1
+
+	assert(tile_id < (ROWS * COLUMNS))
+
 	var dest = Vector2(
-		(tile_bitmask % COLUMNS) * (TILE_WIDTH + PADDING),
-		floor(tile_bitmask / COLUMNS) * (TILE_HEIGHT + PADDING)
+		(tile_id % COLUMNS) * (TILE_WIDTH + PADDING),
+		floor(tile_id / COLUMNS) * (TILE_HEIGHT + PADDING)
 	)
 	
 	# Render from the top down:
 	# N, NE, NW, CENTER, SW, SE, S
 	
-	_render_edge(tile_pos, dest, MapData.Section.EDGE_N)
-	_render_edge(tile_pos, dest, MapData.Section.EDGE_NE)
-	_render_edge(tile_pos, dest, MapData.Section.EDGE_NW)
-	_render_center(tile_pos, dest)
-	_render_edge(tile_pos, dest, MapData.Section.EDGE_SW)
-	_render_edge(tile_pos, dest, MapData.Section.EDGE_SE)
-	_render_edge(tile_pos, dest, MapData.Section.EDGE_S)
+	var s_N = _render_edge(tile_pos, dest, MapData.Section.EDGE_N)
+	var s_NE = _render_edge(tile_pos, dest, MapData.Section.EDGE_NE)
+	var s_NW = _render_edge(tile_pos, dest, MapData.Section.EDGE_NW)
+	var s_CENTER = _render_center(tile_pos, dest)
+	var s_SW = _render_edge(tile_pos, dest, MapData.Section.EDGE_SW)
+	var s_SE = _render_edge(tile_pos, dest, MapData.Section.EDGE_SE)
+	var s_S = _render_edge(tile_pos, dest, MapData.Section.EDGE_S)
 
-	tile_cache[tile_bitmask] = tile_bitmask
-	return tile_bitmask
+	if not s_N and not s_NE and not s_NW and not s_CENTER and not s_SW and not s_SE and not s_S:
+		print("Failed to generate tile %s" % str(tile_pos))
+
+	tile_cache[tile_bitmask] = tile_id
+	return tile_id
 
 func set_tile(tile_pos):
 	# generate tile texture if it doesn't exist
@@ -232,4 +276,5 @@ func set_tile(tile_pos):
 
 func render():
 	texture.set_data(image)
-	# image.save_png("res://bin/test.png")
+	print(missing_tilesets)
+	image.save_png("res://bin/test.png")

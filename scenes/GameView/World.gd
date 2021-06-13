@@ -37,19 +37,28 @@ func generate(options):
 	var temperature_map = WorldNoise.new(map_width, map_height)
 	temperature_map.octaves = 3
 	temperature_map.period = 0.5
-	temperature_map.generate(map_seed)
+	temperature_map.generate(map_seed * 2)
+
+	var rainfall_map = WorldNoise.new(map_width, map_height)
+	rainfall_map.octaves = 4
+	rainfall_map.period = 0.35
+	rainfall_map.generate(map_seed * 3)
 	
 	for x in range(map_width):
 		for y in range(map_height):
 			var pos = Vector2(x, y)
 			var height = int(heightmap.get_cell(pos) * 255)
 			var temperature = temperature_map.get_cell(pos)
+			var rainfall = rainfall_map.get_cell(pos)
 			var terrain_type
 			if height < sealevel:
 				terrain_type = MapData.TerrainType.OCEAN
 			else:
 				if temperature < 0.60:
-					terrain_type = MapData.TerrainType.GRASSLAND
+					if rainfall < 0.5:
+						terrain_type = MapData.TerrainType.GRASSLAND
+					else:
+						terrain_type = MapData.TerrainType.FOREST
 				else:
 					terrain_type = MapData.TerrainType.DESERT
 					
