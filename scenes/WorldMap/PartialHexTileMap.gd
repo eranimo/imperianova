@@ -114,87 +114,53 @@ func _render_edge(tile_pos, dest, section):
 	if MapData.has_transition(terrain_type, tile_data.edge[dir]):
 		for transition_terrain in MapData.terrain_transitions[terrain_type]:
 			var transition_image = transition_2_tileset[terrain_type][transition_terrain]
+			var rect
 			if edge_terrain == transition_terrain and \
 				adj1_terrain == terrain_type and \
 				adj2_terrain == transition_terrain:
 				# Row 4: edge = secondary; adj1 = primary; adj2 = secondary
-				var rect = _get_source_tile(get_transtion_two_tile_id(4, section), 6, 0)
-				image.blit_rect_mask(
-					transition_image,
-					transition_image,
-					Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT),
-					dest
-				)
+				rect = _get_source_tile(get_transtion_two_tile_id(4, section), 6, 0)
 			elif edge_terrain == transition_terrain and \
 				adj1_terrain == transition_terrain and \
 				adj2_terrain == terrain_type:
 				# Row 5: edge = secondary; adj1 = secondary; adj2 = primary
-				var rect = _get_source_tile(get_transtion_two_tile_id(5, section), 6)
-				image.blit_rect_mask(
-					transition_image,
-					transition_image,
-					Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT),
-					dest
-				)
+				rect = _get_source_tile(get_transtion_two_tile_id(5, section), 6)
 			elif edge_terrain == transition_terrain and \
 				adj1_terrain == transition_terrain and \
 				adj2_terrain == transition_terrain:
 				# Row 6: edge = secondary; adj1 = secondary; adj2 = secondary
-				var rect = _get_source_tile(get_transtion_two_tile_id(6, section), 6)
-				image.blit_rect_mask(
-					transition_image,
-					transition_image,
-					Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT),
-					dest
-				)
+				rect = _get_source_tile(get_transtion_two_tile_id(6, section), 6)
 			elif edge_terrain == transition_terrain and \
 				adj1_terrain == terrain_type and \
 				adj2_terrain == terrain_type:
 				# Row 7: edge = secondary; adj1 = primary; adj2 = primary
-				var rect = _get_source_tile(get_transtion_two_tile_id(7, section), 6)
-				image.blit_rect_mask(
-					transition_image,
-					transition_image,
-					Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT),
-					dest
-				)
+				rect = _get_source_tile(get_transtion_two_tile_id(7, section), 6)
+			else:
+				continue
+			image.blit_rect_mask(transition_image, transition_image, Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT), dest)
 	elif MapData.has_transition(terrain_type, tile_data.edge[adj_dir_1]) or \
 		MapData.has_transition(terrain_type, tile_data.edge[adj_dir_2]):
 		for transition_terrain in MapData.terrain_transitions[terrain_type]:
 			var transition_image = transition_2_tileset[terrain_type][transition_terrain]
+			var rect
 			if edge_terrain == terrain_type and \
 				adj1_terrain == transition_terrain and \
 				adj2_terrain == terrain_type:
 				# Row 1: edge = primary; adj1 = secondary; adj2 = primary
-				var rect = _get_source_tile(get_transtion_two_tile_id(1, section), 6)
-				image.blit_rect_mask(
-					transition_image,
-					transition_image,
-					Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT),
-					dest
-				)
+				rect = _get_source_tile(get_transtion_two_tile_id(1, section), 6)
 			elif edge_terrain == terrain_type and \
 				adj1_terrain == terrain_type and \
 				adj2_terrain == transition_terrain:
 				# Row 2: edge = primary; adj1 = primary; adj2 = secondary
-				var rect = _get_source_tile(get_transtion_two_tile_id(2, section), 6)
-				image.blit_rect_mask(
-					transition_image,
-					transition_image,
-					Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT),
-					dest
-				)
+				rect = _get_source_tile(get_transtion_two_tile_id(2, section), 6)
 			elif edge_terrain == terrain_type and \
 				adj1_terrain == transition_terrain and \
 				adj2_terrain == transition_terrain:
 				# Row 3: edge = primary; adj1, adj2 = secondary
-				var rect = _get_source_tile(get_transtion_two_tile_id(3, section), 6)
-				image.blit_rect_mask(
-					transition_image,
-					transition_image,
-					Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT),
-					dest
-				)
+				rect = _get_source_tile(get_transtion_two_tile_id(3, section), 6)
+			else:
+				continue
+			image.blit_rect_mask(transition_image, transition_image, Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT), dest)
 	else:
 		var rect = _get_source_tile(section_column_id, 7)
 		image.blit_rect_mask(
