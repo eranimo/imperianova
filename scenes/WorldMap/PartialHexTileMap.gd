@@ -5,13 +5,18 @@ var OceanBase = preload("res://assets/textures/tilesets/Ocean.png")
 var GrasslandBase = preload("res://assets/textures/tilesets/Grass.png")
 var DesertBase = preload("res://assets/textures/tilesets/Desert.png")
 var ForestBase = preload("res://assets/textures/tilesets/Forest.png")
+
 var OceanGrasslandTrans2 = preload("res://assets/textures/tilesets/Ocean-Grass.png")
 var OceanDesertTrans2 = preload("res://assets/textures/tilesets/Ocean-Desert.png")
 var OceanForestTrans2 = preload("res://assets/textures/tilesets/Ocean-Forest.png")
-var OceanGrasslandDesertTrans3 = preload("res://assets/textures/tilesets/OceanGrass-Desert.png")
 var GrasslandDesertTran2 = preload("res://assets/textures/tilesets/Grass-Desert.png")
 var GrasslandForestTran2 = preload("res://assets/textures/tilesets/Grass-Forest.png")
 var ForestDesertTran2 = preload("res://assets/textures/tilesets/Forest-Desert.png")
+
+var OceanGrasslandDesertTrans3 = preload("res://assets/textures/tilesets/OceanGrass-Desert.png")
+
+# features
+var FeatureForestCenter = preload("res://assets/textures/tilesets/Feature-Forest-Center.png")
 
 var base_column_ids = {
 	MapData.Section.CENTER: 0,
@@ -232,6 +237,14 @@ func _render_center(tile_pos, dest):
 		Rect2(0, 0, TILE_WIDTH, TILE_HEIGHT),
 		dest
 	)
+
+	if terrain_type == MapData.TerrainType.FOREST:
+		image.blit_rect_mask(
+			FeatureForestCenter.get_data(),
+			FeatureForestCenter.get_data(),
+			Rect2(0, 0, TILE_WIDTH, TILE_HEIGHT),
+			dest
+		)
 
 var current_tile_id = 0
 var tile_id_to_mask = {}

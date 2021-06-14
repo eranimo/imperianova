@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Capture.PNG-2a74bb024db9e5f3eb4c1c04a39957bc.stex"
+path="res://.import/Feature-Forest-Center.png-35a22ec82c79843a9807e962d3fe968c.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://screenshots/Capture.PNG"
-dest_files=[ "res://.import/Capture.PNG-2a74bb024db9e5f3eb4c1c04a39957bc.stex" ]
+source_file="res://assets/textures/tilesets/Feature-Forest-Center.png"
+dest_files=[ "res://.import/Feature-Forest-Center.png-35a22ec82c79843a9807e962d3fe968c.stex" ]
 
 [params]
 
