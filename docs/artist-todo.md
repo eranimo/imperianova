@@ -35,10 +35,6 @@ Forest -> Desert
     - base feature tilesets should be one variant per row, 7 columns with first being center, etc
     - only one tree layer variant required for 2-transition and 3-transition feature tilesets
         - the one provided does not match the 2-transition
-- add the following 3-transition tilesets:
-    - Grassland -> Forest (Desert)
-    - Ocean -> Forest (Desert)
-    - Ocean -> Grassland (Forest)
 
 # Future
 - new terrain types:

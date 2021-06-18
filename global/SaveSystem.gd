@@ -65,6 +65,7 @@ func save_game(save_name):
 		
 		objects.append({
 			"parent": node.get_parent().get_path(),
+			"name": node.name,
 			"filename": node.filename,
 			"data": node.call('to_dict'),
 		})
@@ -112,6 +113,11 @@ func load_game(save_name):
 		if parent_node == null:
 			print("Failed to find parent (filename: %s   parent: %s)" % [node_data["filename"], node_data["parent"]])
 			continue
+		
+		if parent_node.has_node(node_data['name']):
+			var existing_node = parent_node.get_node(node_data['name'])
+			print("Deleting node %s/%s" % [parent_node.name, node_data['name']])
+			parent_node.remove_child(existing_node)
 		
 		print("Loading node: %s (parent: %s)" % [new_object.name, parent_node.name])
 		

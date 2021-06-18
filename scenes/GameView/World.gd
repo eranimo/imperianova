@@ -12,6 +12,8 @@ signal map_generated
 
 func _ready():
 	SaveSystem.connect("load_complete", self, "render_map")
+	if SaveSystem.pending_save:
+		return
 	render_map()
 
 func render_map():
