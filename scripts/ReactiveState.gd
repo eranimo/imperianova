@@ -11,6 +11,9 @@ func subscribe(obj: Object, method: String):
 	subscriptions[obj] = [obj, method]
 	_notify()
 
+func unsubscribe(obj: Object):
+	subscriptions.erase(obj)
+
 func _notify():
 	for obj in subscriptions:
 		var method = subscriptions[obj][1]

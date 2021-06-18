@@ -6,6 +6,9 @@ var overlay_tiles = {}
 func _ready():
 	MapManager.current_map_mode.subscribe(self, '_map_mode_change')
 
+func _exit_tree():
+	MapManager.current_map_mode.unsubscribe(self)
+
 func _map_mode_change(map_mode):
 	if map_mode == MapManager.MapMode.NONE:
 		for pos in overlay_tiles:
