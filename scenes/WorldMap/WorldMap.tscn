@@ -26,6 +26,9 @@ __meta__ = {
 
 [node name="Terrain" parent="." instance=ExtResource( 2 )]
 
+[node name="MapOverlay" type="Node2D" parent="."]
+script = ExtResource( 8 )
+
 [node name="GridLines" type="TileMap" parent="."]
 self_modulate = Color( 1, 1, 1, 0.478431 )
 tile_set = ExtResource( 7 )
@@ -38,9 +41,6 @@ script = ExtResource( 5 )
 __meta__ = {
 "_editor_description_": ""
 }
-
-[node name="MapOverlay" type="Node2D" parent="."]
-script = ExtResource( 8 )
 
 [node name="TileUI" type="Area2D" parent="."]
 script = ExtResource( 4 )

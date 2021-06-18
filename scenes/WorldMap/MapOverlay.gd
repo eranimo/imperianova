@@ -1,6 +1,6 @@
 extends Node2D
 
-const ALPHA = 0.75
+const ALPHA = 1
 var overlay_tiles = {}
 
 func _ready():
