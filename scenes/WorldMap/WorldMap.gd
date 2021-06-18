@@ -5,6 +5,8 @@ signal tile_hovered(tile_pos, world_pos)
 
 var _last_hovered_tile_pos = null
 
+onready var OverlayTexture = preload("res://assets/textures/overlay.tres")
+
 func _ready():
 	MapManager.connect_map(self)
 	MapManager.connect("tile_hovered", self, "_on_tile_hover")
@@ -27,6 +29,13 @@ func render():
 				label.text = str(MapData.get_tile_bitmask(pos))
 				label_container.add_child(label)
 				add_child(label_container)
+			
+			# overlays
+			var overlay_tile = Sprite.new()
+			overlay_tile.texture = OverlayTexture
+			overlay_tile.position = get_hex_center(get_hex_at(pos))
+			$MapOverlay.add_overlay_tile(pos, overlay_tile)
+
 	$Terrain.render()
 
 func _input(event) -> void:

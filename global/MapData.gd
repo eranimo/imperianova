@@ -185,6 +185,9 @@ func set_world_data(_world_data, _map_width, _map_height):
 			},
 		}
 
+func get_tile(pos: Vector2):
+	return tiles[pos]
+
 func get_tile_bitmask(tile_pos: Vector2):
 	var terrain_type = tiles[tile_pos].terrain_type
 	var terrain_SE = tiles[tile_pos].edge[Direction.SE]

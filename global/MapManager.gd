@@ -7,6 +7,23 @@ var map_height
 signal tile_pressed(tile_pos)
 signal tile_hovered(tile_pos, world_pos)
 
+var ReactiveState = preload("res://scripts/ReactiveState.gd")
+
+enum MapMode {
+	NONE,
+	HEIGHT,
+}
+
+var map_mode_titles = {
+	MapMode.NONE: 'None',
+	MapMode.HEIGHT: 'Height',
+}
+
+var current_map_mode = ReactiveState.new(MapMode.NONE)
+
+func set_map_mode(map_mode):
+	current_map_mode.next(map_mode)
+
 func connect_map(_map: HexMap):
 	map = _map
 	map.connect("tile_pressed", self, "_on_tile_pressed")
