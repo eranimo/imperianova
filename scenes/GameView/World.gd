@@ -26,6 +26,7 @@ func render_map():
 	print("World map rendering: ", OS.get_ticks_msec() - time_start)
 
 func generate(options):
+	print("World generate")
 	MapData.reset_map()
 	map_seed = options.get('map_seed')
 	var size = options.get('size')

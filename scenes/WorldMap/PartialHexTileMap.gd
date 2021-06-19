@@ -290,4 +290,4 @@ func set_tile(tile_pos):
 func render():
 	texture.set_data(image)
 	print(missing_tilesets)
-	image.save_png("res://bin/test.png")
+	# image.save_png("res://bin/test.png")
