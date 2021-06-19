@@ -93,7 +93,6 @@ func load_game(save_name):
 	for node in nodes:
 		print("Deleting node %s" % node.name)
 		node.queue_free()
-		node.get_parent().remove_child(node)
 
 	# open save file
 	save_file.open(file_path, File.READ)

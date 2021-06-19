@@ -25,11 +25,9 @@ func _on_button_pressed(name):
 			get_tree().quit()
 
 func _on_save_game(save_name):
-	print("Saved game", save_name)
 	self.hide()
 	SaveSystem.save_game(save_name)
 
 func _on_load_game(save_name):
-	print("Load game", save_name)
 	self.hide()
 	SaveSystem.load_game(save_name)
