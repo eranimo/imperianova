@@ -2,6 +2,7 @@ extends Node
 
 var WorldNoise = preload("res://scripts/WorldNoise.gd")
 
+# State
 export(int) var map_seed
 export(int) var map_width
 export(int) var map_height

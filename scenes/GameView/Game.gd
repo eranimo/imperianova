@@ -1,5 +1,8 @@
 extends Node
 
+var ReactiveState = preload("res://scripts/ReactiveState.gd")
+var NameGen = preload("res://scripts/NameGen.gd")
+
 enum Speed {
 	SLOW,
 	NORMAL,
@@ -12,10 +15,11 @@ const speed_ticks = {
 	Speed.FAST: 1,
 }
 
-var ReactiveState = preload("res://scripts/ReactiveState.gd")
+# State
 var date_ticks = ReactiveState.new(0)
 var speed = ReactiveState.new(Speed.NORMAL)
 var is_playing = ReactiveState.new(false)
+
 
 var _ticks_in_day = 0
 
@@ -53,12 +57,17 @@ func setup_game():
 
 func generate():
 	var size = 100
+	var gen = NameGen.new().add_from_file('greek')
+	print(gen.generate_names(10))
 	print("Generating world ", (size * (size * 2)))
 	$World.generate({
 		"map_seed": rand_range(0, 100),
 		"size": size,
 		"sealevel": 140,
 	})
+	
+func _on_menu_pressed():
+	get_parent().open_menu()
 
 func to_dict():
 	return {
@@ -69,6 +78,3 @@ func to_dict():
 func from_dict(dict):
 	date_ticks.next(dict["date_ticks"])
 	speed.next(dict["speed"])
-
-func _on_menu_pressed():
-	get_parent().open_menu()
