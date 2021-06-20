@@ -24,8 +24,16 @@ __meta__ = {
 
 [node name="Terrain" parent="." instance=ExtResource( 2 )]
 
-[node name="MapOverlay" type="Node2D" parent="."]
+[node name="MapOverlay" type="TileMap" parent="."]
+cell_size = Vector2( 49, 60 )
+cell_custom_transform = Transform2D( 64, 0, 0, 60, 0, 0 )
+cell_half_offset = 1
+cell_y_sort = true
+format = 1
 script = ExtResource( 8 )
+__meta__ = {
+"_editor_description_": ""
+}
 
 [node name="GridLines" type="TileMap" parent="."]
 self_modulate = Color( 1, 1, 1, 0.478431 )

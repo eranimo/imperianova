@@ -1,7 +1,10 @@
-extends Node2D
+extends HexMap
 
 const ALPHA = 1
-var overlay_tiles = {}
+
+var tile_colors = {}
+
+onready var HexShape = preload("res://assets/textures/overlay.tres")
 
 func _ready():
 	MapManager.current_map_mode.subscribe(self, '_map_mode_change')
@@ -11,26 +14,32 @@ func _exit_tree():
 
 func _map_mode_change(map_mode):
 	if map_mode == MapManager.MapMode.NONE:
-		for pos in overlay_tiles:
-			overlay_tiles[pos].visible = false
-		return
+		tile_colors = {}
+	else:
+		for x in range(MapData.map_width):
+			for y in range(MapData.map_height):
+				var pos = Vector2(x, y)
+				var color = Color(0, 0, 0)
 
-	for pos in overlay_tiles:
-		var color
+				if map_mode == MapManager.MapMode.HEIGHT:
+					var height = MapData.world_data[pos].height
+					color = Color(height / 255.0, height / 255.0, height / 255.0)
+				
+				tile_colors[pos] = color
+	render()
 
-		if map_mode == MapManager.MapMode.HEIGHT:
-			var height = MapData.world_data[pos].height
-			color = Color(height / 255.0, height / 255.0, height / 255.0)
-		
-		set_overlay_tile_color(pos, color)
+func render():
+	update()
 
-func add_overlay_tile(pos: Vector2, overlay: Sprite):
-	overlay.visible = false
-	overlay_tiles[pos] = overlay
-	add_child(overlay)
-
-func set_overlay_tile_color(pos: Vector2, color: Color):
-	var overlay = overlay_tiles[pos]
-	overlay.visible = true
-	color.a = ALPHA
-	overlay.modulate = color
+func _draw():
+	print("Render MapOverlay")
+	var cells_drawn = 0
+	for x in range(MapData.map_width):
+		for y in range(MapData.map_height):
+			var pos = Vector2(x, y)
+			var center = map_to_world(pos)
+			if tile_colors.has(pos):
+				var color = tile_colors[pos]
+				draw_texture(HexShape, center, color)
+				cells_drawn += 1
+	print("Draw count: %s" % str(cells_drawn))
