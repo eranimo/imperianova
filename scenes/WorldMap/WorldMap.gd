@@ -17,18 +17,16 @@ func render():
 			$Terrain.set_tile(Vector2(x, y))
 	print("Tileset tile count: ", $Terrain.tile_cache.size())
 	# DEBUG: render bitmask IDs on tiles
-	for x in range(MapData.map_width):
-		for y in range(MapData.map_height):
-			var pos = Vector2(x, y)
-			$GridLines.set_cellv(pos, 0)
-			
-			if false:
-				var label_container = Node2D.new()
-				label_container.position = map_to_world(pos) + Vector2(32, 32)
-				var label = Label.new()
-				label.text = str(MapData.get_tile_bitmask(pos))
-				label_container.add_child(label)
-				add_child(label_container)
+	for pos in MapData.tiles:
+		$GridLines.set_cellv(pos, 0)
+		
+		if false:
+			var label_container = Node2D.new()
+			label_container.position = map_to_world(pos) + Vector2(32, 32)
+			var label = Label.new()
+			label.text = str(MapData.get_tile_bitmask(pos))
+			label_container.add_child(label)
+			add_child(label_container)
 
 	$MapOverlay.render()
 	$Terrain.render()

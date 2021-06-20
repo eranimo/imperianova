@@ -22,6 +22,9 @@ var _ticks_in_day = 0
 func _ready():
 	SaveSystem.connect("load_complete", self, "setup_game")
 
+func _exit_tree():
+	SaveSystem.disconnect("load_complete", self, "setup_game")
+
 func _process(_delta):
 	if not is_playing.value:
 		return

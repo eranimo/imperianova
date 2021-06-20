@@ -14,7 +14,9 @@ func _ready():
 	SaveSystem.connect("load_complete", self, "render_map")
 	if SaveSystem.pending_save:
 		return
-	render_map()
+
+func _exit_tree():
+	SaveSystem.disconnect("load_complete", self, "render_map")
 
 func render_map():
 	print("Render map ", world_data.size())

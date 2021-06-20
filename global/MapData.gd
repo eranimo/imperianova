@@ -4,6 +4,7 @@ var world_data = {}
 var map_width
 var map_height
 var tiles = {}
+var tile_neighbors = {}
 
 
 # Terrain type
@@ -141,6 +142,9 @@ func is_valid_pos(pos: Vector2):
 	return true
 
 func get_neighbor(pos: Vector2, dir):
+	if tile_neighbors.has(pos) and tile_neighbors[pos].has(dir):
+		return tile_neighbors[pos][dir]
+
 	var parity = int(pos.x) & 1
 	var dir_add = oddq_directions[parity][dir]
 	var n_pos = Vector2(
@@ -159,7 +163,8 @@ func get_neighbor(pos: Vector2, dir):
 	if n_pos.y >= map_height:
 		n_pos.x = int((map_width-1) - ((n_pos.x / ((map_width-1) / 2)) * ((map_width-1) / 2)))
 		n_pos.y = map_height - 1
-
+	
+	tile_neighbors[pos][dir] = n_pos
 	return n_pos
 
 func get_terrain_type(tile_pos):
@@ -169,9 +174,11 @@ func set_world_data(_world_data, _map_width, _map_height):
 	world_data = _world_data
 	map_width = _map_width
 	map_height = _map_height
+
 	
 	for pos in world_data:
 		var terrain_type = get_terrain_type(pos)
+		tile_neighbors[pos] = {}
 		tiles[pos] = {
 			"height": world_data[pos].height,
 			"terrain_type": terrain_type,
