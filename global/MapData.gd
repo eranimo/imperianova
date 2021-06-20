@@ -1,9 +1,7 @@
 extends Node
 
-var world_data = {} 
-var map_width
-var map_height
-var tiles = {}
+var world
+var tile_edges = {}
 var tile_neighbors = {}
 
 
@@ -131,13 +129,13 @@ const direction_to_section = {
 }
 
 func reset_map():
-	world_data = {}
-	tiles = {}
+	world = null
+	tile_edges = {}
 
 func is_valid_pos(pos: Vector2):
 	if pos.x < 0 or pos.y < 0:
 		return false
-	if pos.x >= map_width or pos.y >= map_height:
+	if pos.x >= world.map_width or pos.y >= world.map_height:
 		return false
 	return true
 
@@ -154,55 +152,53 @@ func get_neighbor(pos: Vector2, dir):
 	
 	# wrap around the world
 	if n_pos.x < 0:
-		n_pos.x = map_width - 1
+		n_pos.x = world.map_width - 1
 	if n_pos.y < 0:
 		n_pos.y = 0
-		n_pos.x = int((map_width-1) - ((n_pos.x / ((map_width-1) / 2)) * ((map_width-1) / 2)))
-	if n_pos.x >= map_width:
+		n_pos.x = int((world.map_width-1) - ((n_pos.x / ((world.map_width-1) / 2)) * ((world.map_width-1) / 2)))
+	if n_pos.x >= world.map_width:
 		n_pos.x = 0
-	if n_pos.y >= map_height:
-		n_pos.x = int((map_width-1) - ((n_pos.x / ((map_width-1) / 2)) * ((map_width-1) / 2)))
-		n_pos.y = map_height - 1
+	if n_pos.y >= world.map_height:
+		n_pos.x = int((world.map_width-1) - ((n_pos.x / ((world.map_width-1) / 2)) * ((world.map_width-1) / 2)))
+		n_pos.y = world.map_height - 1
 	
 	tile_neighbors[pos][dir] = n_pos
 	return n_pos
 
 func get_terrain_type(tile_pos):
-	return world_data[tile_pos].terrain_type
+	return world.world_data[tile_pos].terrain_type
 
-func set_world_data(_world_data, _map_width, _map_height):
-	world_data = _world_data
-	map_width = _map_width
-	map_height = _map_height
+func set_world_data(_world):
+	world = _world
 
-	
-	for pos in world_data:
-		var terrain_type = get_terrain_type(pos)
+	for pos in world.world_data:
 		tile_neighbors[pos] = {}
-		tiles[pos] = {
-			"height": world_data[pos].height,
-			"terrain_type": terrain_type,
-			"edge": {
-				Direction.SE: get_terrain_type(get_neighbor(pos, Direction.SE)),
-				Direction.S: get_terrain_type(get_neighbor(pos, Direction.S)),
-				Direction.SW: get_terrain_type(get_neighbor(pos, Direction.SW)),
-				Direction.NW: get_terrain_type(get_neighbor(pos, Direction.NW)),
-				Direction.N: get_terrain_type(get_neighbor(pos, Direction.N)),
-				Direction.NE: get_terrain_type(get_neighbor(pos, Direction.NE)),
-			},
+		tile_edges[pos] = {
+			Direction.SE: get_terrain_type(get_neighbor(pos, Direction.SE)),
+			Direction.S: get_terrain_type(get_neighbor(pos, Direction.S)),
+			Direction.SW: get_terrain_type(get_neighbor(pos, Direction.SW)),
+			Direction.NW: get_terrain_type(get_neighbor(pos, Direction.NW)),
+			Direction.N: get_terrain_type(get_neighbor(pos, Direction.N)),
+			Direction.NE: get_terrain_type(get_neighbor(pos, Direction.NE)),
 		}
 
+func tiles():
+	return world.world_data
+
 func get_tile(pos: Vector2):
-	return tiles[pos]
+	return world.world_data[pos]
+
+func get_tile_edges(pos: Vector2):
+	return tile_edges[pos]
 
 func get_tile_bitmask(tile_pos: Vector2):
-	var terrain_type = tiles[tile_pos].terrain_type
-	var terrain_SE = tiles[tile_pos].edge[Direction.SE]
-	var terrain_S = tiles[tile_pos].edge[Direction.S]
-	var terrain_SW = tiles[tile_pos].edge[Direction.SW]
-	var terrain_NW = tiles[tile_pos].edge[Direction.NW]
-	var terrain_N = tiles[tile_pos].edge[Direction.N]
-	var terrain_NE = tiles[tile_pos].edge[Direction.NE]
+	var terrain_type = get_tile(tile_pos).terrain_type
+	var terrain_SE = tile_edges[tile_pos][Direction.SE]
+	var terrain_S = tile_edges[tile_pos][Direction.S]
+	var terrain_SW = tile_edges[tile_pos][Direction.SW]
+	var terrain_NW = tile_edges[tile_pos][Direction.NW]
+	var terrain_N = tile_edges[tile_pos][Direction.N]
+	var terrain_NE = tile_edges[tile_pos][Direction.NE]
 	
 	# TODO: remove duplicates of non-transitioning terrain combinations
 	

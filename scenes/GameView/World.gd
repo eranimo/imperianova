@@ -5,7 +5,7 @@ var WorldNoise = preload("res://scripts/WorldNoise.gd")
 export(int) var map_seed
 export(int) var map_width
 export(int) var map_height
-
+export(Dictionary) var map_options
 export(Dictionary) var world_data = {}
 
 signal map_generated
@@ -20,7 +20,7 @@ func _exit_tree():
 
 func render_map():
 	print("Render map ", world_data.size())
-	MapData.set_world_data(world_data, map_width, map_height)
+	MapData.set_world_data(self)
 	MapManager.connect_world(self)
 	
 	var time_start = OS.get_ticks_msec()
@@ -33,6 +33,7 @@ func generate(options):
 	map_seed = options.get('map_seed')
 	var size = options.get('size')
 	var sealevel = options.get('sealevel')
+	map_options = options
 	map_width = size * 2
 	map_height = size
 
@@ -76,12 +77,14 @@ func generate(options):
 
 func to_dict():
 	return {
+		"map_options": map_options,
 		"world_data": world_data,
 		"map_width": map_width,
 		"map_height": map_height,
 	}
 
 func from_dict(dict):
+	map_options = dict["map_options"]
 	world_data = dict["world_data"]
 	map_width = dict["map_width"]
 	map_height = dict["map_height"]

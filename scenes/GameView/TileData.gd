@@ -9,5 +9,5 @@ func _on_tile_hovered(tile_pos, world_pos):
 	else:
 		self.show()
 		$HBoxContainer/TilePos.text = "%d, %d" % [tile_pos.x, tile_pos.y]
-		$HBoxContainer2/TileTerrain.text = MapData.terrain_title[MapData.world_data[tile_pos].terrain_type]
-		$HBoxContainer3/TileHeight.text = str(MapData.world_data[tile_pos].height)
+		$HBoxContainer2/TileTerrain.text = MapData.terrain_title[MapData.get_tile(tile_pos).terrain_type]
+		$HBoxContainer3/TileHeight.text = str(MapData.get_tile(tile_pos).height)

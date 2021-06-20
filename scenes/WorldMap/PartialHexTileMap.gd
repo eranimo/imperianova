@@ -134,7 +134,8 @@ func get_transtion_tile_id(row, section):
 	return ((row - 1) * 6) + section_column_id
 
 func _render_edge(tile_pos, dest, section):
-	var tile_data = MapData.tiles[tile_pos]
+	var tile_data = MapData.get_tile(tile_pos)
+	var tile_edges = MapData.get_tile_edges(tile_pos)
 	var section_column_id = base_column_ids[section]
 	var dir = MapData.section_to_direction[section]
 	var terrain_type = tile_data.terrain_type
@@ -144,13 +145,13 @@ func _render_edge(tile_pos, dest, section):
 	var base_image = terrain_type_base_tileset[terrain_type]
 	var adj_dir_1 = MapData.direction_clockwise[dir]
 	var adj_dir_2 = MapData.direction_counter_clockwise[dir]
-	var edge_terrain = tile_data.edge[dir]
-	var adj1_terrain = tile_data.edge[adj_dir_1]
-	var adj2_terrain = tile_data.edge[adj_dir_2]
+	var edge_terrain = tile_edges[dir]
+	var adj1_terrain = tile_edges[adj_dir_1]
+	var adj2_terrain = tile_edges[adj_dir_2]
 	
-	var has_trans_edge = MapData.has_transition(terrain_type, tile_data.edge[dir])
-	var has_trans_adj1 = MapData.has_transition(terrain_type, tile_data.edge[adj_dir_1])
-	var has_trans_adj2 = MapData.has_transition(terrain_type, tile_data.edge[adj_dir_2])
+	var has_trans_edge = MapData.has_transition(terrain_type, tile_edges[dir])
+	var has_trans_adj1 = MapData.has_transition(terrain_type, tile_edges[adj_dir_1])
+	var has_trans_adj2 = MapData.has_transition(terrain_type, tile_edges[adj_dir_2])
 
 	var source_img = null
 	var rect = null
@@ -225,8 +226,7 @@ func _render_edge(tile_pos, dest, section):
 		return false
 
 func _render_center(tile_pos, dest):
-	var tile_data = MapData.tiles[tile_pos]
-	var terrain_type = tile_data.terrain_type
+	var terrain_type = MapData.get_tile(tile_pos).terrain_type
 	if not terrain_type_base_tileset.has(terrain_type):
 		print("Missing tileset for terrain type ", terrain_type)
 		return

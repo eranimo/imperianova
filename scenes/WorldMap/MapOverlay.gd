@@ -14,11 +14,11 @@ func _map_mode_change(map_mode):
 	if map_mode == MapManager.MapMode.NONE:
 		tile_colors = {}
 	else:
-		for pos in MapData.tiles:
+		for pos in MapData.tiles():
 			var color = Color(0, 0, 0)
 
 			if map_mode == MapManager.MapMode.HEIGHT:
-				var height = MapData.world_data[pos].height
+				var height = MapData.get_tile(pos).height
 				color = Color(height / 255.0, height / 255.0, height / 255.0)
 			
 			tile_colors[pos] = color
@@ -28,7 +28,7 @@ func render():
 	update()
 
 func _draw():
-	for pos in MapData.tiles:
+	for pos in MapData.tiles():
 		var center = map_to_world(pos)
 		if tile_colors.has(pos):
 			var color = tile_colors[pos]
