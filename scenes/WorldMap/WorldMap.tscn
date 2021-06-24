@@ -5,13 +5,10 @@
 [ext_resource path="res://scenes/WorldMap/WorldMap.gd" type="Script" id=3]
 [ext_resource path="res://scenes/WorldMap/TileUI.gd" type="Script" id=4]
 [ext_resource path="res://scenes/WorldMap/HexMap.gd" type="Script" id=5]
-[ext_resource path="res://assets/textures/buildings.png" type="Texture" id=6]
+[ext_resource path="res://scenes/WorldMap/Resource.tscn" type="PackedScene" id=6]
 [ext_resource path="res://resources/tilesets/grid-ui.tres" type="TileSet" id=7]
 [ext_resource path="res://scenes/WorldMap/MapOverlay.gd" type="Script" id=8]
-
-[sub_resource type="AtlasTexture" id=2]
-atlas = ExtResource( 6 )
-region = Rect2( 0, 0, 64, 60 )
+[ext_resource path="res://scenes/WorldMap/TileDevelopment.tscn" type="PackedScene" id=9]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 512, 300 )
@@ -29,6 +26,16 @@ __meta__ = {
 
 [node name="Terrain" parent="." instance=ExtResource( 2 )]
 
+[node name="TileDevelopments" type="Node2D" parent="."]
+
+[node name="TileDevelopment" parent="TileDevelopments" instance=ExtResource( 9 )]
+visible = false
+
+[node name="Resources" type="Node2D" parent="."]
+
+[node name="Resource" parent="Resources" instance=ExtResource( 6 )]
+visible = false
+
 [node name="MapOverlay" type="TileMap" parent="."]
 cell_size = Vector2( 49, 60 )
 cell_custom_transform = Transform2D( 64, 0, 0, 60, 0, 0 )
@@ -39,12 +46,6 @@ script = ExtResource( 8 )
 __meta__ = {
 "_editor_description_": ""
 }
-
-[node name="Buildings" type="Node2D" parent="."]
-
-[node name="Building" type="Sprite" parent="Buildings"]
-texture = SubResource( 2 )
-centered = false
 
 [node name="GridLines" type="TileMap" parent="."]
 self_modulate = Color( 1, 1, 1, 0.478431 )

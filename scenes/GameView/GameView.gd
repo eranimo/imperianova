@@ -18,7 +18,8 @@ func _ready():
 	
 	if not SaveSystem.current_save:
 		$Game.generate()
-		emit_signal("game_loaded")
+	
+	emit_signal("game_loaded")
 
 # GAME MENU
 func _on_menu_close():

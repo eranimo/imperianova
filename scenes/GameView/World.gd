@@ -22,7 +22,6 @@ func _exit_tree():
 func render_map():
 	print("Render map ", world_data.size())
 	MapData.set_world_data(self)
-	MapManager.connect_world(self)
 	
 	var time_start = OS.get_ticks_msec()
 	$MapViewport/Viewport/WorldMap.render()

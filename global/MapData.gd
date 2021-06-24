@@ -128,6 +128,20 @@ const direction_to_section = {
 	Direction.NE: Section.EDGE_NE,
 }
 
+func set_world_data(_world):
+	world = _world
+
+	for pos in world.world_data:
+		tile_neighbors[pos] = {}
+		tile_edges[pos] = {
+			Direction.SE: get_terrain_type(get_neighbor(pos, Direction.SE)),
+			Direction.S: get_terrain_type(get_neighbor(pos, Direction.S)),
+			Direction.SW: get_terrain_type(get_neighbor(pos, Direction.SW)),
+			Direction.NW: get_terrain_type(get_neighbor(pos, Direction.NW)),
+			Direction.N: get_terrain_type(get_neighbor(pos, Direction.N)),
+			Direction.NE: get_terrain_type(get_neighbor(pos, Direction.NE)),
+		}
+
 func reset_map():
 	world = null
 	tile_edges = {}
@@ -168,19 +182,6 @@ func get_neighbor(pos: Vector2, dir):
 func get_terrain_type(tile_pos):
 	return world.world_data[tile_pos].terrain_type
 
-func set_world_data(_world):
-	world = _world
-
-	for pos in world.world_data:
-		tile_neighbors[pos] = {}
-		tile_edges[pos] = {
-			Direction.SE: get_terrain_type(get_neighbor(pos, Direction.SE)),
-			Direction.S: get_terrain_type(get_neighbor(pos, Direction.S)),
-			Direction.SW: get_terrain_type(get_neighbor(pos, Direction.SW)),
-			Direction.NW: get_terrain_type(get_neighbor(pos, Direction.NW)),
-			Direction.N: get_terrain_type(get_neighbor(pos, Direction.N)),
-			Direction.NE: get_terrain_type(get_neighbor(pos, Direction.NE)),
-		}
 
 func tiles():
 	return world.world_data

@@ -2,7 +2,7 @@ extends HexMap
 
 var tile_colors = {}
 
-onready var HexShape = preload("res://assets/textures/overlay.tres")
+onready var HexShape = preload("res://assets/textures/hex-shape.png")
 
 func _ready():
 	MapManager.current_map_mode.subscribe(self, '_map_mode_change')

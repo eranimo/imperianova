@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/buildings.png-09c7c4d109bc3334673c6144a0d8b3de.stex"
+path="res://.import/farmer.svg-74bda2b343caabeca8484c254ce45d4c.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/textures/buildings.png"
-dest_files=[ "res://.import/buildings.png-09c7c4d109bc3334673c6144a0d8b3de.stex" ]
+source_file="res://assets/icons/farmer.svg"
+dest_files=[ "res://.import/farmer.svg-74bda2b343caabeca8484c254ce45d4c.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=false
+flags/filter=true
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

@@ -1,0 +1,17 @@
+[
+    {
+        "id": 0,
+        "name": "Farm",
+        "icon": "farmer.svg"
+    },
+    {
+        "id": 1,
+        "name": "Mine",
+        "icon": "miner.svg"
+    },
+    {
+        "id": 2,
+        "name": "Logger",
+        "icon": "log.svg"
+    }
+]

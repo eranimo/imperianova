@@ -9,9 +9,10 @@ enum Speed {
 	FAST
 }
 
+const TICKS_PER_DAY = 2
 const speed_ticks = {
-	Speed.SLOW: 8,
-	Speed.NORMAL: 4,
+	Speed.SLOW: 4 * TICKS_PER_DAY,
+	Speed.NORMAL: 2 * TICKS_PER_DAY,
 	Speed.FAST: 1,
 }
 

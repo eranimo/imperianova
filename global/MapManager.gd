@@ -1,11 +1,9 @@
 extends Node
 
 var map: HexMap
-var map_width
-var map_height
-
 signal tile_pressed(tile_pos)
 signal tile_hovered(tile_pos, world_pos)
+signal tile_updated(tile_pos, data)
 
 var ReactiveState = preload("res://scripts/ReactiveState.gd")
 
@@ -29,14 +27,10 @@ func connect_map(_map: HexMap):
 	map.connect("tile_pressed", self, "_on_tile_pressed")
 	map.connect("tile_hovered", self, "_on_tile_hovered")
 
-func connect_world(world):
-	map_width = world.map_width
-	map_height = world.map_height
-
 func is_valid_pos(pos: Vector2):
 	if pos.x < 0 or pos.y < 0:
 		return false
-	if pos.x >= map_width or pos.y >= map_height:
+	if pos.x >= MapData.world.map_width or pos.y >= MapData.world.map_height:
 		return false
 	return true
 
@@ -56,3 +50,10 @@ func _on_tile_hovered(tile_pos: Vector2, world_pos: Vector2):
 		emit_signal("tile_hovered", null, null)
 		return
 	emit_signal("tile_hovered", tile_pos, world_pos)
+
+func set_tile_development(tile_pos: Vector2, tile_development_id: int):
+	assert(is_valid_pos(tile_pos), "Invalid tile")
+	emit_signal("tile_updated", tile_pos, {
+		"tile": tile_pos,
+		"tile_development_id": tile_development_id,
+	})

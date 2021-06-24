@@ -9,6 +9,16 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Object",
+"class": "Entity",
+"language": "GDScript",
+"path": "res://scripts/Entity.gd"
+}, {
+"base": "Node",
+"class": "EntitySystem",
+"language": "GDScript",
+"path": "res://scripts/EntitySystem.gd"
+}, {
 "base": "Resource",
 "class": "HexCell",
 "language": "GDScript",
@@ -29,16 +39,24 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/ReactiveState.gd"
 }, {
+"base": "Node",
+"class": "System",
+"language": "GDScript",
+"path": "res://scripts/System.gd"
+}, {
 "base": "OpenSimplexNoise",
 "class": "WorldNoise",
 "language": "GDScript",
 "path": "res://scripts/WorldNoise.gd"
 } ]
 _global_script_class_icons={
+"Entity": "",
+"EntitySystem": "",
 "HexCell": "",
 "HexMap": "",
 "NameGen": "",
 "ReactiveState": "",
+"System": "",
 "WorldNoise": ""
 }
 
@@ -55,10 +73,16 @@ SaveSystem="*res://global/SaveSystem.gd"
 RefSaver="*res://global/RefSaver.gd"
 MapManager="*res://global/MapManager.gd"
 MapData="*res://global/MapData.gd"
+GameData="*res://global/GameData.gd"
+Console="*res://addons/quentincaffeino-console/src/Console.tscn"
 
 [display]
 
 window/stretch/mode="2d"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/quentincaffeino-console/plugin.cfg" )
 
 [global]
 
