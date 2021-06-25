@@ -3,6 +3,8 @@ extends Node
 var ReactiveState = preload("res://scripts/ReactiveState.gd")
 var NameGen = preload("res://scripts/NameGen.gd")
 
+var Pop = load("res://scenes/GameView/entities/Pop.gd")
+
 enum Speed {
 	SLOW,
 	NORMAL,
@@ -36,6 +38,7 @@ func _process(_delta):
 	if _ticks_in_day == 0:
 		var ticks_left = speed_ticks[speed.value]
 		date_ticks.next(date_ticks.value + 1)
+		$EntitySystem.update(date_ticks.value)
 		_ticks_in_day = ticks_left
 	else:
 		_ticks_in_day -= 1
@@ -66,6 +69,12 @@ func generate():
 		"size": size,
 		"sealevel": 140,
 	})
+
+
+	var pop = Pop.new()
+	pop.size = 1000
+	pop.location = Vector2(0, 0)
+	$EntitySystem.add_entity(pop)
 	
 func _on_menu_pressed():
 	get_parent().open_menu()

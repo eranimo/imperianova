@@ -1,7 +1,7 @@
 # Entity System
 
 ## Design
-Entities are software agents in the game simulation.
+Each tick in the simulation is one day in the game world. Entities are software agents in the game simulation. Systems run on certain sets of Entities
 
 Entities have the following:
 - Data represented in local variables
@@ -10,10 +10,26 @@ Entities have the following:
 
 # Entity Types
 
-- Pop
-- FileFoliage
-- TileDevelopment
-- Country
+Tile specific:
+- Pops: Parts of human population on a Tile
+- Plants: The forests, grass, crops on a Tile
+- Deposit: Finite supply of metal Resources on a Tile
+- Animals: all living non-Human animals on a tile (Ocean or Land)
+  - Domesticated animals: e.g. cattle
+  - Wildlife (e.g. Aurochs, Deer, )
+- TileDevelopments
+  - Districts: e.g. city center, neighborhood, settlement, fort, camp
+  - Improvements: e.g. farms, mines, plantations
 
+Other:
+- Countries
+- Cultures
+- Religions
 
 # Systems
+Every day:
+- PlantGrowth: grows plants 
+- AnimalGrowth: handles consumption and handles calculating growth
+- PopGrowth: handles consumption and handles calculating growth
+
+First of every month:
