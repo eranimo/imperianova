@@ -1,14 +1,11 @@
 extends Node
-class_name EntitySystem
 
 var _current_id = 0
 var _entity_by_id = {}
 var systems = []
 var _system_ticks_remaining = {}
+var _entities_to_delete = []
 
-func _ready():
-	for child in get_children():
-		register_system(child)
 
 func add_entity(entity: Entity, id = null):
 	if id == null:
@@ -19,21 +16,33 @@ func add_entity(entity: Entity, id = null):
 		
 	for system in systems:
 		if system.entity_filter(entity):
-			system.entities.append(entity)
+			system._add_entity(entity)
 	
 	return entity
+
+func remove_entity(entity: Entity):
+	_entity_by_id.clear(entity.id)
+	for system in systems:
+		if system.entity_filter(entity) and system.entities.has(entity):
+			system._remove_entity(entity)
+
+func delete_entity(entity):
+	_entities_to_delete.append(entity)
 
 func get_entity(entity_id: int):
 	return _entity_by_id.get(entity_id)
 
 func register_system(system):
 	print("Added system ", system.name)
-	if system.has_method("init"):
-		system.call("init", self)
+	if system.has_method("setup"):
+		system.call("setup", self)
 	_system_ticks_remaining[system] = system.tick_interval
 	systems.append(system)
 
 func update(tick: int):
+	for entity in _entities_to_delete:
+		entity.free()
+
 	for system in systems:
 		if _system_ticks_remaining[system] == 1:
 			system.update(tick)
@@ -48,7 +57,7 @@ func to_dict():
 		entities.append({
 			"id": entity_id,
 			"type": entity.entity_type,
-			"data": entity.to_dict(),
+			"data": entity.data,
 		})
 	return entities
 

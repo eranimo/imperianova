@@ -14,11 +14,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/Entity.gd"
 }, {
-"base": "Node",
-"class": "EntitySystem",
-"language": "GDScript",
-"path": "res://scripts/EntitySystem.gd"
-}, {
 "base": "Resource",
 "class": "HexCell",
 "language": "GDScript",
@@ -56,7 +51,6 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "Entity": "",
-"EntitySystem": "",
 "HexCell": "",
 "HexMap": "",
 "NameGen": "",
@@ -81,6 +75,7 @@ MapManager="*res://global/MapManager.gd"
 MapData="*res://global/MapData.gd"
 GameData="*res://global/GameData.gd"
 Console="*res://addons/quentincaffeino-console/src/Console.tscn"
+EntitySystem="*res://global/EntitySystem.gd"
 
 [display]
 
