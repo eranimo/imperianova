@@ -71,10 +71,11 @@ func generate():
 	})
 
 
-	var pop = Pop.new()
-	pop.set("size", 1000)
-	pop.set("location", Vector2(0, 0))
-	EntitySystem.add_entity(pop)
+	for _i in range(10):
+		var pop = Pop.new()
+		pop.size = 1000
+		pop.location = EntityValue.new(Vector2(0, 0))
+		EntitySystem.add_entity(pop)
 	
 func _on_menu_pressed():
 	get_parent().open_menu()

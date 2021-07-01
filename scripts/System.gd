@@ -23,10 +23,18 @@ func get_entities():
 func size():
 	return entities.size()
 
+func entity_added(_entity):
+	pass
+
+func entity_removed(_entity):
+	pass
+
 func _add_entity(entity):
 	entities.append(entity)
+	entity_added(entity)
 	emit_signal("entity_added", entity)
 
 func _remove_entity(entity):
 	entities.erase(entity)
+	entity_removed(entity)
 	emit_signal("entity_removed", entity)

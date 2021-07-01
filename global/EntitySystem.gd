@@ -57,7 +57,7 @@ func to_dict():
 		entities.append({
 			"id": entity_id,
 			"type": entity.entity_type,
-			"data": entity.data,
+			"data": entity.to_dict(),
 		})
 	return entities
 

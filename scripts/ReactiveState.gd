@@ -4,7 +4,7 @@ class_name ReactiveState
 var value = null
 var subscriptions = {}
 
-func _init(default_value):
+func _init(default_value = null):
 	value = default_value
 
 func subscribe(obj: Object, method: String):

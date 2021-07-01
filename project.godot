@@ -14,6 +14,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/Entity.gd"
 }, {
+"base": "Object",
+"class": "EntityValue",
+"language": "GDScript",
+"path": "res://scripts/EntityValue.gd"
+}, {
 "base": "Resource",
 "class": "HexCell",
 "language": "GDScript",
@@ -23,6 +28,11 @@ _global_script_classes=[ {
 "class": "HexMap",
 "language": "GDScript",
 "path": "res://scenes/WorldMap/HexMap.gd"
+}, {
+"base": "Reference",
+"class": "MapSet",
+"language": "GDScript",
+"path": "res://scripts/MapSet.gd"
 }, {
 "base": "Object",
 "class": "NameGen",
@@ -34,7 +44,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scenes/GameView/entities/Pop.gd"
 }, {
-"base": "Node",
+"base": "Object",
 "class": "ReactiveState",
 "language": "GDScript",
 "path": "res://scripts/ReactiveState.gd"
@@ -51,8 +61,10 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "Entity": "",
+"EntityValue": "",
 "HexCell": "",
 "HexMap": "",
+"MapSet": "",
 "NameGen": "",
 "Pop": "",
 "ReactiveState": "",
