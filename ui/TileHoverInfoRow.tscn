@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://ui/TileHoverInfoRow.gd" type="Script" id=1]
+[ext_resource path="res://resources/fonts/ui-labels-normal.tres" type="DynamicFont" id=2]
+
+[node name="TileHoverInfoRow" type="HBoxContainer"]
+margin_right = 133.0
+margin_bottom = 16.0
+alignment = 2
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_left = 126.0
+margin_right = 129.0
+margin_bottom = 16.0
+custom_fonts/font = ExtResource( 2 )
+text = ":"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Value" type="Label" parent="."]
+margin_left = 133.0
+margin_right = 133.0
+margin_bottom = 16.0
+custom_fonts/font = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
