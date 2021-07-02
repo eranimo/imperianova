@@ -71,6 +71,8 @@ func generate(options):
 			world_data[pos] = {
 				"height": height,
 				"terrain_type": terrain_type,
+				"temperature": temperature,
+				"rainfall": rainfall,
 			}
 	render_map()
 	emit_signal("map_generated")

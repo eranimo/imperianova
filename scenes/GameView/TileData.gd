@@ -8,6 +8,8 @@ func _on_tile_hovered(tile_pos, world_pos):
 		self.hide()
 	else:
 		self.show()
-		$HBoxContainer/TilePos.text = "%d, %d" % [tile_pos.x, tile_pos.y]
-		$HBoxContainer2/TileTerrain.text = MapData.terrain_title[MapData.get_tile(tile_pos).terrain_type]
-		$HBoxContainer3/TileHeight.text = str(MapData.get_tile(tile_pos).height)
+		$HBoxContainer/Value.text = "%d, %d" % [tile_pos.x, tile_pos.y]
+		$HBoxContainer2/Value.text = MapData.terrain_title[MapData.get_tile(tile_pos).terrain_type]
+		$HBoxContainer3/Value.text = str(MapData.get_tile(tile_pos).height)
+		$HBoxContainer4/Value.text = str(MapData.get_tile(tile_pos).temperature)
+		$HBoxContainer5/Value.text = str(MapData.get_tile(tile_pos).rainfall)

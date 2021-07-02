@@ -68,7 +68,7 @@ _global_script_class_icons={
 "NameGen": "",
 "Pop": "",
 "ReactiveState": "",
-"System": "",
+"System": "res://assets/editor/letter-s.svg",
 "WorldNoise": ""
 }
 
@@ -88,6 +88,7 @@ MapData="*res://global/MapData.gd"
 GameData="*res://global/GameData.gd"
 Console="*res://addons/quentincaffeino-console/src/Console.tscn"
 EntitySystem="*res://global/EntitySystem.gd"
+Utils="*res://global/Utils.gd"
 
 [display]
 

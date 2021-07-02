@@ -10,11 +10,15 @@ var ReactiveState = preload("res://scripts/ReactiveState.gd")
 enum MapMode {
 	NONE,
 	HEIGHT,
+	TEMPERATURE,
+	RAINFALL,
 }
 
 var map_mode_titles = {
 	MapMode.NONE: 'None',
 	MapMode.HEIGHT: 'Height',
+	MapMode.TEMPERATURE: 'Temperature',
+	MapMode.RAINFALL: 'Rainfall',
 }
 
 var current_map_mode = ReactiveState.new(MapMode.NONE)
