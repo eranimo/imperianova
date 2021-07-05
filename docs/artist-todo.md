@@ -27,19 +27,9 @@ Forest -> Desert
     - farm
 
 # Immediate
-- desert changes:
-    - remove shrubs from desert transition tilesets
-    - move shrubs/rocks/cactus to their own layer like forests
-- forest trees:
-    - missing the base edge tileset for forest trees
-    - base feature tilesets should be one variant per row, 7 columns with first being center, etc
-    - only one tree layer variant required for 2-transition and 3-transition feature tilesets
-        - the one provided does not match the 2-transition
 
 # Future
 - new terrain types:
-    - deep ocean
-        - Deep Ocean -> Ocean
     - tropical
         - Ocean -> Tropical Grassland
         - Ocean -> Tropical Rainforest
@@ -70,5 +60,7 @@ Forest -> Desert
     - walls (feature layer)
 - units
     - scout
-    - warrior
-    - transport
+    - swordsman
+    - galley
+    - land transport
+    - sea transport
