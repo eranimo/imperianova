@@ -1,13 +1,14 @@
 extends Entity
 class_name Pop
 
-const entity_type = 'Pop'
+var entity_name = 'Pop'
 
 var size = 0
-var location = EntityValue.new()
+
+func _init(location: Vector2):
+	self.add_component(TileLocation.new(location))
 
 func to_dict():
 	return {
 		"size": size,
-		"location": location.value,
 	}

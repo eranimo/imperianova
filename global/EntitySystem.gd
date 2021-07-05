@@ -7,7 +7,15 @@ var _system_ticks_remaining = {}
 var _entities_to_delete = []
 
 
-func add_entity(entity: Entity, id = null):
+func setup():
+	for entity_id in _entity_by_id:
+		_entity_by_id[entity_id].quue_free()
+	systems = []
+	_system_ticks_remaining = {}
+	_entities_to_delete = []
+	_current_id = 0
+
+func add_entity(entity, id = null):
 	if id == null:
 		entity.id = _current_id
 		_current_id += 1
@@ -20,7 +28,7 @@ func add_entity(entity: Entity, id = null):
 	
 	return entity
 
-func remove_entity(entity: Entity):
+func remove_entity(entity):
 	_entity_by_id.clear(entity.id)
 	for system in systems:
 		if system.entity_filter(entity) and system.entities.has(entity):
@@ -56,7 +64,7 @@ func to_dict():
 		var entity = _entity_by_id[entity_id]
 		entities.append({
 			"id": entity_id,
-			"type": entity.entity_type,
+			"type": entity.name,
 			"data": entity.to_dict(),
 		})
 	return entities

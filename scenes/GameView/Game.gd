@@ -22,6 +22,7 @@ const speed_ticks = {
 var date_ticks = ReactiveState.new(0)
 var speed = ReactiveState.new(Speed.NORMAL)
 var is_playing = ReactiveState.new(false)
+var entities = []
 
 
 var _ticks_in_day = 0
@@ -58,9 +59,10 @@ func toggle_speed():
 
 func setup_game():
 	print("Game loaded from file")
+	EntitySystem.setup()
 
 func generate():
-	var size = 100
+	var size = 200
 	var gen = NameGen.new().add_from_file('greek')
 	print(gen.generate_names(10))
 	print("Generating world ", (size * (size * 2)))
@@ -72,9 +74,8 @@ func generate():
 
 
 	for _i in range(10):
-		var pop = Pop.new()
+		var pop = Pop.new(Vector2(0, 0))
 		pop.size = 1000
-		pop.location = EntityValue.new(Vector2(0, 0))
 		EntitySystem.add_entity(pop)
 	
 func _on_menu_pressed():

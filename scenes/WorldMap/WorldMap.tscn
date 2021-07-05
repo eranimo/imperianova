@@ -15,9 +15,9 @@ extents = Vector2( 512, 300 )
 
 [node name="WorldMap" type="TileMap"]
 cell_size = Vector2( 49, 60 )
+cell_quadrant_size = 128
 cell_custom_transform = Transform2D( 64, 0, 0, 60, 0, 0 )
 cell_half_offset = 1
-cell_y_sort = true
 format = 1
 script = ExtResource( 3 )
 __meta__ = {
@@ -25,6 +25,8 @@ __meta__ = {
 }
 
 [node name="Terrain" parent="." instance=ExtResource( 2 )]
+cell_quadrant_size = 128
+cell_y_sort = false
 
 [node name="TileDevelopments" type="Node2D" parent="."]
 
@@ -38,9 +40,9 @@ visible = false
 
 [node name="MapOverlay" type="TileMap" parent="."]
 cell_size = Vector2( 49, 60 )
+cell_quadrant_size = 128
 cell_custom_transform = Transform2D( 64, 0, 0, 60, 0, 0 )
 cell_half_offset = 1
-cell_y_sort = true
 format = 1
 script = ExtResource( 8 )
 __meta__ = {
@@ -51,9 +53,9 @@ __meta__ = {
 self_modulate = Color( 1, 1, 1, 0.478431 )
 tile_set = ExtResource( 7 )
 cell_size = Vector2( 49, 60 )
+cell_quadrant_size = 128
 cell_custom_transform = Transform2D( 64, 0, 0, 60, 0, 0 )
 cell_half_offset = 1
-cell_y_sort = true
 format = 1
 script = ExtResource( 5 )
 __meta__ = {
