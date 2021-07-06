@@ -9,11 +9,14 @@ var ForestBase = preload("res://assets/textures/tilesets/Forest.png")
 var OceanGrasslandTrans2 = preload("res://assets/textures/tilesets/Ocean-Grass.png")
 var OceanDesertTrans2 = preload("res://assets/textures/tilesets/Ocean-Desert.png")
 var OceanForestTrans2 = preload("res://assets/textures/tilesets/Ocean-Forest.png")
-var GrasslandDesertTran2 = preload("res://assets/textures/tilesets/Grass-Desert.png")
-var GrasslandForestTran2 = preload("res://assets/textures/tilesets/Grass-Forest.png")
+var GrasslandDesertTrans2 = preload("res://assets/textures/tilesets/Grass-Desert.png")
+var GrasslandForestTrans2 = preload("res://assets/textures/tilesets/Grass-Forest.png")
 var ForestDesertTran2 = preload("res://assets/textures/tilesets/Forest-Desert.png")
 
 var OceanGrasslandDesertTrans3 = preload("res://assets/textures/tilesets/OceanGrass-Desert.png")
+var GrasslandForestDesertTrans3 = preload("res://assets/textures/tilesets/Grassland-Forest(Desert).png")
+var OceanGrasslandForestTrans3 = preload("res://assets/textures/tilesets/Ocean-Grassland(Forest).png")
+var OceanForestDesertTrans3 = preload("res://assets/textures/tilesets/Ocean-Forest(Desert).png")
 
 # features
 var FeatureForestCenter = preload("res://assets/textures/tilesets/Feature-Forest-Center.png")
@@ -51,8 +54,8 @@ var transition_2_tileset = {
 		MapData.TerrainType.FOREST: OceanForestTrans2.get_data(),
 	},
 	MapData.TerrainType.GRASSLAND: {
-		MapData.TerrainType.DESERT: GrasslandDesertTran2.get_data(),
-		MapData.TerrainType.FOREST: GrasslandForestTran2.get_data(),
+		MapData.TerrainType.DESERT: GrasslandDesertTrans2.get_data(),
+		MapData.TerrainType.FOREST: GrasslandForestTrans2.get_data(),
 	},
 	MapData.TerrainType.FOREST: {
 		MapData.TerrainType.DESERT: ForestDesertTran2.get_data()
@@ -62,7 +65,16 @@ var transition_2_tileset = {
 var transition_3_tileset = {
 	MapData.TerrainType.OCEAN: {
 		MapData.TerrainType.GRASSLAND: {
-			MapData.TerrainType.DESERT: OceanGrasslandDesertTrans3.get_data()
+			MapData.TerrainType.DESERT: OceanGrasslandDesertTrans3.get_data(),
+			MapData.TerrainType.FOREST: OceanGrasslandForestTrans3.get_data(),
+		},
+		MapData.TerrainType.FOREST: {
+			MapData.TerrainType.DESERT: OceanForestDesertTrans3.get_data(),
+		}
+	},
+	MapData.TerrainType.GRASSLAND: {
+		MapData.TerrainType.FOREST: {
+			MapData.TerrainType.DESERT: GrasslandForestDesertTrans3.get_data(),
 		}
 	}
 }
