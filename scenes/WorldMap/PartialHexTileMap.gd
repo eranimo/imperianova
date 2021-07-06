@@ -11,7 +11,7 @@ var OceanDesertTrans2 = preload("res://assets/textures/tilesets/Ocean-Desert.png
 var OceanForestTrans2 = preload("res://assets/textures/tilesets/Ocean-Forest.png")
 var GrasslandDesertTrans2 = preload("res://assets/textures/tilesets/Grass-Desert.png")
 var GrasslandForestTrans2 = preload("res://assets/textures/tilesets/Grass-Forest.png")
-var ForestDesertTran2 = preload("res://assets/textures/tilesets/Forest-Desert.png")
+var ForestDesertTran2 = preload("res://assets/textures/tilesets/ForestGrass-Desert.png")
 
 var OceanGrasslandDesertTrans3 = preload("res://assets/textures/tilesets/OceanGrass-Desert.png")
 var GrasslandForestDesertTrans3 = preload("res://assets/textures/tilesets/Grassland-Forest(Desert).png")
