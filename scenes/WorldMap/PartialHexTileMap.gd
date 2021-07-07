@@ -1,25 +1,26 @@
 extends TileMap
 
 
-var OceanBase = preload("res://assets/textures/tilesets/Ocean.png")
-var GrasslandBase = preload("res://assets/textures/tilesets/Grass.png")
-var DesertBase = preload("res://assets/textures/tilesets/Desert.png")
-var ForestBase = preload("res://assets/textures/tilesets/Forest.png")
+var OceanBase = preload("res://assets/textures/tilesets/Ocean.png").get_data()
+var GrasslandBase = preload("res://assets/textures/tilesets/Grass.png").get_data()
+var DesertBase = preload("res://assets/textures/tilesets/Desert.png").get_data()
+var ForestBase = preload("res://assets/textures/tilesets/Forest.png").get_data()
 
-var OceanGrasslandTrans2 = preload("res://assets/textures/tilesets/Ocean-Grass.png")
-var OceanDesertTrans2 = preload("res://assets/textures/tilesets/Ocean-Desert.png")
-var OceanForestTrans2 = preload("res://assets/textures/tilesets/Ocean-Forest.png")
-var GrasslandDesertTrans2 = preload("res://assets/textures/tilesets/Grass-Desert.png")
-var GrasslandForestTrans2 = preload("res://assets/textures/tilesets/Grass-Forest.png")
-var ForestDesertTran2 = preload("res://assets/textures/tilesets/ForestGrass-Desert.png")
+var OceanGrasslandTrans2 = preload("res://assets/textures/tilesets/Ocean-Grass.png").get_data()
+var OceanDesertTrans2 = preload("res://assets/textures/tilesets/Ocean-Desert.png").get_data()
+var OceanForestTrans2 = preload("res://assets/textures/tilesets/Ocean-Forest.png").get_data()
+var GrasslandDesertTrans2 = preload("res://assets/textures/tilesets/Grass-Desert.png").get_data()
+var GrasslandForestTrans2 = preload("res://assets/textures/tilesets/Grass-Forest.png").get_data()
+var ForestDesertTran2 = preload("res://assets/textures/tilesets/ForestGrass-Desert.png").get_data()
 
-var OceanGrasslandDesertTrans3 = preload("res://assets/textures/tilesets/OceanGrass-Desert.png")
-var GrasslandForestDesertTrans3 = preload("res://assets/textures/tilesets/Grassland-Forest(Desert).png")
-var OceanGrasslandForestTrans3 = preload("res://assets/textures/tilesets/Ocean-Grassland(Forest).png")
-var OceanForestDesertTrans3 = preload("res://assets/textures/tilesets/Ocean-Forest(Desert).png")
+var OceanGrasslandDesertTrans3 = preload("res://assets/textures/tilesets/OceanGrass-Desert.png").get_data()
+var GrasslandForestDesertTrans3 = preload("res://assets/textures/tilesets/Grassland-Forest(Desert).png").get_data()
+var OceanGrasslandForestTrans3 = preload("res://assets/textures/tilesets/Ocean-Grassland(Forest).png").get_data()
+var OceanForestDesertTrans3 = preload("res://assets/textures/tilesets/Ocean-Forest(Desert).png").get_data()
 
 # features
-var FeatureForestCenter = preload("res://assets/textures/tilesets/Feature-Forest-Center.png")
+var FeatureForestCenter = preload("res://assets/textures/tilesets/Feature-Forest-Center.png").get_data()
+var FeatureForestEdges = preload("res://assets/textures/tilesets/Trees-Hex.png").get_data()
 
 var base_column_ids = {
 	MapData.Section.CENTER: 0,
@@ -41,40 +42,40 @@ var transition_column_ids = {
 }
 
 var terrain_type_base_tileset = {
-	MapData.TerrainType.OCEAN: OceanBase.get_data(),
-	MapData.TerrainType.GRASSLAND: GrasslandBase.get_data(),
-	MapData.TerrainType.DESERT: DesertBase.get_data(),
-	MapData.TerrainType.FOREST: ForestBase.get_data(),
+	MapData.TerrainType.OCEAN: OceanBase,
+	MapData.TerrainType.GRASSLAND: GrasslandBase,
+	MapData.TerrainType.DESERT: DesertBase,
+	MapData.TerrainType.FOREST: ForestBase,
 }
 
 var transition_2_tileset = {
 	MapData.TerrainType.OCEAN: {
-		MapData.TerrainType.GRASSLAND: OceanGrasslandTrans2.get_data(),
-		MapData.TerrainType.DESERT: OceanDesertTrans2.get_data(),
-		MapData.TerrainType.FOREST: OceanForestTrans2.get_data(),
+		MapData.TerrainType.GRASSLAND: OceanGrasslandTrans2,
+		MapData.TerrainType.DESERT: OceanDesertTrans2,
+		MapData.TerrainType.FOREST: OceanForestTrans2,
 	},
 	MapData.TerrainType.GRASSLAND: {
-		MapData.TerrainType.DESERT: GrasslandDesertTrans2.get_data(),
-		MapData.TerrainType.FOREST: GrasslandForestTrans2.get_data(),
+		MapData.TerrainType.DESERT: GrasslandDesertTrans2,
+		MapData.TerrainType.FOREST: GrasslandForestTrans2,
 	},
 	MapData.TerrainType.FOREST: {
-		MapData.TerrainType.DESERT: ForestDesertTran2.get_data()
+		MapData.TerrainType.DESERT: ForestDesertTran2
 	}
 }
 
 var transition_3_tileset = {
 	MapData.TerrainType.OCEAN: {
 		MapData.TerrainType.GRASSLAND: {
-			MapData.TerrainType.DESERT: OceanGrasslandDesertTrans3.get_data(),
-			MapData.TerrainType.FOREST: OceanGrasslandForestTrans3.get_data(),
+			MapData.TerrainType.DESERT: OceanGrasslandDesertTrans3,
+			MapData.TerrainType.FOREST: OceanGrasslandForestTrans3,
 		},
 		MapData.TerrainType.FOREST: {
-			MapData.TerrainType.DESERT: OceanForestDesertTrans3.get_data(),
+			MapData.TerrainType.DESERT: OceanForestDesertTrans3,
 		}
 	},
 	MapData.TerrainType.GRASSLAND: {
 		MapData.TerrainType.FOREST: {
-			MapData.TerrainType.DESERT: GrasslandForestDesertTrans3.get_data(),
+			MapData.TerrainType.DESERT: GrasslandForestDesertTrans3,
 		}
 	}
 }
@@ -135,10 +136,10 @@ func _ready():
 		tileset.tile_set_texture(i, texture)
 		tileset.tile_set_region(i, Rect2(dest.x, dest.y, TILE_WIDTH, TILE_HEIGHT))
 
-func _get_source_tile(id, columns, padding=0):
+func _get_source_tile(id, columns, padding=0, tile_width=TILE_WIDTH, tile_height=TILE_HEIGHT):
 	return Vector2(
-		(id % columns) * (TILE_WIDTH + padding),
-		floor(id / columns) * (TILE_HEIGHT + padding)
+		(id % columns) * (tile_width + padding),
+		floor(id / columns) * (tile_height + padding)
 	)
 
 func get_transtion_tile_id(row, section):
@@ -226,7 +227,6 @@ func _render_edge(tile_pos, dest, section):
 	
 	if rect != null and source_img != null:
 		image.blit_rect_mask(source_img, source_img, Rect2(rect.x, rect.y, TILE_WIDTH, TILE_HEIGHT), dest)
-		return true
 	else:
 	# 	print("Failed to find section tile for: Section: %s\tTerrain: %s\tEdge: %s\tAdj1: %s\tAdj2: %s" % [
 	# 		section,
@@ -236,6 +236,24 @@ func _render_edge(tile_pos, dest, section):
 	# 		MapData.terrain_title[adj2_terrain],
 	# 	])
 		return false
+	rect = null
+	source_img = null
+	
+	if terrain_type == MapData.TerrainType.FOREST:
+		if edge_terrain == MapData.TerrainType.FOREST:
+			source_img = FeatureForestEdges
+			rect = _get_source_tile(section_column_id + 1, 8, 0, TILE_WIDTH, 120)
+			image.blit_rect_mask(
+				source_img,
+				source_img,
+				Rect2(rect.x, rect.y, TILE_WIDTH, 120),
+				Vector2(dest.x, dest.y - 56)
+			)
+			return true
+	
+	if rect == null or source_img == null:
+		return true
+
 
 func _render_center(tile_pos, dest):
 	var terrain_type = MapData.get_tile(tile_pos).terrain_type
@@ -252,8 +270,8 @@ func _render_center(tile_pos, dest):
 
 	if terrain_type == MapData.TerrainType.FOREST:
 		image.blit_rect_mask(
-			FeatureForestCenter.get_data(),
-			FeatureForestCenter.get_data(),
+			FeatureForestCenter,
+			FeatureForestCenter,
 			Rect2(0, 0, TILE_WIDTH, TILE_HEIGHT),
 			dest
 		)
