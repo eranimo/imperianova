@@ -4,6 +4,8 @@ var world
 var tile_edges = {}
 var tile_neighbors = {}
 
+const CHUNK_SIZE = Vector2(10, 10)
+const HEX_SIZE = Vector2(64, 60)
 
 # Terrain type
 enum TerrainType {
@@ -194,12 +196,13 @@ func get_tile_edges(pos: Vector2):
 
 func get_tile_bitmask(tile_pos: Vector2):
 	var terrain_type = get_tile(tile_pos).terrain_type
-	var terrain_SE = tile_edges[tile_pos][Direction.SE]
-	var terrain_S = tile_edges[tile_pos][Direction.S]
-	var terrain_SW = tile_edges[tile_pos][Direction.SW]
-	var terrain_NW = tile_edges[tile_pos][Direction.NW]
-	var terrain_N = tile_edges[tile_pos][Direction.N]
-	var terrain_NE = tile_edges[tile_pos][Direction.NE]
+	var edges = get_tile_edges(tile_pos)
+	var terrain_SE = edges[Direction.SE]
+	var terrain_S = edges[Direction.S]
+	var terrain_SW = edges[Direction.SW]
+	var terrain_NW = edges[Direction.NW]
+	var terrain_N = edges[Direction.N]
+	var terrain_NE = edges[Direction.NE]
 	
 	# TODO: remove duplicates of non-transitioning terrain combinations
 	

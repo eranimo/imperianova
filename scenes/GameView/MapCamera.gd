@@ -1,10 +1,13 @@
 extends Camera2D
 
+signal camera_moved
+
 var zoom_step = 0.1
 var min_zoom = 0.5
 var max_zoom = 2.0
 
 var pan_speed = 600
+var last_position = Vector2()
 
 var _mouse_captured = false
 func _input(event):
@@ -51,3 +54,7 @@ func _process(delta):
 	
 	if panning.length_squared() > 0:
 		position += panning * pan_speed * delta * zoom
+	
+	if not position.is_equal_approx(last_position):
+		emit_signal("camera_moved")
+	last_position = position

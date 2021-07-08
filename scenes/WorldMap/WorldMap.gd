@@ -6,29 +6,30 @@ signal tile_hovered(tile_pos, world_pos)
 var _last_hovered_tile_pos = null
 
 onready var OverlayTexture = preload("res://assets/textures/overlay.tres")
+onready var MapChunk = preload("res://scenes/WorldMap/MapChunk.tscn")
 
 func _ready():
 	MapManager.connect_map(self)
 	MapManager.connect("tile_hovered", self, "_on_tile_hover")
 
 func render():
-	for pos in MapData.tiles():
-		$Terrain.set_tile(pos)
-	print("Tileset tile count: ", $Terrain.tile_cache.size())
+	var chunk_width = MapData.world.map_width / MapData.CHUNK_SIZE.x
+	var chunk_height = MapData.world.map_height / MapData.CHUNK_SIZE.y
+	for cx in chunk_width:
+		for cy in chunk_height:
+			var map_chunk = MapChunk.instance()
+			map_chunk.chunk_position = Vector2(cx, cy)
+			map_chunk.name = "MapChunk (%d, %d)" % [cx, cy]
+			$MapChunks.add_child(map_chunk)
+			var first_hex = Vector2(cx * MapData.CHUNK_SIZE.x, cy * MapData.CHUNK_SIZE.y)
+			map_chunk.position = map_to_world(to_global(first_hex))
+			# map_chunk.render()
+
 	# DEBUG: render bitmask IDs on tiles
 	for pos in MapData.tiles():
 		$GridLines.set_cellv(pos, 0)
-		
-		if false:
-			var label_container = Node2D.new()
-			label_container.position = map_to_world(pos) + Vector2(32, 32)
-			var label = Label.new()
-			label.text = str(MapData.get_tile_bitmask(pos))
-			label_container.add_child(label)
-			add_child(label_container)
 
 	$MapOverlay.render()
-	$Terrain.render()
 
 func _input(event) -> void:
 	var grid_pos: Vector2 = world_to_map(get_global_mouse_position()) 

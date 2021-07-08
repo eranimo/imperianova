@@ -37,18 +37,15 @@ func generate(options):
 	map_width = size * 2
 	map_height = size
 
-	var heightmap = WorldNoise.new(map_width, map_height)
-	heightmap.generate(map_seed)
+	var heightmap = WorldNoise.new(map_width, map_height, map_seed)
 	
-	var temperature_map = WorldNoise.new(map_width, map_height)
+	var temperature_map = WorldNoise.new(map_width, map_height, map_seed * 2)
 	temperature_map.octaves = 3
 	temperature_map.period = 0.5
-	temperature_map.generate(map_seed * 2)
 
-	var rainfall_map = WorldNoise.new(map_width, map_height)
+	var rainfall_map = WorldNoise.new(map_width, map_height, map_seed * 3)
 	rainfall_map.octaves = 4
 	rainfall_map.period = 0.35
-	rainfall_map.generate(map_seed * 3)
 	
 	for x in range(map_width):
 		for y in range(map_height):

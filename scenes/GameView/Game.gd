@@ -62,7 +62,7 @@ func setup_game():
 	EntitySystem.setup()
 
 func generate():
-	var size = 100
+	var size = 150
 	var gen = NameGen.new().add_from_file('greek')
 	print(gen.generate_names(10))
 	print("Generating world ", (size * (size * 2)))
