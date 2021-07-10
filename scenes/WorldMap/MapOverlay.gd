@@ -30,7 +30,8 @@ func update_colors():
 		tile_colors = {}
 		return
 	var sealevel = float(MapData.world.map_options.sealevel)
-	for pos in MapData.tiles():
+	for chunk_tile in get_parent().chunk_tiles:
+		var pos = chunk_tile.global
 		var color = Color(0, 0, 0)
 		var tile_data = MapData.get_tile(pos)
 		if map_mode == MapManager.MapMode.HEIGHT:
@@ -55,11 +56,12 @@ func _map_mode_change(_map_mode):
 	render()
 
 func render():
+	update_colors()
 	update()
 
 func _draw():
-	for pos in MapData.tiles():
-		var center = map_to_world(pos)
-		if tile_colors.has(pos):
-			var color = tile_colors[pos]
+	for chunk_tile in get_parent().chunk_tiles:
+		if tile_colors.has(chunk_tile.global):
+			var color = tile_colors[chunk_tile.global]
+			var center = map_to_world(chunk_tile.local)
 			draw_texture(HexShape, center, color)

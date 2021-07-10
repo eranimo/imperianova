@@ -116,7 +116,7 @@ func _init():
 
 func render():
 	texture.set_data(image)
-	print(missing_tilesets)
+	# print(missing_tilesets)
 	# image.save_png("res://bin/test.png")
 
 func _get_transition_image(primary, secondary, tertiary=null):

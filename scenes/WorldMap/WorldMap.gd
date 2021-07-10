@@ -29,8 +29,6 @@ func render():
 	for pos in MapData.tiles():
 		$GridLines.set_cellv(pos, 0)
 
-	$MapOverlay.render()
-
 func _input(event) -> void:
 	var grid_pos: Vector2 = world_to_map(get_global_mouse_position()) 
 	var hexCell: HexCell = get_hex_at(grid_pos)
