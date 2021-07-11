@@ -25,10 +25,9 @@ func render():
 				"global": global_tile,
 				"local": local_tile,
 			})
-			$Terrain.set_tile(global_tile, local_tile)
 
-	$Terrain.render()
-	$MapOverlay.render()
+	$ChunkTerrain.render()
+	$ChunkOverlay.render()
 
 	should_render = false
 	print("Render chunk %s (%d ms)" % [str(chunk_position), OS.get_ticks_msec() - time_start])

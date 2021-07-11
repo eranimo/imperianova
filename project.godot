@@ -54,15 +54,15 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/ReactiveState.gd"
 }, {
+"base": "HexMap",
+"class": "SectionalTilemap",
+"language": "GDScript",
+"path": "res://scenes/WorldMap/SectionalTilemap.gd"
+}, {
 "base": "Node",
 "class": "System",
 "language": "GDScript",
 "path": "res://scripts/System.gd"
-}, {
-"base": "TileSet",
-"class": "TerrainTileset",
-"language": "GDScript",
-"path": "res://scenes/WorldMap/TerrainTileset.gd"
 }, {
 "base": "Component",
 "class": "TileLocation",
@@ -84,8 +84,8 @@ _global_script_class_icons={
 "NameGen": "",
 "Pop": "",
 "ReactiveState": "",
+"SectionalTilemap": "",
 "System": "",
-"TerrainTileset": "",
 "TileLocation": "",
 "WorldNoise": ""
 }
@@ -107,6 +107,7 @@ GameData="*res://global/GameData.gd"
 Console="*res://addons/quentincaffeino-console/src/Console.tscn"
 EntitySystem="*res://global/EntitySystem.gd"
 Utils="*res://global/Utils.gd"
+MapTilesets="*res://global/MapTilesets.gd"
 
 [display]
 

@@ -23,7 +23,6 @@ func render():
 			$MapChunks.add_child(map_chunk)
 			var first_hex = Vector2(cx * MapData.CHUNK_SIZE.x, cy * MapData.CHUNK_SIZE.y)
 			map_chunk.position = map_to_world(to_global(first_hex))
-			# map_chunk.render()
 
 	# DEBUG: render bitmask IDs on tiles
 	for pos in MapData.tiles():
