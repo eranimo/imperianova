@@ -20,6 +20,7 @@ Each tick in the simulation is one day in the game world. Entities are software 
   - event type, event data
 - Systems (Node)
   - Updates entities based on signals and timers
+  - System nodes are subclassed
 
 # Entities
 Entities (with their properties in parenthesis) and components in each entity

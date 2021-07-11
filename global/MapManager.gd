@@ -7,6 +7,8 @@ signal tile_updated(tile_pos, data)
 
 var ReactiveState = preload("res://scripts/ReactiveState.gd")
 
+var selected_tile = ReactiveState.new(null)
+
 enum MapMode {
 	NONE,
 	HEIGHT,
@@ -42,10 +44,14 @@ func _on_tile_pressed(tile_pos: Vector2):
 	if not is_valid_pos(tile_pos):
 		return
 	print("Tile pressed: ", tile_pos)
-	print('\tTile bitmask: ', MapData.get_tile_bitmask(tile_pos))
 	# map.set_cellv(tile_pos, 1)
 	print('Terrain type: ', MapData.terrain_title[MapData.get_tile(tile_pos).terrain_type])
 	emit_signal("tile_pressed", tile_pos)
+
+	if selected_tile.value != null and selected_tile.value.is_equal_approx(tile_pos):
+		selected_tile.next(null)
+	else:
+		selected_tile.next(tile_pos)
 
 func _on_tile_hovered(tile_pos: Vector2, world_pos: Vector2):
 	if not is_valid_pos(tile_pos):

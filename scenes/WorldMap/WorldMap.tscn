@@ -57,13 +57,18 @@ script = ExtResource( 4 )
 visible = false
 shape = SubResource( 1 )
 
-[node name="Highlight" type="Node2D" parent="TileUI"]
-
-[node name="Sprite" type="Sprite" parent="TileUI/Highlight"]
+[node name="HoverTile" type="Sprite" parent="TileUI"]
+modulate = Color( 0.901961, 0.901961, 0.901961, 1 )
 texture = ExtResource( 1 )
 centered = false
 region_enabled = true
 region_rect = Rect2( 64, 0, 64, 60 )
+
+[node name="SelectedTile" type="Sprite" parent="TileUI"]
+texture = ExtResource( 1 )
+centered = false
+region_enabled = true
+region_rect = Rect2( 256, 0, 64, 60 )
 
 [node name="MapCamera" type="Camera2D" parent="."]
 current = true

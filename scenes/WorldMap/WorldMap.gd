@@ -11,6 +11,10 @@ onready var MapChunk = preload("res://scenes/WorldMap/MapChunk.tscn")
 func _ready():
 	MapManager.connect_map(self)
 	MapManager.connect("tile_hovered", self, "_on_tile_hover")
+	MapManager.selected_tile.subscribe(self, "_update_selected_tile")
+
+func _exit_tree():
+	MapManager.selected_tile.unsubscribe(self)
 
 func render():
 	var chunk_width = MapData.world.map_width / MapData.CHUNK_SIZE.x
@@ -48,7 +52,14 @@ func _input(event) -> void:
 
 func _on_tile_hover(tile_pos, world_pos):
 	if tile_pos == null:
-		$TileUI.hide()
+		$TileUI/HoverTile.hide()
 	else:
-		$TileUI.show()
-		$TileUI.update_highlight_pos(world_pos)
+		$TileUI/HoverTile.show()
+		$TileUI/HoverTile.position = world_pos
+
+func _update_selected_tile(selected_tile):
+	if selected_tile == null:
+		$TileUI/SelectedTile.hide()
+	else:
+		$TileUI/SelectedTile.show()
+		$TileUI/SelectedTile.position = map_to_world(selected_tile)

@@ -8,6 +8,8 @@ signal entity_removed(entity)
 
 export(int) var tick_interval = 1
 
+export(Array, String) var requirements = []
+
 func _ready():
 	EntitySystem.register_system(self)
 
