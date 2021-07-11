@@ -17,19 +17,18 @@ func _draw_tile_edge(
 	section
 ):
 	var terrain_type = tile_data.terrain_type
-	var tile_edges = MapData.get_tile_edges(tile_pos)
 	var section_column_id = MapTilesets.base_column_ids[section]
 	var dir = MapData.section_to_direction[section]
 	var base_image = MapTilesets.terrain_type_base_tileset[terrain_type]
 	var adj_dir_1 = MapData.direction_clockwise[dir]
 	var adj_dir_2 = MapData.direction_counter_clockwise[dir]
-	var edge_terrain = tile_edges[dir]
-	var adj1_terrain = tile_edges[adj_dir_1]
-	var adj2_terrain = tile_edges[adj_dir_2]
+	var edge_terrain = MapData.get_neighbor_tile(tile_pos, dir)
+	var adj1_terrain = MapData.get_neighbor_tile(tile_pos, adj_dir_1)
+	var adj2_terrain = MapData.get_neighbor_tile(tile_pos, adj_dir_2)
 	
-	var has_trans_edge = MapData.has_transition(terrain_type, tile_edges[dir])
-	var has_trans_adj1 = MapData.has_transition(terrain_type, tile_edges[adj_dir_1])
-	var has_trans_adj2 = MapData.has_transition(terrain_type, tile_edges[adj_dir_2])
+	var has_trans_edge = MapData.has_transition(terrain_type, edge_terrain)
+	var has_trans_adj1 = MapData.has_transition(terrain_type, adj1_terrain)
+	var has_trans_adj2 = MapData.has_transition(terrain_type, adj2_terrain)
 
 	var source_img = null
 	var rect = null

@@ -74,6 +74,9 @@ func generate(options):
 	render_map()
 	emit_signal("map_generated")
 
+func get_tile(tile_pos: Vector2):
+	return world_data[tile_pos]
+
 func to_dict():
 	return {
 		"map_options": map_options,

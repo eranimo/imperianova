@@ -1,7 +1,6 @@
 extends Node
 
 var world
-var tile_edges = {}
 var tile_neighbors = {}
 
 const CHUNK_SIZE = Vector2(10, 10)
@@ -134,19 +133,17 @@ func set_world_data(_world):
 	world = _world
 
 	for pos in world.world_data:
-		tile_neighbors[pos] = {}
-		tile_edges[pos] = {
-			Direction.SE: get_terrain_type(get_neighbor(pos, Direction.SE)),
-			Direction.S: get_terrain_type(get_neighbor(pos, Direction.S)),
-			Direction.SW: get_terrain_type(get_neighbor(pos, Direction.SW)),
-			Direction.NW: get_terrain_type(get_neighbor(pos, Direction.NW)),
-			Direction.N: get_terrain_type(get_neighbor(pos, Direction.N)),
-			Direction.NE: get_terrain_type(get_neighbor(pos, Direction.NE)),
+		tile_neighbors[pos] = {
+			Direction.SE: _get_neighbor(pos, Direction.SE),
+			Direction.S: _get_neighbor(pos, Direction.S),
+			Direction.SW: _get_neighbor(pos, Direction.SW),
+			Direction.NW: _get_neighbor(pos, Direction.NW),
+			Direction.N: _get_neighbor(pos, Direction.N),
+			Direction.NE: _get_neighbor(pos, Direction.NE),
 		}
 
 func reset_map():
 	world = null
-	tile_edges = {}
 
 func is_valid_pos(pos: Vector2):
 	if pos.x < 0 or pos.y < 0:
@@ -156,9 +153,9 @@ func is_valid_pos(pos: Vector2):
 	return true
 
 func get_neighbor(pos: Vector2, dir):
-	if tile_neighbors.has(pos) and tile_neighbors[pos].has(dir):
-		return tile_neighbors[pos][dir]
+	return tile_neighbors[pos][dir]
 
+func _get_neighbor(pos: Vector2, dir):
 	var parity = int(pos.x) & 1
 	var dir_add = oddq_directions[parity][dir]
 	var n_pos = Vector2(
@@ -177,13 +174,8 @@ func get_neighbor(pos: Vector2, dir):
 	if n_pos.y >= world.map_height:
 		n_pos.x = int((world.map_width-1) - ((n_pos.x / ((world.map_width-1) / 2)) * ((world.map_width-1) / 2)))
 		n_pos.y = world.map_height - 1
-	
-	tile_neighbors[pos][dir] = n_pos
+
 	return n_pos
-
-func get_terrain_type(tile_pos):
-	return world.world_data[tile_pos].terrain_type
-
 
 func tiles():
 	return world.world_data
@@ -191,30 +183,8 @@ func tiles():
 func get_tile(pos: Vector2):
 	return world.world_data[pos]
 
-func get_tile_edges(pos: Vector2):
-	return tile_edges[pos]
-
-func get_tile_bitmask(tile_pos: Vector2):
-	var terrain_type = get_tile(tile_pos).terrain_type
-	var edges = get_tile_edges(tile_pos)
-	var terrain_SE = edges[Direction.SE]
-	var terrain_S = edges[Direction.S]
-	var terrain_SW = edges[Direction.SW]
-	var terrain_NW = edges[Direction.NW]
-	var terrain_N = edges[Direction.N]
-	var terrain_NE = edges[Direction.NE]
-	
-	# TODO: remove duplicates of non-transitioning terrain combinations
-	
-	return (
-		pow(TerrainTypeCount, Section.CENTER) * terrain_type
-		+ pow(TerrainTypeCount, Section.EDGE_SE) * terrain_SE
-		+ pow(TerrainTypeCount, Section.EDGE_S) * terrain_S
-		+ pow(TerrainTypeCount, Section.EDGE_SW) * terrain_SW
-		+ pow(TerrainTypeCount, Section.EDGE_NW) * terrain_NW
-		+ pow(TerrainTypeCount, Section.EDGE_N) * terrain_N
-		+ pow(TerrainTypeCount, Section.EDGE_NE) * terrain_NE
-	)
+func get_neighbor_tile(pos: Vector2, dir):
+	return world.world_data[get_neighbor(pos, dir)]
 
 func has_transition(terrain1, terrain2):
 	if not terrain_transitions.has(terrain1):
