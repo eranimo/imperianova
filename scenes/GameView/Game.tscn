@@ -168,6 +168,7 @@ margin_bottom = 20.0
 text = "Menu"
 
 [node name="SelectedTileInfo" parent="CanvasLayer" instance=ExtResource( 9 )]
+visible = true
 anchor_bottom = 1.0
 margin_top = 450.0
 margin_bottom = 0.0

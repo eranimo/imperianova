@@ -1,45 +1,60 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://ui/SelectedTileInfo.gd" type="Script" id=1]
+[ext_resource path="res://ui/DataTable.tscn" type="PackedScene" id=2]
 
 [node name="SelectedTileInfo" type="WindowDialog"]
-visible = true
 margin_right = 400.0
-margin_bottom = 150.0
+margin_bottom = 212.0
+focus_mode = 2
 input_pass_on_modal_close_click = false
+window_title = "Selected Tile"
 resizable = true
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
+[node name="Control" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
-margin_right = 79.0
-margin_bottom = 34.0
-
-[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/VBoxContainer"]
-margin_right = 79.0
-margin_bottom = 34.0
+[node name="MarginContainer" type="MarginContainer" parent="Control/ScrollContainer"]
+margin_right = 400.0
+margin_bottom = 212.0
+size_flags_horizontal = 3
+size_flags_vertical = 11
 custom_constants/margin_right = 10
 custom_constants/margin_top = 10
 custom_constants/margin_left = 10
 custom_constants/margin_bottom = 10
 
-[node name="Title" type="Label" parent="ScrollContainer/VBoxContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/ScrollContainer/MarginContainer"]
 margin_left = 10.0
 margin_top = 10.0
-margin_right = 69.0
-margin_bottom = 24.0
+margin_right = 390.0
+margin_bottom = 202.0
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="Control/ScrollContainer/MarginContainer/VBoxContainer"]
+margin_right = 380.0
+margin_bottom = 14.0
 text = "Tile (0, 0)"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Details" parent="Control/ScrollContainer/MarginContainer/VBoxContainer" instance=ExtResource( 2 )]
+margin_top = 18.0
+margin_right = 380.0
+margin_bottom = 192.0
+size_flags_vertical = 3
 
 [connection signal="popup_hide" from="." to="." method="_on_popup_hide"]
