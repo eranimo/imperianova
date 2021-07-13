@@ -23,7 +23,6 @@ func _ready():
 		"id": 1,
 		"size": 1000
 	})
-	
 
 func _exit_tree():
 	MapManager.selected_tile.unsubscribe(self)

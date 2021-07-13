@@ -32,7 +32,7 @@ func render():
 	for pos in MapData.tiles():
 		$GridLines.set_cellv(pos, 0)
 
-func _input(event) -> void:
+func _unhandled_input(event) -> void:
 	var grid_pos: Vector2 = world_to_map(get_global_mouse_position()) 
 	var hexCell: HexCell = get_hex_at(grid_pos)
 	var hexWorldPos: Vector2 = map_to_world(hexCell.get_offset_coords())
