@@ -12,7 +12,6 @@ var last_position = Vector2()
 var _mouse_captured = false
 
 func _unhandled_input(event):
-	print(event.as_text())
 	# mouse wheel zoom
 	if event is InputEventMouseButton:
 		if event.is_action_pressed("view_zoom_in"):

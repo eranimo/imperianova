@@ -19,11 +19,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://ui/DataTable.gd"
 }, {
-"base": "Node",
-"class": "DataTableColumn",
-"language": "GDScript",
-"path": "res://ui/DataTableColumn.gd"
-}, {
 "base": "Object",
 "class": "Entity",
 "language": "GDScript",
@@ -87,7 +82,6 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "Component": "",
 "DataTable": "",
-"DataTableColumn": "",
 "Entity": "",
 "EntityValue": "",
 "HexCell": "",

@@ -8,6 +8,7 @@ signal tile_updated(tile_pos, data)
 var ReactiveState = preload("res://scripts/ReactiveState.gd")
 
 var selected_tile = ReactiveState.new(null)
+var selected_units = []
 
 enum MapMode {
 	NONE,

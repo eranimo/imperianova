@@ -1,4 +1,4 @@
-extends Node2D
+extends Area2D
 
 var type = null setget _set_type
 

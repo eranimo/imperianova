@@ -89,3 +89,4 @@ __meta__ = {
 }
 
 [node name="LoadDialog" parent="." instance=ExtResource( 2 )]
+visible = false

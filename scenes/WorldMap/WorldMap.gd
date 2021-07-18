@@ -5,13 +5,24 @@ signal tile_hovered(tile_pos, world_pos)
 
 var _last_hovered_tile_pos = null
 
+var is_dragging = false
+var selected = []
+var drag_start = Vector2.ZERO  
+var select_rect = RectangleShape2D.new()
+
 onready var OverlayTexture = preload("res://assets/textures/overlay.tres")
 onready var MapChunk = preload("res://scenes/WorldMap/MapChunk.tscn")
 
-func _ready():
+func _init():
 	MapManager.connect_map(self)
+
+func _ready():
 	MapManager.connect("tile_hovered", self, "_on_tile_hover")
 	MapManager.selected_tile.subscribe(self, "_update_selected_tile")
+
+	var unit = load("res://scenes/WorldMap/Unit.tscn").instance()
+	unit.set_tile_pos(Vector2(2, 2))
+	$Units.add_child(unit)
 
 func _exit_tree():
 	MapManager.selected_tile.unsubscribe(self)
@@ -36,19 +47,44 @@ func _unhandled_input(event) -> void:
 	var grid_pos: Vector2 = world_to_map(get_global_mouse_position()) 
 	var hexCell: HexCell = get_hex_at(grid_pos)
 	var hexWorldPos: Vector2 = map_to_world(hexCell.get_offset_coords())
-	if event.is_action_pressed("ui_select"): 
-		emit_signal("tile_pressed", hexCell.offset_coords)
+
+
+	if event.is_action_pressed("ui_select"):
+		print("Down ", hexCell.offset_coords)
+		is_dragging = true
+		drag_start = get_global_mouse_position()
+	if event.is_action_released("ui_select"):
+		print("Up ", hexCell.offset_coords)
+
+		if get_global_mouse_position().is_equal_approx(drag_start):
+			emit_signal("tile_pressed", hexCell.offset_coords)
+
+		if is_dragging:
+			is_dragging = false
+			$TileUI.update_selection_rect(null)
+			var drag_end = get_global_mouse_position()
+			print(drag_start, drag_end)
+			select_rect.extents = (drag_end - drag_start) / 2
+			var space = get_world_2d().direct_space_state
+			var query = Physics2DShapeQueryParameters.new()
+			query.set_shape(select_rect)
+			query.transform = Transform2D(0, (drag_end + drag_start) / 2)
+			selected = space.intersect_shape(query)
+			print(selected)
+		
+	if event is InputEventMouseMotion:
+		if is_dragging:
+			$TileUI.update_selection_rect(Rect2(drag_start, get_global_mouse_position() - drag_start))
+		elif _last_hovered_tile_pos == null or \
+			not hexCell.offset_coords.is_equal_approx(_last_hovered_tile_pos):
+			emit_signal("tile_hovered", hexCell.offset_coords, hexWorldPos)
+			_last_hovered_tile_pos = hexCell.offset_coords
 	
 	if event.is_action_pressed("map_toggle_grid"):
 		if $GridLines.visible:
 			$GridLines.hide()
 		else:
 			$GridLines.show()
-
-	if _last_hovered_tile_pos == null or \
-		not hexCell.offset_coords.is_equal_approx(_last_hovered_tile_pos):
-		emit_signal("tile_hovered", hexCell.offset_coords, hexWorldPos)
-		_last_hovered_tile_pos = hexCell.offset_coords
 
 func _on_tile_hover(tile_pos, world_pos):
 	if tile_pos == null:

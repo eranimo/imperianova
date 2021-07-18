@@ -24,8 +24,9 @@ __meta__ = {
 
 [node name="MapChunks" type="YSort" parent="."]
 
+[node name="Units" type="Node2D" parent="."]
+
 [node name="TileDevelopments" type="Node2D" parent="."]
-visible = false
 
 [node name="TileDevelopment" parent="TileDevelopments" instance=ExtResource( 9 )]
 visible = false

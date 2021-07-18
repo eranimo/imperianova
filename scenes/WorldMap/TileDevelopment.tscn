@@ -1,10 +1,13 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://scenes/WorldMap/TileDevelopment.gd" type="Script" id=1]
 [ext_resource path="res://assets/textures/grid-ui.png" type="Texture" id=2]
 [ext_resource path="res://resources/pixelfont.tres" type="DynamicFont" id=3]
 [ext_resource path="res://assets/icons/log.svg" type="Texture" id=4]
 [ext_resource path="res://resources/pixelated.shader" type="Shader" id=5]
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 64, 60 )
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 2 )
@@ -14,8 +17,12 @@ region = Rect2( 128, 0, 64, 60 )
 shader = ExtResource( 5 )
 shader_param/amount = 40
 
-[node name="TileDevelopment" type="Node2D"]
+[node name="TileDevelopment" type="Area2D"]
+monitoring = false
 script = ExtResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="."]
 modulate = Color( 0.2, 0.2, 0.2, 1 )
