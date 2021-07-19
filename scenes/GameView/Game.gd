@@ -1,9 +1,8 @@
 extends Node
+class_name Game
 
 var ReactiveState = preload("res://scripts/ReactiveState.gd")
 var NameGen = preload("res://scripts/NameGen.gd")
-
-var Pop = load("res://scenes/GameView/entities/Pop.gd")
 
 enum Speed {
 	SLOW,
@@ -66,17 +65,11 @@ func generate():
 	var gen = NameGen.new().add_from_file('greek')
 	print(gen.generate_names(10))
 	print("Generating world ", (size * (size * 2)))
-	$World.generate({
+	$GameWorld.generate({
 		"map_seed": rand_range(0, 100),
 		"size": size,
 		"sealevel": 140,
 	})
-
-
-	for _i in range(10):
-		var pop = Pop.new(Vector2(0, 0))
-		pop.size = 1000
-		EntitySystem.add_entity(pop)
 	
 func _on_menu_pressed():
 	get_parent().open_menu()

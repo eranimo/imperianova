@@ -1,44 +1,54 @@
 extends Node
 
-var _current_id = 0
-var _entity_by_id = {}
-var systems = []
+var _entities_components = {}
 var _system_ticks_remaining = {}
+var systems = []
 var _entities_to_delete = []
+var _components_entities = {}
 
 
 func setup():
-	for entity_id in _entity_by_id:
-		_entity_by_id[entity_id].quue_free()
-	systems = []
-	_system_ticks_remaining = {}
-	_entities_to_delete = []
-	_current_id = 0
+	_entities_components = {}
 
-func add_entity(entity, id = null):
-	if id == null:
-		entity.id = _current_id
-		_current_id += 1
-	
-	_entity_by_id[entity.id] = entity
-		
-	for system in systems:
-		if system.entity_filter(entity):
-			system._add_entity(entity)
-	
-	return entity
+func is_entity(entity):
+	return entity != null and 'entity_name' in entity
+
+func is_component(component):
+	return component != null and 'component_name' in component
+
+func register_entity(entity):
+	assert(is_entity(entity), "Entity is required")
+	if not _entities_components.has(entity):
+		_entities_components[entity] = {}
+
+func register_component(component: Node):
+	assert(is_component(component), "Component is required")
+	var entity = component.get_parent()
+	register_entity(entity)
+	_entities_components[entity][component.component_name] = component
+	_components_entities[component] = entity
+
+	component.connect("tree_exiting", self, "unregister_component")
+
+func unregister_component(component: Node):
+	var entity = component.get_parent()
+	_components_entities.clear(component)
+	_entities_components[entity].clear()
 
 func remove_entity(entity):
-	_entity_by_id.clear(entity.id)
-	for system in systems:
-		if system.entity_filter(entity) and system.entities.has(entity):
-			system._remove_entity(entity)
+	assert(is_entity(entity), "Entity is required")
+	entity.queue_free()
+	_entities_components.clear(entity)
 
-func delete_entity(entity):
-	_entities_to_delete.append(entity)
+func get_components(entity):
+	assert(is_entity(entity), "Entity is required")
+	return _entities_components.get(entity)
 
-func get_entity(entity_id: int):
-	return _entity_by_id.get(entity_id)
+func get_component(sibling_component: Node, component_name: String):
+	var entity = sibling_component.get_parent()
+	assert(is_entity(entity), "Entity is required")
+	assert(_entities_components[entity].has(component_name), "Entity '%s' has no component '%s'" % [entity.entity_name, component_name])
+	return _entities_components[entity][component_name]
 
 func register_system(system):
 	print("Added system ", system.name)
@@ -47,9 +57,23 @@ func register_system(system):
 	_system_ticks_remaining[system] = system.tick_interval
 	systems.append(system)
 
+func emit_event(sibling_component: Node, event_name: String, event_data: Dictionary):
+	var entity = sibling_component.get_parent()
+	assert(is_entity(entity), "Entity is required")
+	for component_name in _entities_components[entity]:
+		var component = _entities_components[entity][component_name]
+		if component.has_method("handle_event"):
+			component.callv("handle_event", [event_name, event_data])
+
 func update(tick: int):
 	for entity in _entities_to_delete:
 		entity.free()
+
+	for entity in _entities_components:
+		for component_name in _entities_components[entity]:
+			var component = _entities_components[entity][component_name]
+			if component.has_method("game_process"):
+				component.call("game_process")
 
 	for system in systems:
 		if _system_ticks_remaining[system] == 1:
@@ -57,18 +81,3 @@ func update(tick: int):
 			_system_ticks_remaining[system] = system.tick_interval
 		else:
 			_system_ticks_remaining[system] -= 1
-
-func to_dict():
-	var entities = []
-	for entity_id in _entity_by_id:
-		var entity = _entity_by_id[entity_id]
-		entities.append({
-			"id": entity_id,
-			"type": entity.name,
-			"data": entity.to_dict(),
-		})
-	return entities
-
-func from_dict(entities):
-	for e in entities:
-		add_entity(e)

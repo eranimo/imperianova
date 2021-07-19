@@ -1,10 +1,10 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://scenes/GameView/World.gd" type="Script" id=1]
+[ext_resource path="res://scenes/GameView/GameWorld.gd" type="Script" id=1]
 [ext_resource path="res://scenes/WorldMap/WorldMap.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/GameView/MapCamera.gd" type="Script" id=3]
 
-[node name="World" type="Node" groups=[
+[node name="GameWorld" type="Node" groups=[
 "persist",
 ]]
 script = ExtResource( 1 )

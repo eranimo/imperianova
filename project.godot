@@ -9,25 +9,20 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Node",
-"class": "Component",
-"language": "GDScript",
-"path": "res://scripts/Component.gd"
-}, {
 "base": "Control",
 "class": "DataTable",
 "language": "GDScript",
 "path": "res://ui/DataTable.gd"
 }, {
-"base": "Object",
-"class": "Entity",
+"base": "Node",
+"class": "Game",
 "language": "GDScript",
-"path": "res://scripts/Entity.gd"
+"path": "res://scenes/GameView/Game.gd"
 }, {
-"base": "Object",
-"class": "EntityValue",
+"base": "Node",
+"class": "GameWorld",
 "language": "GDScript",
-"path": "res://scripts/EntityValue.gd"
+"path": "res://scenes/GameView/GameWorld.gd"
 }, {
 "base": "Resource",
 "class": "HexCell",
@@ -44,15 +39,15 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/MapSet.gd"
 }, {
+"base": "Node",
+"class": "Movement",
+"language": "GDScript",
+"path": "res://game/components/Movement.gd"
+}, {
 "base": "Object",
 "class": "NameGen",
 "language": "GDScript",
 "path": "res://scripts/NameGen.gd"
-}, {
-"base": "Entity",
-"class": "Pop",
-"language": "GDScript",
-"path": "res://scenes/GameView/entities/Pop.gd"
 }, {
 "base": "Object",
 "class": "ReactiveState",
@@ -72,7 +67,12 @@ _global_script_classes=[ {
 "base": "Component",
 "class": "TileLocation",
 "language": "GDScript",
-"path": "res://scenes/GameView/components/TileLocation.gd"
+"path": "res://game/components/TileLocation.gd"
+}, {
+"base": "Node",
+"class": "TilePosition",
+"language": "GDScript",
+"path": "res://game/components/TilePosition.gd"
 }, {
 "base": "OpenSimplexNoise",
 "class": "WorldNoise",
@@ -80,19 +80,19 @@ _global_script_classes=[ {
 "path": "res://scripts/WorldNoise.gd"
 } ]
 _global_script_class_icons={
-"Component": "",
 "DataTable": "",
-"Entity": "",
-"EntityValue": "",
+"Game": "",
+"GameWorld": "",
 "HexCell": "",
 "HexMap": "",
 "MapSet": "",
+"Movement": "",
 "NameGen": "",
-"Pop": "",
 "ReactiveState": "",
 "SectionalTilemap": "",
 "System": "",
 "TileLocation": "",
+"TilePosition": "",
 "WorldNoise": ""
 }
 

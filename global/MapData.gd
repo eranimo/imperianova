@@ -1,6 +1,6 @@
 extends Node
 
-var world
+var game_world
 var tile_neighbors = {}
 
 const CHUNK_SIZE = Vector2(10, 10)
@@ -129,10 +129,46 @@ const direction_to_section = {
 	Direction.NE: Section.EDGE_NE,
 }
 
-func set_world_data(_world):
-	world = _world
 
-	for pos in world.world_data:
+var pathfinder: AStar2D
+var _node_id_to_pos = {}
+var _pos_to_node_id = {}
+
+func setup_pathfinder():
+	pathfinder = AStar2D.new()
+	var _node_id = 0
+	pathfinder.reserve_space(MapData.game_world.map_width * MapData.game_world.map_height)
+	for pos in MapData.game_world.world_data:
+		pathfinder.add_point(_node_id, pos, 1)
+		_node_id_to_pos[_node_id] = pos
+		_pos_to_node_id[pos] = _node_id
+		_node_id += 1
+	for node_id in _node_id_to_pos:
+		var tile_pos = _node_id_to_pos[node_id]
+		var se_node_id = _pos_to_node_id[get_neighbor(tile_pos, Direction.SE)]
+		var s_node_id = _pos_to_node_id[get_neighbor(tile_pos, Direction.S)]
+		var sw_node_id = _pos_to_node_id[get_neighbor(tile_pos, Direction.SW)]
+		var nw_node_id = _pos_to_node_id[get_neighbor(tile_pos, Direction.NW)]
+		var n_node_id = _pos_to_node_id[get_neighbor(tile_pos, Direction.N)]
+		var ne_node_id = _pos_to_node_id[get_neighbor(tile_pos, Direction.NE)]
+		pathfinder.connect_points(node_id, se_node_id)
+		pathfinder.connect_points(node_id, s_node_id)
+		pathfinder.connect_points(node_id, sw_node_id)
+		pathfinder.connect_points(node_id, nw_node_id)
+		pathfinder.connect_points(node_id, n_node_id)
+		pathfinder.connect_points(node_id, ne_node_id)
+
+func find_path(from: Vector2, to: Vector2):
+	var path = pathfinder.get_point_path(
+		_pos_to_node_id[from],
+		_pos_to_node_id[to]
+	)
+	return path
+
+func set_world_data(_world):
+	game_world = _world
+
+	for pos in game_world.world_data:
 		tile_neighbors[pos] = {
 			Direction.SE: _get_neighbor(pos, Direction.SE),
 			Direction.S: _get_neighbor(pos, Direction.S),
@@ -141,14 +177,18 @@ func set_world_data(_world):
 			Direction.N: _get_neighbor(pos, Direction.N),
 			Direction.NE: _get_neighbor(pos, Direction.NE),
 		}
+	
+	var time_start = OS.get_ticks_msec()
+	setup_pathfinder()
+	print("Setup pathfinder: ", OS.get_ticks_msec() - time_start)
 
 func reset_map():
-	world = null
+	game_world = null
 
 func is_valid_pos(pos: Vector2):
 	if pos.x < 0 or pos.y < 0:
 		return false
-	if pos.x >= world.map_width or pos.y >= world.map_height:
+	if pos.x >= game_world.map_width or pos.y >= game_world.map_height:
 		return false
 	return true
 
@@ -165,26 +205,26 @@ func _get_neighbor(pos: Vector2, dir):
 	
 	# wrap around the world
 	if n_pos.x < 0:
-		n_pos.x = world.map_width - 1
+		n_pos.x = game_world.map_width - 1
 	if n_pos.y < 0:
 		n_pos.y = 0
-		n_pos.x = int((world.map_width-1) - ((n_pos.x / ((world.map_width-1) / 2)) * ((world.map_width-1) / 2)))
-	if n_pos.x >= world.map_width:
+		n_pos.x = int((game_world.map_width-1) - ((n_pos.x / ((game_world.map_width-1) / 2)) * ((game_world.map_width-1) / 2)))
+	if n_pos.x >= game_world.map_width:
 		n_pos.x = 0
-	if n_pos.y >= world.map_height:
-		n_pos.x = int((world.map_width-1) - ((n_pos.x / ((world.map_width-1) / 2)) * ((world.map_width-1) / 2)))
-		n_pos.y = world.map_height - 1
+	if n_pos.y >= game_world.map_height:
+		n_pos.x = int((game_world.map_width-1) - ((n_pos.x / ((game_world.map_width-1) / 2)) * ((game_world.map_width-1) / 2)))
+		n_pos.y = game_world.map_height - 1
 
 	return n_pos
 
 func tiles():
-	return world.world_data
+	return game_world.world_data
 
 func get_tile(pos: Vector2):
-	return world.world_data[pos]
+	return game_world.world_data[pos]
 
 func get_neighbor_tile(pos: Vector2, dir):
-	return world.world_data[get_neighbor(pos, dir)]
+	return game_world.world_data[get_neighbor(pos, dir)]
 
 func has_transition(terrain1, terrain2):
 	if not terrain_transitions.has(terrain1):

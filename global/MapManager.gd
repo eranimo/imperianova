@@ -1,9 +1,12 @@
 extends Node
 
-var map: HexMap
+var world_map: HexMap
 signal tile_pressed(tile_pos)
 signal tile_hovered(tile_pos, world_pos)
 signal tile_updated(tile_pos, data)
+
+
+var pathfinder: AStar
 
 var ReactiveState = preload("res://scripts/ReactiveState.gd")
 
@@ -30,14 +33,17 @@ func set_map_mode(map_mode):
 	current_map_mode.next(map_mode)
 
 func connect_map(_map: HexMap):
-	map = _map
-	map.connect("tile_pressed", self, "_on_tile_pressed")
-	map.connect("tile_hovered", self, "_on_tile_hovered")
+	world_map = _map
+	world_map.connect("tile_pressed", self, "_on_tile_pressed")
+	world_map.connect("tile_hovered", self, "_on_tile_hovered")
+
+	pathfinder = AStar.new()
+
 
 func is_valid_pos(pos: Vector2):
 	if pos.x < 0 or pos.y < 0:
 		return false
-	if pos.x >= MapData.world.map_width or pos.y >= MapData.world.map_height:
+	if pos.x >= MapData.game_world.map_width or pos.y >= MapData.game_world.map_height:
 		return false
 	return true
 

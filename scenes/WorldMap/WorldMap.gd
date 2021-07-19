@@ -21,15 +21,15 @@ func _ready():
 	MapManager.selected_tile.subscribe(self, "_update_selected_tile")
 
 	var unit = load("res://scenes/WorldMap/Unit.tscn").instance()
-	unit.set_tile_pos(Vector2(2, 2))
+	unit.get_node("TilePosition").set_tile_pos(Vector2(2, 2))
 	$Units.add_child(unit)
 
 func _exit_tree():
 	MapManager.selected_tile.unsubscribe(self)
 
 func render():
-	var chunk_width = MapData.world.map_width / MapData.CHUNK_SIZE.x
-	var chunk_height = MapData.world.map_height / MapData.CHUNK_SIZE.y
+	var chunk_width = MapData.game_world.map_width / MapData.CHUNK_SIZE.x
+	var chunk_height = MapData.game_world.map_height / MapData.CHUNK_SIZE.y
 	for cx in chunk_width:
 		for cy in chunk_height:
 			var map_chunk = MapChunk.instance()

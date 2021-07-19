@@ -1,4 +1,5 @@
 extends Node
+class_name GameWorld
 
 var WorldNoise = preload("res://scripts/WorldNoise.gd")
 
@@ -22,7 +23,7 @@ func _exit_tree():
 func render_map():
 	print("Render map ", world_data.size())
 	MapData.set_world_data(self)
-	$MapViewport/Viewport/WorldMap.set_bounds(Vector2(0, 0), Vector2(map_width, map_height))
+	# $MapViewport/Viewport/WorldMap.set_bounds(Vector2(0, 0), Vector2(map_width, map_height))
 	
 	var time_start = OS.get_ticks_msec()
 	$MapViewport/Viewport/WorldMap.render()

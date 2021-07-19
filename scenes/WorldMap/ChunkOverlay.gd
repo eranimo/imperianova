@@ -29,7 +29,7 @@ func update_colors():
 	if map_mode == MapManager.MapMode.NONE:
 		tile_colors = {}
 		return
-	var sealevel = float(MapData.world.map_options.sealevel)
+	var sealevel = float(MapData.game_world.map_options.sealevel)
 	for chunk_tile in get_parent().chunk_tiles:
 		var pos = chunk_tile.global
 		var color = Color(0, 0, 0)
