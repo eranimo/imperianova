@@ -10,11 +10,11 @@ enum Speed {
 	FAST
 }
 
-const TICKS_PER_DAY = 2
+const TICKS_PER_DAY = 4
 const speed_ticks = {
 	Speed.SLOW: 4 * TICKS_PER_DAY,
 	Speed.NORMAL: 2 * TICKS_PER_DAY,
-	Speed.FAST: 1,
+	Speed.FAST: 1 * TICKS_PER_DAY,
 }
 
 # State
@@ -28,6 +28,7 @@ var _ticks_in_day = 0
 
 func _ready():
 	SaveSystem.connect("load_complete", self, "setup_game")
+	EntitySystem.CURRENT_TICKS_PER_DAY = speed_ticks[speed.value]
 
 func _exit_tree():
 	SaveSystem.disconnect("load_complete", self, "setup_game")
@@ -55,6 +56,7 @@ func toggle_speed():
 		speed.next(Speed.FAST)
 	else:
 		speed.next(Speed.SLOW)
+	EntitySystem.CURRENT_TICKS_PER_DAY = speed_ticks[speed.value]
 
 func setup_game():
 	print("Game loaded from file")
@@ -62,8 +64,8 @@ func setup_game():
 
 func generate():
 	var size = 150
-	var gen = NameGen.new().add_from_file('greek')
-	print(gen.generate_names(10))
+	# var gen = NameGen.new().add_from_file('greek')
+	# print(gen.generate_names(10))
 	print("Generating world ", (size * (size * 2)))
 	$GameWorld.generate({
 		"map_seed": rand_range(0, 100),

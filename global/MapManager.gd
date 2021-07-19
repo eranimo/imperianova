@@ -8,10 +8,8 @@ signal tile_updated(tile_pos, data)
 
 var pathfinder: AStar
 
-var ReactiveState = preload("res://scripts/ReactiveState.gd")
-
 var selected_tile = ReactiveState.new(null)
-var selected_units = []
+var selected_units = ReactiveSet.new()
 
 enum MapMode {
 	NONE,

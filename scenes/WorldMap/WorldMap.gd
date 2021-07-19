@@ -21,7 +21,7 @@ func _ready():
 	MapManager.selected_tile.subscribe(self, "_update_selected_tile")
 
 	var unit = load("res://scenes/WorldMap/Unit.tscn").instance()
-	unit.get_node("TilePosition").set_tile_pos(Vector2(2, 2))
+	unit.setup(Vector2(2, 2))
 	$Units.add_child(unit)
 
 func _exit_tree():
@@ -50,11 +50,9 @@ func _unhandled_input(event) -> void:
 
 
 	if event.is_action_pressed("ui_select"):
-		print("Down ", hexCell.offset_coords)
 		is_dragging = true
 		drag_start = get_global_mouse_position()
 	if event.is_action_released("ui_select"):
-		print("Up ", hexCell.offset_coords)
 
 		if get_global_mouse_position().is_equal_approx(drag_start):
 			emit_signal("tile_pressed", hexCell.offset_coords)
@@ -63,7 +61,6 @@ func _unhandled_input(event) -> void:
 			is_dragging = false
 			$TileUI.update_selection_rect(null)
 			var drag_end = get_global_mouse_position()
-			print(drag_start, drag_end)
 			select_rect.extents = (drag_end - drag_start) / 2
 			var space = get_world_2d().direct_space_state
 			var query = Physics2DShapeQueryParameters.new()
@@ -71,6 +68,9 @@ func _unhandled_input(event) -> void:
 			query.transform = Transform2D(0, (drag_end + drag_start) / 2)
 			selected = space.intersect_shape(query)
 			print(selected)
+
+			for item in selected:
+				item.collider.is_selected = true
 		
 	if event is InputEventMouseMotion:
 		if is_dragging:

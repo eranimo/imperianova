@@ -6,6 +6,8 @@ var systems = []
 var _entities_to_delete = []
 var _components_entities = {}
 
+var CURRENT_TICKS_PER_DAY
+
 
 func setup():
 	_entities_components = {}
