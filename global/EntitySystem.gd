@@ -46,11 +46,24 @@ func get_components(entity):
 	assert(is_entity(entity), "Entity is required")
 	return _entities_components.get(entity)
 
-func get_component(sibling_component: Node, component_name: String):
-	var entity = sibling_component.get_parent()
-	assert(is_entity(entity), "Entity is required")
+func get_component(from: Node, component_name: String):
+	var entity
+	if is_entity(from):
+		entity = from
+	else:
+		entity = from.get_parent()
+		assert(is_entity(entity), "Entity is required")
 	assert(_entities_components[entity].has(component_name), "Entity '%s' has no component '%s'" % [entity.entity_name, component_name])
 	return _entities_components[entity][component_name]
+
+func has_component(from: Node, component_name: String):
+	var entity
+	if is_entity(from):
+		entity = from
+	else:
+		entity = from.get_parent()
+		assert(is_entity(entity), "Entity is required")
+	return _entities_components[entity].has(component_name)
 
 func register_system(system):
 	print("Added system ", system.name)

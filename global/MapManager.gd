@@ -37,7 +37,6 @@ func connect_map(_map: HexMap):
 
 	pathfinder = AStar.new()
 
-
 func is_valid_pos(pos: Vector2):
 	if pos.x < 0 or pos.y < 0:
 		return false
@@ -70,3 +69,23 @@ func set_tile_development(tile_pos: Vector2, tile_development_id: int):
 		"tile": tile_pos,
 		"tile_development_id": tile_development_id,
 	})
+
+
+# Selected units
+
+func clear_selected_units():
+	for unit in selected_units.data:
+		deselect_unit(unit)
+	selected_units.clear()
+
+func select_unit(unit):
+	selected_units.add(unit)
+	if EntitySystem.has_component(unit, "Selectable"):
+		var selectable = EntitySystem.get_component(unit, "Selectable")
+		selectable.is_selected = true
+
+func deselect_unit(unit):
+	selected_units.remove(unit)
+	if EntitySystem.has_component(unit, "Selectable"):
+		var selectable = EntitySystem.get_component(unit, "Selectable")
+		selectable.is_selected = false

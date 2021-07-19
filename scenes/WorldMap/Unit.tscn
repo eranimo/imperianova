@@ -4,15 +4,12 @@
 [ext_resource path="res://game/components/Movement.tscn" type="PackedScene" id=2]
 [ext_resource path="res://game/components/TilePosition.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/WorldMap/Unit.gd" type="Script" id=4]
-[ext_resource path="res://resources/outline.shader" type="Shader" id=5]
+[ext_resource path="res://resources/pixelated.shader" type="Shader" id=5]
+[ext_resource path="res://game/components/Selectable.tscn" type="PackedScene" id=6]
 
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 49, 60 )
-
-[sub_resource type="ShaderMaterial" id=2]
+[sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 5 )
-shader_param/outline_width = 0.0
-shader_param/outline_color = Color( 0, 0, 0, 1 )
+shader_param/amount = 40
 
 [node name="Unit" type="KinematicBody2D"]
 script = ExtResource( 4 )
@@ -21,12 +18,10 @@ script = ExtResource( 4 )
 
 [node name="TilePosition" parent="." instance=ExtResource( 3 )]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( 0, 59.7577 )
-shape = SubResource( 1 )
+[node name="Selectable" parent="." instance=ExtResource( 6 )]
 
 [node name="Icon" type="Sprite" parent="."]
-material = SubResource( 2 )
+material = SubResource( 1 )
 position = Vector2( 32, 30 )
 scale = Vector2( 0.082768, 0.077595 )
 texture = ExtResource( 1 )

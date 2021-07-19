@@ -12,6 +12,7 @@ var select_rect = RectangleShape2D.new()
 
 onready var OverlayTexture = preload("res://assets/textures/overlay.tres")
 onready var MapChunk = preload("res://scenes/WorldMap/MapChunk.tscn")
+onready var Unit = preload("res://scenes/WorldMap/Unit.tscn")
 
 func _init():
 	MapManager.connect_map(self)
@@ -20,9 +21,10 @@ func _ready():
 	MapManager.connect("tile_hovered", self, "_on_tile_hover")
 	MapManager.selected_tile.subscribe(self, "_update_selected_tile")
 
-	var unit = load("res://scenes/WorldMap/Unit.tscn").instance()
-	unit.setup(Vector2(2, 2))
-	$Units.add_child(unit)
+	for _i in range(5):
+		var unit = Unit.instance()
+		unit.setup(Vector2(randi()%50+1, randi()%50+1))
+		$Units.add_child(unit)
 
 func _exit_tree():
 	MapManager.selected_tile.unsubscribe(self)
@@ -52,6 +54,7 @@ func _unhandled_input(event) -> void:
 	if event.is_action_pressed("ui_select"):
 		is_dragging = true
 		drag_start = get_global_mouse_position()
+
 	if event.is_action_released("ui_select"):
 
 		if get_global_mouse_position().is_equal_approx(drag_start):
@@ -69,8 +72,10 @@ func _unhandled_input(event) -> void:
 			selected = space.intersect_shape(query)
 			print(selected)
 
+			if not Input.is_key_pressed(KEY_SHIFT):
+				MapManager.clear_selected_units()
 			for item in selected:
-				item.collider.is_selected = true
+				MapManager.select_unit(item.collider)
 		
 	if event is InputEventMouseMotion:
 		if is_dragging:
