@@ -1,4 +1,4 @@
-extends WindowDialog
+extends PopupDialog
 
 onready var Title = $Control/ScrollContainer/MarginContainer/VBoxContainer/Title
 onready var Details = $Control/ScrollContainer/MarginContainer/VBoxContainer/Details
@@ -36,3 +36,10 @@ func _update_ui(selected_tile):
 
 func _on_popup_hide():
 	MapManager.selected_tile.next(null)
+
+
+func _notification(what):
+	if what == NOTIFICATION_RESIZED:
+		get_tree().root.update_worlds();
+		force_update_transform();
+		update();

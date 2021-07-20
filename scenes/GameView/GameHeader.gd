@@ -4,7 +4,7 @@ onready var PlayButton = get_node("Content/Grid/LeftColumn/PlayButton")
 onready var DateDisplay = get_node("Content/Grid/LeftColumn/Date")
 onready var ChangeSpeed = get_node("Content/Grid/LeftColumn/ChangeSpeed")
 onready var Menu = get_node("Content/Grid/RightColumn/Menu")
-onready var Game = get_parent().get_parent()
+onready var Game = get_tree().current_scene.find_node("Game")
 
 func _ready():
 	Game.date_ticks.subscribe(self, "_date_tick")

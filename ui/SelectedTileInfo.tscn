@@ -3,13 +3,14 @@
 [ext_resource path="res://ui/SelectedTileInfo.gd" type="Script" id=1]
 [ext_resource path="res://ui/DataTable.tscn" type="PackedScene" id=2]
 
-[node name="SelectedTileInfo" type="WindowDialog"]
+[node name="SelectedTileInfo" type="PopupDialog"]
 margin_right = 400.0
 margin_bottom = 212.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 400, 200 )
 focus_mode = 2
 input_pass_on_modal_close_click = false
-window_title = "Selected Tile"
-resizable = true
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false

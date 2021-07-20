@@ -3,7 +3,7 @@ extends Node
 var game_world
 var tile_neighbors = {}
 
-const CHUNK_SIZE = Vector2(10, 10)
+const CHUNK_SIZE = Vector2(50, 50)
 const HEX_SIZE = Vector2(64, 60)
 
 # Terrain type
