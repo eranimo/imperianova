@@ -2,7 +2,7 @@ extends Camera2D
 
 signal camera_moved
 
-var zoom_step = 0.1
+var zoom_step = 0.005
 var min_zoom = 0.5
 var max_zoom = 2.0
 
@@ -11,32 +11,37 @@ var last_position = Vector2()
 
 var _mouse_captured = false
 
-func _unhandled_input(event):
-	# mouse wheel zoom
-	if event is InputEventMouseButton:
-		if event.is_action_pressed("view_zoom_in"):
-			zoom /= 1 + zoom_step
-		if event.is_action_pressed("view_zoom_out"):
-			zoom *= 1 + zoom_step
 
-	# trackpad pinch zoom
+var zoom_speed = 0.5
+var panning = false
+
+func _unhandled_input(event):
+	# Mouse zooming
+	if event.is_action_released('view_zoom_in'):
+		zoom_camera(-zoom_speed, event.position)
+	if event.is_action_released('view_zoom_out'):
+		zoom_camera(zoom_speed, event.position)
+	
+	# trackpad zooming
 	if event is InputEventMagnifyGesture:
 		if event.factor < 1:
-			zoom /= 1 + (zoom_step / 3)
+			zoom_camera(-zoom_speed, event.position)
 		else:
-			zoom *= 1 + (zoom_step / 3)
+			zoom_camera(zoom_speed, event.position)
 	
 	# trackpad panning
 	if event is InputEventPanGesture:
 		position += event.delta * 25
-	
-	# mouse middle click panning
+
+	# Panning
 	if event.is_action_pressed("view_pan_mouse"):
-		_mouse_captured = true
+		panning = true
 	elif event.is_action_released("view_pan_mouse"):
-		_mouse_captured = false
-	if _mouse_captured && event is InputEventMouseMotion:
-		position -= event.relative * zoom
+		panning = false
+	
+	# Update
+	if event is InputEventMouseMotion and panning == true:
+		offset -= event.relative * zoom
 
 func _process(delta):
 	var speed = 1
@@ -54,8 +59,14 @@ func _process(delta):
 		panning.x += speed
 	
 	if panning.length_squared() > 0:
-		position += panning * pan_speed * delta * zoom
+		offset += panning * pan_speed * delta * zoom
 	
-	if not position.is_equal_approx(last_position):
+	if not offset.is_equal_approx(last_position):
 		emit_signal("camera_moved")
-	last_position = position
+	last_position = offset
+
+func zoom_camera(zoom_factor, mouse_position):
+	var viewport_size = get_viewport().size
+	var previous_zoom = zoom
+	zoom += zoom * zoom_factor
+	offset += ((viewport_size * 0.5) - mouse_position) * (zoom-previous_zoom)
