@@ -79,16 +79,20 @@ func set_tile_development(tile_pos: Vector2, tile_development_id: int):
 
 func clear_selected_units():
 	for unit in selected_units.data:
-		deselect_unit(unit)
+		if EntitySystem.has_component(unit, "Selectable"):
+			var selectable = EntitySystem.get_component(unit, "Selectable")
+			selectable.is_selected = false
 	selected_units.clear()
 
 func select_unit(unit):
+	print("Select unit ", unit)
 	selected_units.add(unit)
 	if EntitySystem.has_component(unit, "Selectable"):
 		var selectable = EntitySystem.get_component(unit, "Selectable")
 		selectable.is_selected = true
 
 func deselect_unit(unit):
+	print("Deselect unit ", unit)
 	selected_units.remove(unit)
 	if EntitySystem.has_component(unit, "Selectable"):
 		var selectable = EntitySystem.get_component(unit, "Selectable")
