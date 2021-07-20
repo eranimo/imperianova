@@ -2,17 +2,11 @@ extends Camera2D
 
 signal camera_moved
 
-var zoom_step = 0.005
 var min_zoom = 0.5
-var max_zoom = 2.0
-
 var pan_speed = 600
 var last_position = Vector2()
-
 var _mouse_captured = false
-
-
-var zoom_speed = 0.5
+var zoom_speed = 0.25
 var panning = false
 
 func _unhandled_input(event):
@@ -69,4 +63,6 @@ func zoom_camera(zoom_factor, mouse_position):
 	var viewport_size = get_viewport().size
 	var previous_zoom = zoom
 	zoom += zoom * zoom_factor
+	zoom.x = max(zoom.x, min_zoom)
+	zoom.y = max(zoom.y, min_zoom)
 	offset += ((viewport_size * 0.5) - mouse_position) * (zoom-previous_zoom)
