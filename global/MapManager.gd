@@ -4,6 +4,7 @@ var world_map: HexMap
 signal tile_pressed(tile_pos)
 signal tile_hovered(tile_pos, world_pos)
 signal tile_updated(tile_pos, data)
+signal camera_moved(position, zoom)
 
 
 var pathfinder: AStar

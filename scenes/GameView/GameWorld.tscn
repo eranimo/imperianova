@@ -25,9 +25,9 @@ size = Vector2( 2048, 1200 )
 handle_input_locally = false
 render_target_update_mode = 3
 
-[node name="WorldMap" parent="MapViewport/Viewport" instance=ExtResource( 2 )]
-cell_quadrant_size = 32
-
 [node name="MapCamera" type="Camera2D" parent="MapViewport/Viewport"]
 current = true
 script = ExtResource( 3 )
+
+[node name="WorldMap" parent="MapViewport/Viewport" instance=ExtResource( 2 )]
+cell_quadrant_size = 32

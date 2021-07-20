@@ -1,13 +1,12 @@
 extends Camera2D
 
-signal camera_moved
-
 var min_zoom = 0.5
 var pan_speed = 600
 var last_position = Vector2()
 var _mouse_captured = false
 var zoom_speed = 0.25
 var panning = false
+var panning_vec = Vector2()
 
 func _unhandled_input(event):
 	# Mouse zooming
@@ -42,21 +41,22 @@ func _process(delta):
 	if Input.is_action_pressed("view_pan_fast"):
 		speed = 2
 	
-	var panning = Vector2()
+	panning_vec.x = 0
+	panning_vec.y = 0
 	if Input.is_action_pressed("view_pan_up"):
-		panning.y -= speed
+		panning_vec.y -= speed
 	if Input.is_action_pressed("view_pan_down"):
-		panning.y += speed
+		panning_vec.y += speed
 	if Input.is_action_pressed("view_pan_left"):
-		panning.x -= speed
+		panning_vec.x -= speed
 	if Input.is_action_pressed("view_pan_right"):
-		panning.x += speed
+		panning_vec.x += speed
 	
-	if panning.length_squared() > 0:
-		offset += panning * pan_speed * delta * zoom
+	if panning_vec.length_squared() > 0:
+		offset += panning_vec * pan_speed * delta * zoom
 	
 	if not offset.is_equal_approx(last_position):
-		emit_signal("camera_moved")
+		MapManager.emit_signal("camera_moved", offset, zoom)
 	last_position = offset
 
 func zoom_camera(zoom_factor, mouse_position):

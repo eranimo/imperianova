@@ -10,6 +10,8 @@ var selected = []
 var drag_start = Vector2.ZERO  
 var select_rect = RectangleShape2D.new()
 
+onready var GridLines: Node = find_node("GridLines")
+
 onready var OverlayTexture = preload("res://assets/textures/overlay.tres")
 onready var MapChunk = preload("res://scenes/WorldMap/MapChunk.tscn")
 onready var Unit = preload("res://scenes/WorldMap/Unit.tscn")
@@ -18,6 +20,7 @@ func _init():
 	MapManager.connect_map(self)
 
 func _ready():
+	MapManager.connect("camera_moved", self, "_update_grid_visibility")
 	MapManager.connect("tile_hovered", self, "_on_tile_hover")
 	MapManager.selected_tile.subscribe(self, "_update_selected_tile")
 
@@ -28,6 +31,9 @@ func _ready():
 
 func _exit_tree():
 	MapManager.selected_tile.unsubscribe(self)
+
+func _update_grid_visibility(_offset, zoom):
+	GridLines.visible = zoom.x < 3
 
 func render():
 	var chunk_width = MapData.game_world.map_width / MapData.CHUNK_SIZE.x
