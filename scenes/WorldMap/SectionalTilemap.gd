@@ -39,5 +39,5 @@ func _draw():
 		_draw_tile_edge(chunk_tile.global, dest, tile_data, MapData.Section.EDGE_SE)
 		_draw_tile_edge(chunk_tile.global, dest, tile_data, MapData.Section.EDGE_S)
 	
-	# print("Render chunk %s terrain (%d ms)" % [str(get_parent().chunk_position), OS.get_ticks_msec() - time_start])
+	print("Render chunk %s terrain (%d ms)" % [str(get_parent().chunk_position), OS.get_ticks_msec() - time_start])
 		

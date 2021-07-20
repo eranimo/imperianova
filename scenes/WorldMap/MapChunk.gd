@@ -30,7 +30,7 @@ func render():
 	$ChunkOverlay.render()
 
 	should_render = false
-	# print("Render chunk %s (%d ms)" % [str(chunk_position), OS.get_ticks_msec() - time_start])
+	print("Render chunk %s (%d ms)" % [str(chunk_position), OS.get_ticks_msec() - time_start])
 
 
 func _on_entered(viewport):

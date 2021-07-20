@@ -47,9 +47,13 @@ func is_valid_pos(pos: Vector2):
 func _on_tile_pressed(tile_pos: Vector2):
 	if not is_valid_pos(tile_pos):
 		return
-	print("Tile pressed: ", tile_pos)
-	# map.set_cellv(tile_pos, 1)
-	print('Terrain type: ', MapData.terrain_title[MapData.get_tile(tile_pos).terrain_type])
+	var tile = MapData.get_tile(tile_pos)
+	print("Tile pressed: %s (%s)" % [tile_pos, MapData.terrain_title[tile.terrain_type]])
+	for dir in MapData.tile_neighbors[tile_pos]:
+		var pos = MapData.tile_neighbors[tile_pos][dir]
+		var n_tile = MapData.get_tile(pos)
+		print("\tNeighbor %s:  %s (%s)" % [MapData.direction_titles[dir], pos, MapData.terrain_title[n_tile.terrain_type]])
+	print('Terrain type: ', MapData.terrain_title[tile.terrain_type])
 	emit_signal("tile_pressed", tile_pos)
 
 	if selected_tile.value != null and selected_tile.value.is_equal_approx(tile_pos):

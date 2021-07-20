@@ -54,6 +54,15 @@ enum Direction {
 	S
 }
 
+const direction_titles = {
+	Direction.SE: 'SE',
+	Direction.NE: 'NE',
+	Direction.N: 'N',
+	Direction.NW: 'NW',
+	Direction.SW: 'SW',
+	Direction.S: 'S',
+}
+
 const oddq_directions = [
   [
 	[+1, 0], [+1, -1], [0, -1],
