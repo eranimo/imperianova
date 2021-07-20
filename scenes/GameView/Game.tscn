@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://resources/fonts/ui-labels-normal.tres" type="DynamicFont" id=1]
 [ext_resource path="res://scenes/GameView/GameWorld.tscn" type="PackedScene" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://scenes/GameView/GameHeader.gd" type="Script" id=5]
 [ext_resource path="res://scenes/GameView/MapModeSelect.gd" type="Script" id=6]
 [ext_resource path="res://ui/TileHoverInfoRow.tscn" type="PackedScene" id=7]
+[ext_resource path="res://ui/SelectedUnits.tscn" type="PackedScene" id=8]
 [ext_resource path="res://ui/SelectedTileInfo.tscn" type="PackedScene" id=9]
 
 [sub_resource type="StyleBoxFlat" id=1]
@@ -178,6 +179,12 @@ anchor_bottom = 1.0
 margin_top = -200.0
 margin_bottom = 0.0
 focus_mode = 1
+
+[node name="SelectedUnits" parent="UI" instance=ExtResource( 8 )]
+margin_top = 40.0
+margin_right = -824.0
+margin_bottom = -360.0
+rect_min_size = Vector2( 200, 200 )
 
 [connection signal="item_selected" from="UI/GameHeader/Content/Grid/RightColumn/MapModeSelect" to="UI/GameHeader/Content/Grid/RightColumn/MapModeSelect" method="_on_MapModeSelect_item_selected"]
 [connection signal="pressed" from="UI/GameHeader/Content/Grid/RightColumn/Menu" to="." method="_on_menu_pressed"]

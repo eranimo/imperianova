@@ -5,6 +5,7 @@ const component_name = 'Selectable'
 
 var is_selected = false setget set_selected
 
+
 func _ready():
 	EntitySystem.register_component(self)
 
