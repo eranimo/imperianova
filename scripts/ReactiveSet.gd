@@ -28,4 +28,7 @@ func clear():
 	data.clear()
 	_notify()
 
+func size():
+	return data.size()
+
 

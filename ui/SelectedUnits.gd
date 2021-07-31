@@ -10,8 +10,11 @@ func _ready():
 	shrink_size()
 	MapManager.selected_units.subscribe(self, "_on_selected_units_update")
 
+func _toggle_visibility():
+	self.visible = MapManager.selected_units.size() > 0
 
 func _on_selected_units_update(selected_units):
+	_toggle_visibility()
 	for unit_panel in UnitPanelContainer.get_children():
 		UnitPanelContainer.remove_child(unit_panel)
 	for unit in selected_units:
@@ -26,3 +29,7 @@ func _unit_panel_deselect(unit):
 
 func shrink_size():
 	rect_size = mim_size
+
+
+func _on_CloseButton_pressed():
+	MapManager.clear_selected_units()
