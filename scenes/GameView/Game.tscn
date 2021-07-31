@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://resources/fonts/ui-labels-normal.tres" type="DynamicFont" id=1]
 [ext_resource path="res://scenes/GameView/GameWorld.tscn" type="PackedScene" id=2]
@@ -15,6 +15,12 @@ bg_color = Color( 0.152941, 0.152941, 0.152941, 1 )
 
 [sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0.137255, 0.137255, 0.137255, 1 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+content_margin_left = 10.0
+content_margin_right = 10.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
 
 [node name="Game" type="Node" groups=[
 "persist",
@@ -128,7 +134,6 @@ margin_left = 117.0
 margin_top = 2.0
 margin_right = 146.0
 margin_bottom = 18.0
-hint_tooltip = "Foobar"
 custom_fonts/font = ExtResource( 1 )
 text = "Date"
 __meta__ = {
@@ -181,10 +186,12 @@ margin_bottom = 0.0
 focus_mode = 1
 
 [node name="SelectedUnits" parent="UI" instance=ExtResource( 8 )]
-margin_top = 40.0
-margin_right = -824.0
-margin_bottom = -360.0
-rect_min_size = Vector2( 200, 200 )
+margin_top = 38.6808
+margin_right = 400.0
+margin_bottom = 398.681
+mouse_filter = 1
+size_flags_vertical = 3
+custom_styles/panel = SubResource( 3 )
 
 [connection signal="item_selected" from="UI/GameHeader/Content/Grid/RightColumn/MapModeSelect" to="UI/GameHeader/Content/Grid/RightColumn/MapModeSelect" method="_on_MapModeSelect_item_selected"]
 [connection signal="pressed" from="UI/GameHeader/Content/Grid/RightColumn/Menu" to="." method="_on_menu_pressed"]

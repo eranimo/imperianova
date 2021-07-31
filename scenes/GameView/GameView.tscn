@@ -91,7 +91,6 @@ __meta__ = {
 }
 
 [node name="LoadDialog" parent="GameMenu" instance=ExtResource( 8 )]
-visible = false
 margin_right = 400.0
 margin_bottom = 300.0
 
