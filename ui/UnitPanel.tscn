@@ -1,8 +1,16 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://resources/icons/CloseIcon.tres" type="Texture" id=1]
-[ext_resource path="res://resources/fonts/ui-labels-normal.tres" type="DynamicFont" id=2]
+[ext_resource path="res://assets/fonts/pixelated-times-new-roman.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://ui/UnitPanel.gd" type="Script" id=3]
+[ext_resource path="res://assets/textures/ui/main-rect-1.png" type="Texture" id=4]
+
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[sub_resource type="DynamicFont" id=2]
+size = 24
+extra_spacing_space = 1
+font_data = ExtResource( 2 )
 
 [node name="UnitPanel" type="Panel"]
 margin_right = 380.0
@@ -11,7 +19,22 @@ grow_horizontal = 2
 rect_min_size = Vector2( 0, 35 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
+custom_styles/panel = SubResource( 1 )
 script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 4 )
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -51,7 +74,8 @@ __meta__ = {
 margin_right = 340.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color = Color( 0.819608, 0.815686, 0.803922, 1 )
 text = "Unit"
 
 [node name="CloseButton" type="TextureButton" parent="MarginContainer/VBoxContainer/HBoxContainer"]

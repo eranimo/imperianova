@@ -1,13 +1,25 @@
-# ImperiaNova gameplay
+# Game architecture
+Godot using C# for heavy logic
 
-## Players
+## Game Logic
 
 
-### Variable time step
+### Classes
+- GameState
+  - global Node
+- Entity
+  - has an ID
+- Manager
+  - properties
+    - tick rate
+  - methods
+    - update
+    - init
+- Message
+  - pieces of data that describe how
+- Interface
+  - Godot Node added as a child to UI nodes
+  - receives Messages and computes internal UI state
+  - emits signals that other UI nodes can listen to
 
-# Ages
-The game is split into ages. Each age has a different time step.
-
-## Stone Age
-
-## Civilized Age
+## UI

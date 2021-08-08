@@ -23,6 +23,7 @@ var speed = ReactiveState.new(Speed.NORMAL)
 var is_playing = ReactiveState.new(false)
 var entities = []
 
+onready var GameState = get_node("GameState")
 
 var _ticks_in_day = 0
 
@@ -34,12 +35,14 @@ func _exit_tree():
 	SaveSystem.disconnect("load_complete", self, "setup_game")
 
 func _process(_delta):
+	GameState.Process()
 	if not is_playing.value:
 		return
 	if _ticks_in_day == 0:
 		var ticks_left = speed_ticks[speed.value]
 		date_ticks.next(date_ticks.value + 1)
 		EntitySystem.update(date_ticks.value)
+		GameState.Update(date_ticks.value)
 		_ticks_in_day = ticks_left
 	else:
 		_ticks_in_day -= 1
