@@ -64,3 +64,22 @@ Forest -> Desert
     - galley
     - land transport
     - sea transport
+- icons
+    - small icons (24x24): inline UI icons
+        - population, (a portrait of a non-descript person)
+        - labor (a hammer)
+        - money (single gold coin)
+        - food (a bushel of wheat)
+        - world (a globe, should not be Earth)
+        - housing (a house)
+        - influence (a few dots surrounded by a border)
+        - culture (open to ideas)
+        - religion (open to ideas, not related to real religions)
+    - large icons (48x48): action icons, job icons
+        - attack (two crossed swords)
+        - farmer
+        - warrior
+        - craftsman
+        - slave
+        - aristocrat
+        - 
