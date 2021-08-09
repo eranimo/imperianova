@@ -1,14 +1,16 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://resources/fonts/ui-labels-normal.tres" type="DynamicFont" id=1]
-[ext_resource path="res://scenes/GameView/World.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/GameView/GameWorld.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/GameView/Game.gd" type="Script" id=3]
 [ext_resource path="res://scenes/GameView/TileData.gd" type="Script" id=4]
 [ext_resource path="res://scenes/GameView/GameHeader.gd" type="Script" id=5]
 [ext_resource path="res://scenes/GameView/MapModeSelect.gd" type="Script" id=6]
 [ext_resource path="res://ui/TileHoverInfoRow.tscn" type="PackedScene" id=7]
-[ext_resource path="res://scenes/GameView/systems/PopGrowth.gd" type="Script" id=8]
+[ext_resource path="res://ui/SelectedUnits.tscn" type="PackedScene" id=8]
 [ext_resource path="res://ui/SelectedTileInfo.tscn" type="PackedScene" id=9]
+[ext_resource path="res://game/GameState.cs" type="Script" id=10]
+[ext_resource path="res://game/managers/UnitManager.cs" type="Script" id=11]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.152941, 0.152941, 0.152941, 1 )
@@ -21,51 +23,56 @@ bg_color = Color( 0.137255, 0.137255, 0.137255, 1 )
 ]]
 script = ExtResource( 3 )
 
-[node name="World" parent="." instance=ExtResource( 2 )]
+[node name="GameWorld" parent="." instance=ExtResource( 2 )]
 world_data = {
 }
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="."]
 
-[node name="TileData" type="VBoxContainer" parent="CanvasLayer"]
-anchor_top = 1.0
+[node name="TileData" type="VBoxContainer" parent="UI"]
+anchor_left = 1.0
 anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 881.0
-margin_top = -550.0
-margin_right = -10.0
-margin_bottom = -462.0
+margin_left = -300.0
+margin_top = 50.0
+margin_right = -20.0
+margin_bottom = 100.0
 grow_horizontal = 2
+rect_min_size = Vector2( 300, 100 )
 size_flags_horizontal = 3
 script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TileCoord" parent="CanvasLayer/TileData" instance=ExtResource( 7 )]
+[node name="TileCoord" parent="UI/TileData" instance=ExtResource( 7 )]
+margin_right = 300.0
 label = "Tile"
 
-[node name="Terrain" parent="CanvasLayer/TileData" instance=ExtResource( 7 )]
+[node name="Terrain" parent="UI/TileData" instance=ExtResource( 7 )]
 margin_top = 20.0
+margin_right = 300.0
 margin_bottom = 36.0
 label = "Terrain"
 
-[node name="Height" parent="CanvasLayer/TileData" instance=ExtResource( 7 )]
+[node name="Height" parent="UI/TileData" instance=ExtResource( 7 )]
 margin_top = 40.0
+margin_right = 300.0
 margin_bottom = 56.0
 label = "Height"
 
-[node name="Temperature" parent="CanvasLayer/TileData" instance=ExtResource( 7 )]
+[node name="Temperature" parent="UI/TileData" instance=ExtResource( 7 )]
 margin_top = 60.0
+margin_right = 300.0
 margin_bottom = 76.0
 label = "Temperature"
 
-[node name="Rainfall" parent="CanvasLayer/TileData" instance=ExtResource( 7 )]
+[node name="Rainfall" parent="UI/TileData" instance=ExtResource( 7 )]
 margin_top = 80.0
+margin_right = 300.0
 margin_bottom = 96.0
 label = "Rainfall"
 
-[node name="GameHeader" type="PanelContainer" parent="CanvasLayer"]
+[node name="GameHeader" type="PanelContainer" parent="UI"]
 anchor_right = 1.0
 margin_bottom = 40.0
 custom_styles/panel = SubResource( 1 )
@@ -74,7 +81,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Panel" type="Panel" parent="CanvasLayer/GameHeader"]
+[node name="Panel" type="Panel" parent="UI/GameHeader"]
 visible = false
 margin_left = 7.0
 margin_top = 7.0
@@ -82,7 +89,7 @@ margin_right = 1017.0
 margin_bottom = 50.0
 custom_styles/panel = SubResource( 2 )
 
-[node name="Content" type="MarginContainer" parent="CanvasLayer/GameHeader"]
+[node name="Content" type="MarginContainer" parent="UI/GameHeader"]
 margin_right = 1024.0
 margin_bottom = 40.0
 custom_constants/margin_right = 10
@@ -90,14 +97,14 @@ custom_constants/margin_top = 10
 custom_constants/margin_left = 10
 custom_constants/margin_bottom = 10
 
-[node name="Grid" type="GridContainer" parent="CanvasLayer/GameHeader/Content"]
+[node name="Grid" type="GridContainer" parent="UI/GameHeader/Content"]
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 1014.0
 margin_bottom = 30.0
 columns = 2
 
-[node name="LeftColumn" type="HBoxContainer" parent="CanvasLayer/GameHeader/Content/Grid"]
+[node name="LeftColumn" type="HBoxContainer" parent="UI/GameHeader/Content/Grid"]
 margin_right = 156.0
 margin_bottom = 20.0
 grow_horizontal = 0
@@ -107,30 +114,29 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PlayButton" type="Button" parent="CanvasLayer/GameHeader/Content/Grid/LeftColumn"]
+[node name="PlayButton" type="Button" parent="UI/GameHeader/Content/Grid/LeftColumn"]
 margin_right = 38.0
 margin_bottom = 20.0
 text = "Play"
 
-[node name="ChangeSpeed" type="Button" parent="CanvasLayer/GameHeader/Content/Grid/LeftColumn"]
+[node name="ChangeSpeed" type="Button" parent="UI/GameHeader/Content/Grid/LeftColumn"]
 margin_left = 48.0
 margin_right = 107.0
 margin_bottom = 20.0
 text = "Normal"
 
-[node name="DateLabel" type="Label" parent="CanvasLayer/GameHeader/Content/Grid/LeftColumn"]
+[node name="DateLabel" type="Label" parent="UI/GameHeader/Content/Grid/LeftColumn"]
 margin_left = 117.0
 margin_top = 2.0
 margin_right = 146.0
 margin_bottom = 18.0
-hint_tooltip = "Foobar"
 custom_fonts/font = ExtResource( 1 )
 text = "Date"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Date" type="Label" parent="CanvasLayer/GameHeader/Content/Grid/LeftColumn"]
+[node name="Date" type="Label" parent="UI/GameHeader/Content/Grid/LeftColumn"]
 margin_left = 156.0
 margin_top = 2.0
 margin_right = 156.0
@@ -140,13 +146,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RightColumn" type="HBoxContainer" parent="CanvasLayer/GameHeader/Content/Grid"]
+[node name="RightColumn" type="HBoxContainer" parent="UI/GameHeader/Content/Grid"]
 margin_left = 847.0
 margin_right = 1004.0
 margin_bottom = 20.0
 size_flags_horizontal = 0
 
-[node name="Label" type="Label" parent="CanvasLayer/GameHeader/Content/Grid/RightColumn"]
+[node name="Label" type="Label" parent="UI/GameHeader/Content/Grid/RightColumn"]
 margin_top = 3.0
 margin_right = 72.0
 margin_bottom = 17.0
@@ -155,27 +161,39 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="MapModeSelect" type="OptionButton" parent="CanvasLayer/GameHeader/Content/Grid/RightColumn"]
+[node name="MapModeSelect" type="OptionButton" parent="UI/GameHeader/Content/Grid/RightColumn"]
 margin_left = 76.0
 margin_right = 105.0
 margin_bottom = 20.0
 script = ExtResource( 6 )
 
-[node name="Menu" type="Button" parent="CanvasLayer/GameHeader/Content/Grid/RightColumn"]
+[node name="Menu" type="Button" parent="UI/GameHeader/Content/Grid/RightColumn"]
 margin_left = 109.0
 margin_right = 157.0
 margin_bottom = 20.0
 text = "Menu"
 
-[node name="SelectedTileInfo" parent="CanvasLayer" instance=ExtResource( 9 )]
+[node name="SelectedTileInfo" parent="UI" instance=ExtResource( 9 )]
+visible = true
+anchor_top = 1.0
 anchor_bottom = 1.0
-margin_top = 450.0
+margin_top = -200.0
 margin_bottom = 0.0
-grow_horizontal = 2
+focus_mode = 1
 
-[node name="PopGrowthSystem" type="Node" parent="."]
-script = ExtResource( 8 )
-tick_interval = 5
+[node name="SelectedUnits" parent="UI" instance=ExtResource( 8 )]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -200.0
+margin_bottom = 0.0
+mouse_filter = 1
+size_flags_vertical = 3
 
-[connection signal="item_selected" from="CanvasLayer/GameHeader/Content/Grid/RightColumn/MapModeSelect" to="CanvasLayer/GameHeader/Content/Grid/RightColumn/MapModeSelect" method="_on_MapModeSelect_item_selected"]
-[connection signal="pressed" from="CanvasLayer/GameHeader/Content/Grid/RightColumn/Menu" to="." method="_on_menu_pressed"]
+[node name="GameState" type="Node" parent="."]
+script = ExtResource( 10 )
+
+[node name="UnitManager" type="Node" parent="GameState"]
+script = ExtResource( 11 )
+
+[connection signal="item_selected" from="UI/GameHeader/Content/Grid/RightColumn/MapModeSelect" to="UI/GameHeader/Content/Grid/RightColumn/MapModeSelect" method="_on_MapModeSelect_item_selected"]
+[connection signal="pressed" from="UI/GameHeader/Content/Grid/RightColumn/Menu" to="." method="_on_menu_pressed"]

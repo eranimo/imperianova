@@ -1,9 +1,8 @@
 extends Node
+class_name Game
 
 var ReactiveState = preload("res://scripts/ReactiveState.gd")
 var NameGen = preload("res://scripts/NameGen.gd")
-
-var Pop = load("res://scenes/GameView/entities/Pop.gd")
 
 enum Speed {
 	SLOW,
@@ -11,11 +10,11 @@ enum Speed {
 	FAST
 }
 
-const TICKS_PER_DAY = 2
+const TICKS_PER_DAY = 4
 const speed_ticks = {
 	Speed.SLOW: 4 * TICKS_PER_DAY,
 	Speed.NORMAL: 2 * TICKS_PER_DAY,
-	Speed.FAST: 1,
+	Speed.FAST: 1 * TICKS_PER_DAY,
 }
 
 # State
@@ -24,22 +23,26 @@ var speed = ReactiveState.new(Speed.NORMAL)
 var is_playing = ReactiveState.new(false)
 var entities = []
 
+onready var GameState = get_node("GameState")
 
 var _ticks_in_day = 0
 
 func _ready():
 	SaveSystem.connect("load_complete", self, "setup_game")
+	EntitySystem.CURRENT_TICKS_PER_DAY = speed_ticks[speed.value]
 
 func _exit_tree():
 	SaveSystem.disconnect("load_complete", self, "setup_game")
 
 func _process(_delta):
+	GameState.Process()
 	if not is_playing.value:
 		return
 	if _ticks_in_day == 0:
 		var ticks_left = speed_ticks[speed.value]
 		date_ticks.next(date_ticks.value + 1)
 		EntitySystem.update(date_ticks.value)
+		GameState.Update(date_ticks.value)
 		_ticks_in_day = ticks_left
 	else:
 		_ticks_in_day -= 1
@@ -56,6 +59,7 @@ func toggle_speed():
 		speed.next(Speed.FAST)
 	else:
 		speed.next(Speed.SLOW)
+	EntitySystem.CURRENT_TICKS_PER_DAY = speed_ticks[speed.value]
 
 func setup_game():
 	print("Game loaded from file")
@@ -63,20 +67,14 @@ func setup_game():
 
 func generate():
 	var size = 150
-	var gen = NameGen.new().add_from_file('greek')
-	print(gen.generate_names(10))
+	# var gen = NameGen.new().add_from_file('greek')
+	# print(gen.generate_names(10))
 	print("Generating world ", (size * (size * 2)))
-	$World.generate({
+	$GameWorld.generate({
 		"map_seed": rand_range(0, 100),
 		"size": size,
 		"sealevel": 140,
 	})
-
-
-	for _i in range(10):
-		var pop = Pop.new(Vector2(0, 0))
-		pop.size = 1000
-		EntitySystem.add_entity(pop)
 	
 func _on_menu_pressed():
 	get_parent().open_menu()

@@ -87,24 +87,4 @@ Logic:
 - GrowthSystem: LifeformGroup
 
 UI:
-- MapSelectionSystem: 
-
-# Entity Types (OLD)
-
-Tile specific:
-- Pops: Human population on a Tile
-- Plants: The plant life on a Tile
-  - Trees
-  - Grass
-- Animals: all living non-Human animals on a tile (Ocean or Land)
-  - Domesticated animals: e.g. cattle
-  - Wildlife (e.g. Aurochs, Deer, Fowl)
-- Deposit: Finite supply of metal Resources on a Tile
-- Developments
-  - Districts: e.g. city center, neighborhood, settlement, fort, camp
-  - Improvements: e.g. farms, mines, plantations
-
-Other:
-- Countries
-- Cultures
-- Religions
+- MapSelectionSystem

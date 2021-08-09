@@ -1,13 +1,16 @@
 extends Node
 
-var map: HexMap
+var world_map: HexMap
 signal tile_pressed(tile_pos)
 signal tile_hovered(tile_pos, world_pos)
 signal tile_updated(tile_pos, data)
+signal camera_moved(position, zoom)
 
-var ReactiveState = preload("res://scripts/ReactiveState.gd")
+
+var pathfinder: AStar
 
 var selected_tile = ReactiveState.new(null)
+var selected_units = ReactiveSet.new()
 
 enum MapMode {
 	NONE,
@@ -29,23 +32,29 @@ func set_map_mode(map_mode):
 	current_map_mode.next(map_mode)
 
 func connect_map(_map: HexMap):
-	map = _map
-	map.connect("tile_pressed", self, "_on_tile_pressed")
-	map.connect("tile_hovered", self, "_on_tile_hovered")
+	world_map = _map
+	world_map.connect("tile_pressed", self, "_on_tile_pressed")
+	world_map.connect("tile_hovered", self, "_on_tile_hovered")
+
+	pathfinder = AStar.new()
 
 func is_valid_pos(pos: Vector2):
 	if pos.x < 0 or pos.y < 0:
 		return false
-	if pos.x >= MapData.world.map_width or pos.y >= MapData.world.map_height:
+	if pos.x >= MapData.game_world.map_width or pos.y >= MapData.game_world.map_height:
 		return false
 	return true
 
 func _on_tile_pressed(tile_pos: Vector2):
 	if not is_valid_pos(tile_pos):
 		return
-	print("Tile pressed: ", tile_pos)
-	# map.set_cellv(tile_pos, 1)
-	print('Terrain type: ', MapData.terrain_title[MapData.get_tile(tile_pos).terrain_type])
+	var tile = MapData.get_tile(tile_pos)
+	print("Tile pressed: %s (%s)" % [tile_pos, MapData.terrain_title[tile.terrain_type]])
+	for dir in MapData.tile_neighbors[tile_pos]:
+		var pos = MapData.tile_neighbors[tile_pos][dir]
+		var n_tile = MapData.get_tile(pos)
+		print("\tNeighbor %s:  %s (%s)" % [MapData.direction_titles[dir], pos, MapData.terrain_title[n_tile.terrain_type]])
+	print('Terrain type: ', MapData.terrain_title[tile.terrain_type])
 	emit_signal("tile_pressed", tile_pos)
 
 	if selected_tile.value != null and selected_tile.value.is_equal_approx(tile_pos):
@@ -65,3 +74,27 @@ func set_tile_development(tile_pos: Vector2, tile_development_id: int):
 		"tile": tile_pos,
 		"tile_development_id": tile_development_id,
 	})
+
+
+# Selected units
+
+func clear_selected_units():
+	for unit in selected_units.data:
+		if EntitySystem.has_component(unit, "Selectable"):
+			var selectable = EntitySystem.get_component(unit, "Selectable")
+			selectable.is_selected = false
+	selected_units.clear()
+
+func select_unit(unit):
+	print("Select unit ", unit)
+	selected_units.add(unit)
+	if EntitySystem.has_component(unit, "Selectable"):
+		var selectable = EntitySystem.get_component(unit, "Selectable")
+		selectable.is_selected = true
+
+func deselect_unit(unit):
+	print("Deselect unit ", unit)
+	selected_units.remove(unit)
+	if EntitySystem.has_component(unit, "Selectable"):
+		var selectable = EntitySystem.get_component(unit, "Selectable")
+		selectable.is_selected = false
