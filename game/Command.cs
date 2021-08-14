@@ -1,12 +1,12 @@
 using Godot;
 using System;
 
-public class Command {
-    public Command(Entity target_) {
+public class Command<T> where T : Entity {
+    public Command(T target_) {
         target = target_;
     }
 
-    public Entity target;
+    public T target;
 
-    public virtual void Process() {}
+    public virtual void Execute() {}
 }

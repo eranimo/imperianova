@@ -17,10 +17,20 @@ public class Query {
     private List<Func<Entity, bool>> withFilters = new List<Func<Entity, bool>>();
     public HashSet<Entity> items = new HashSet<Entity>();
 
+	public event EventHandler<Entity.EntityEventArgs> EntityAdded;
+	public event EventHandler<Entity.EntityEventArgs> EntityRemoved;
+
     public Query(GameState gameState_) {
         gameState = gameState_;
     }
 
+	public virtual void OnEntityAdded(Entity entity) {
+		EntityAdded.Invoke(this, new Entity.EntityEventArgs(entity));
+	}
+
+	public virtual void OnEntityRemoved(Entity entity) {
+		EntityRemoved.Invoke(this, new Entity.EntityEventArgs(entity));
+	}
 
     /// <summary>Filters entities by Type</summary>
     public Query WithType(String type) {
@@ -30,11 +40,13 @@ public class Query {
 
     /// <summary>Filters entities by ID</summary>
     public Query GetID(String id) {
+		withIDs.Add(id);
         return this;
     }
 
     /// <summary>Filters entities by a function</summary>
     public Query Filter(Func<Entity, bool> func) {
+		withFilters.Add(func);
         return this;
     }
 

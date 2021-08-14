@@ -1,8 +1,12 @@
 using Godot;
+using System;
 using System.Linq;
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 /**
 Summary:
@@ -16,6 +20,12 @@ public class GameState : Node {
 	private HashSet<Interface> interfaces = new HashSet<Interface>();
 	private Queue<Message> messageQueue = new Queue<Message>();
 	private List<Query> queries = new List<Query>();
+
+	JsonSerializerSettings serializerSettings = new JsonSerializerSettings() {
+		TypeNameHandling = TypeNameHandling.Auto,
+		Formatting = Formatting.Indented, // TODO: debug mode only
+		PreserveReferencesHandling = PreserveReferencesHandling.Objects
+	};
 
 	// Setup
 
@@ -32,19 +42,19 @@ public class GameState : Node {
 		}
 	}
 
-    public override void _EnterTree() {
-        base._EnterTree();
+	public override void _EnterTree() {
+		base._EnterTree();
 		Global global = GetNode<Global>("/root/Global");
 		global.gameState = this;
-    }
+	}
 
-    public override void _ExitTree() {
-        base._ExitTree();
+	public override void _ExitTree() {
+		base._ExitTree();
 		Global global = GetNode<Global>("/root/Global");
 		global.gameState = null;
-    }
+	}
 
-    public void RegisterManager(Manager manager) {
+	public void RegisterManager(Manager manager) {
 		managers.Add(manager);
 	}
 
@@ -61,6 +71,7 @@ public class GameState : Node {
 	}
 
 	public void FinalizeQuery(Query query) {
+		GD.Print("[GameState] finalized query");
 		foreach (Entity entity in entities) {
 			if (query.Check(entity)) {
 				query.items.Add(entity);
@@ -95,7 +106,7 @@ public class GameState : Node {
 
 	public void AddEntity(Entity entity) {
 		var type = entity.GetType().Name;
-		GD.Print("[GameState] add entity", entity);
+		// GD.Print("[GameState] add entity ", entity);
 		entities.Add(entity);
 		entitiesById.Add(entity.id, entity);
 		if (!entitiesByType.ContainsKey(type)) {
@@ -103,6 +114,13 @@ public class GameState : Node {
 		}
 		entitiesByType[type].Add(entity);
 		entity.Attach(this);
+
+		foreach(Query query in queries) {
+			if (query.Check(entity)) {
+				query.OnEntityAdded(entity);
+				query.items.Add(entity);
+			}
+		}
 	}
 
 	public void RemoveEntity(Entity entity) {
@@ -110,16 +128,47 @@ public class GameState : Node {
 		entities.Remove(entity);
 		entitiesByType[type].Remove(entity);
 		entitiesById.Remove(entity.id);
+
+		foreach(Query query in queries) {
+			if (query.items.Contains(entity) && !query.Check(entity)) {
+				query.OnEntityRemoved(entity);
+				query.items.Remove(entity);
+			}
+		}
 	}
 
 	public Entity GetEntity(string id) {
 		return entitiesById[id];
 	}
 
-	public void export(System.IO.Stream stream) {
-		DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Entity));
-		foreach (Entity entity in entities) {
-			serializer.WriteObject(stream, entity);
+	public string export() {
+		return JsonConvert.SerializeObject(entities, serializerSettings);
+	}
+
+	public void import(string data) {
+		List<Entity> importedEntities = JsonConvert.DeserializeObject<List<Entity>>(data, serializerSettings);
+		foreach(Entity entity in importedEntities) {
+			AddEntity(entity);
 		}
+	}
+
+	public void clear() {
+		foreach(Entity entity in entities) {
+			var type = entity.GetType().Name;
+			entitiesByType[type].Remove(entity);
+			entitiesById.Remove(entity.id);
+
+			foreach(Query query in queries) {
+				if (query.items.Contains(entity) && !query.Check(entity)) {
+					query.OnEntityRemoved(entity);
+					query.items.Remove(entity);
+				}
+			}
+		}
+		entities.Clear();
+	}
+
+	public void debug() {
+		GD.PrintS("Entities:", entities.Count());
 	}
 }

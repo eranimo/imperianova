@@ -1,24 +1,19 @@
 using Godot;
+using Newtonsoft.Json;
 using System;
 
-namespace Entities {
-    public class Unit : Entity {
-        public Unit(Vector2 initial_position) {
-            position = initial_position;
-        }
+public class Unit : Entity {
+	public Unit(Tile initial_position) {
+		position = new Value<Tile>(initial_position);
+	}
 
-        public class UnitMoved : Message {
-            public Unit Unit { set; get; }
-            public Vector2 NewLocation { set; get; }
-        }
+	public class UnitCreated : Message {
+		public Unit Unit { set; get; }
+	}
 
-        public Vector2 position { set; get; }
+	public class UnitDeleted : Message {
+		public Unit Unit { set; get; }
+	}
 
-        public void Move(Vector2 newLocation) {
-            gameState.SendMessage(new UnitMoved() {
-                Unit = this,
-                NewLocation = new Vector2(0, 0)
-            });
-        }
-    }
+	public Value<Tile> position = new Value<Tile>();
 }

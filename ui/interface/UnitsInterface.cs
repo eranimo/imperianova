@@ -2,15 +2,26 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-/*
-- on init, instantiate a unit node for each unit entity
-- on UnitAdded message, add unit node
-- on UnitMoved message, update unit node position
-- on UnitDeleted message, delete unit node
-*/
 public class UnitsInterface : Interface {
-    Query units;
-    public override void Init() {
-        units = gameState.Query().WithType("Unit").Done();
-    }
+	Query units;
+
+	public override void Init() {
+		units = gameState.Query().WithType("Unit").Done();
+		units.EntityAdded += OnEntityAdded;
+		units.EntityRemoved += OnEntityRemoved;
+	}
+
+	public void OnEntityAdded(object sender, Entity.EntityEventArgs e) {
+		var unit = (Unit) e.entity;
+		unit.position.ValueChanged += OnUnitPositionChanged;
+	}
+
+	public void OnEntityRemoved(object sender, Entity.EntityEventArgs e) {
+		var unit = (Unit) e.entity;
+		unit.position.ValueChanged -= OnUnitPositionChanged;
+	}
+
+	public void OnUnitPositionChanged(object sender, Entity.Value<Tile>.ValueChangedEventArgs e) {
+		// GD.PrintS("OLD: ", e.oldValue, "NEW: ", e.newValue);
+	}
 }
