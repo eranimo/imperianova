@@ -21,7 +21,7 @@ public class UnitsInterface : Interface {
 		unit.position.ValueChanged -= OnUnitPositionChanged;
 	}
 
-	public void OnUnitPositionChanged(object sender, Entity.Value<Tile>.ValueChangedEventArgs e) {
+	public void OnUnitPositionChanged(object sender, Entity.Value<Vector2>.ValueChangedEventArgs e) {
 		// GD.PrintS("OLD: ", e.oldValue, "NEW: ", e.newValue);
 	}
 }

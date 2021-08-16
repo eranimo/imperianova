@@ -9,15 +9,15 @@ public class UnitManager : Manager {
 		gameState.AddEntity(tile2);
 		var tile_id = tile.id;
 		GD.Print("[UnitManager] init");
-		for(var i = 0; i < 2; i++) {
-			Unit unit = new Unit(tile);
-			gameState.AddEntity(unit);
-			GD.PrintS("Entity", unit.id);
 
-			unit.position.Set(tile2);
+		Unit unit = new Unit(new Vector2(0, 0));
+		unit.tile = tile;
+		gameState.AddEntity(unit);
 
-			// gameState.RemoveEntity(unit);
-		}
+		Unit unit2 = new Unit(new Vector2(0, 1));
+		unit2.tile = tile2;
+		gameState.AddEntity(unit2);
+
 		GD.Print("> Export");
 		gameState.debug();
 		var exported = gameState.export();

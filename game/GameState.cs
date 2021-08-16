@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Runtime.Serialization.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 
 /**
 Summary:
@@ -21,10 +23,73 @@ public class GameState : Node {
 	private Queue<Message> messageQueue = new Queue<Message>();
 	private List<Query> queries = new List<Query>();
 
-	JsonSerializerSettings serializerSettings = new JsonSerializerSettings() {
+	// public class KnownTypesBinder : ISerializationBinder {
+	// 	public Dictionary<string, Type> KnownTypes { get; set; }
+
+	// 	public Type BindToType(string assemblyName, string typeName) {
+	// 		return KnownTypes[typeName];
+	// 	}
+
+	// 	public void BindToName(Type serializedType, out string assemblyName, out string typeName) {
+	// 		assemblyName = null;
+	// 		typeName = KnownTypes.FirstOrDefault(t => t.Value.Name == serializedType.Name).Key;
+	// 	}
+	// }
+
+	public class EntityConverter : JsonConverter {
+		public override bool CanConvert(Type objectType) {
+			return objectType.BaseType.Name == "Entity";
+		}
+
+		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
+			JToken t = JToken.FromObject(value);
+			Entity entity = (Entity) value;
+			JObject o = new JObject();
+			var properties = ((JObject) t).Properties();
+			// o.AddFirst(new JProperty("id", entity.id));
+
+			foreach (var prop in entity.GetType().GetProperties()) {
+				var propValue = prop.GetValue(entity);
+				GD.PrintS(prop.Name, propValue.GetType().Name, propValue.GetType().Equals(typeof(Entity.Value<>)));
+				// if (propValue.GetType().Name == 'Entity.Value') {
+				o.AddFirst(new JProperty(prop.Name, 0));
+			}
+
+			// foreach (JProperty prop in properties) {
+			// 	var propType = entity.GetType().GetProperty(prop.Name);
+			// 	GD.PrintS(prop.Name, propType.GetValue(entity));
+			// 	o.AddFirst(new JProperty(prop.Name, prop.Value));
+			// }
+			o.AddFirst(new JProperty("__type", value.GetType().Name));
+			o.WriteTo(writer);
+		}
+
+		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
+			throw new NotImplementedException("Unnecessary because CanRead is false. The type will skip the converter.");
+		}
+
+		public override bool CanRead {
+			get { return false; }
+		}
+		public override string ToString() {
+			return base.ToString();
+		}		
+	}
+
+  	JsonSerializerSettings serializerSettings = new JsonSerializerSettings() {
 		TypeNameHandling = TypeNameHandling.Auto,
 		Formatting = Formatting.Indented, // TODO: debug mode only
-		PreserveReferencesHandling = PreserveReferencesHandling.Objects
+		PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+		// SerializationBinder = new KnownTypesBinder {
+		// 	KnownTypes = new Dictionary<string, Type> {
+		// 		{ "Entity", typeof(Entity) },
+		// 		{ "Unit", typeof(Unit) },
+		// 		{ "Tile", typeof(Tile) },
+		// 	},
+		// },
+		Converters = new List<JsonConverter>() {
+			{ new EntityConverter() }
+		}
 	};
 
 	// Setup
@@ -146,9 +211,13 @@ public class GameState : Node {
 	}
 
 	public void import(string data) {
-		List<Entity> importedEntities = JsonConvert.DeserializeObject<List<Entity>>(data, serializerSettings);
-		foreach(Entity entity in importedEntities) {
-			AddEntity(entity);
+		try {
+			List<Entity> importedEntities = JsonConvert.DeserializeObject<List<Entity>>(data, serializerSettings);
+			foreach(Entity entity in importedEntities) {
+				AddEntity(entity);
+			}
+		} catch (Exception err) {
+			GD.PushError(err.ToString());
 		}
 	}
 

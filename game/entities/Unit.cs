@@ -3,8 +3,8 @@ using Newtonsoft.Json;
 using System;
 
 public class Unit : Entity {
-	public Unit(Tile initial_position) {
-		position = new Value<Tile>(initial_position);
+	public Unit(Vector2 initial_position) {
+		position = new Value<Vector2>(initial_position);
 	}
 
 	public class UnitCreated : Message {
@@ -15,5 +15,6 @@ public class Unit : Entity {
 		public Unit Unit { set; get; }
 	}
 
-	public Value<Tile> position = new Value<Tile>();
+	public Value<Vector2> position { get; set; }
+	public Tile tile { get; set; }
 }

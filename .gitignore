@@ -13,3 +13,5 @@ data_*/
 debug_images/
 
 bin/
+
+mono_crash*
