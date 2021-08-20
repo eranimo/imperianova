@@ -24,6 +24,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scenes/GameView/GameWorld.gd"
 }, {
+"base": "ResourceFormatLoader",
+"class": "HTerrainDataLoader",
+"language": "GDScript",
+"path": "res://addons/zylann.hterrain/hterrain_resource_loader.gd"
+}, {
+"base": "ResourceFormatSaver",
+"class": "HTerrainDataSaver",
+"language": "GDScript",
+"path": "res://addons/zylann.hterrain/hterrain_resource_saver.gd"
+}, {
 "base": "Resource",
 "class": "HexCell",
 "language": "GDScript",
@@ -98,6 +108,8 @@ _global_script_class_icons={
 "DataTable": "",
 "Game": "",
 "GameWorld": "",
+"HTerrainDataLoader": "",
+"HTerrainDataSaver": "",
 "HexCell": "",
 "HexMap": "",
 "MapSet": "",
@@ -144,7 +156,7 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/integer_resolution_handler/plugin.cfg", "res://addons/quentincaffeino-console/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/integer_resolution_handler/plugin.cfg", "res://addons/quentincaffeino-console/plugin.cfg", "res://addons/zylann.hterrain/plugin.cfg" )
 
 [global]
 
