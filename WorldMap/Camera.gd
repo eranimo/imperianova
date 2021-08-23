@@ -2,6 +2,7 @@ extends Camera
 
 var panning_speed = 1
 var panning = false
+var zoom_speed = 25
 
 func _input(event):
 	if event.is_action_pressed("view_pan_mouse"):
@@ -16,7 +17,7 @@ func _input(event):
 
 	if event.is_action_released('view_zoom_in'):
 		print(event.position)
-		translation.y -= 100
+		translation.y -= zoom_speed
 	if event.is_action_released('view_zoom_out'):
-		translation.y += 100
-	translation.y = max(300, translation.y)
+		translation.y += zoom_speed
+	translation.y = max(100, translation.y)

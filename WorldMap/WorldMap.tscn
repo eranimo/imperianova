@@ -1,17 +1,8 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://addons/zylann.hterrain/hterrain.gd" type="Script" id=1]
-[ext_resource path="res://addons/zylann.hterrain/hterrain_texture_set.gd" type="Script" id=2]
-[ext_resource path="res://WorldMap/data.hterrain" type="Resource" id=3]
+[ext_resource path="res://WorldMap/MapChunk.tscn" type="PackedScene" id=1]
 [ext_resource path="res://WorldMap/WorldMap.gd" type="Script" id=4]
-[ext_resource path="res://WorldMap/textures/grass.png" type="Texture" id=5]
-[ext_resource path="res://WorldMap/textures/water.png" type="Texture" id=6]
 [ext_resource path="res://WorldMap/Camera.gd" type="Script" id=8]
-
-[sub_resource type="Resource" id=1]
-script = ExtResource( 2 )
-mode = 0
-textures = [ [ ExtResource( 5 ), ExtResource( 6 ) ], [ null, null ] ]
 
 [node name="WorldMap" type="Spatial"]
 script = ExtResource( 4 )
@@ -24,17 +15,8 @@ current = true
 far = 8192.0
 script = ExtResource( 8 )
 
-[node name="HTerrain" type="Spatial" parent="."]
-script = ExtResource( 1 )
-_terrain_data = ExtResource( 3 )
-chunk_size = 32
-collision_enabled = true
-collision_layer = 1
-collision_mask = 1
-shader_type = "LowPoly"
-custom_shader = null
-custom_globalmap_shader = null
-texture_set = SubResource( 1 )
-
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 256, 400, 256 )
+
+[node name="MapChunk" parent="." instance=ExtResource( 1 )]
+noise_multiplier = 51

@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/water.png-967117f14da441032d752ab3df37bf37.s3tc.stex"
-path.etc2="res://.import/water.png-967117f14da441032d752ab3df37bf37.etc2.stex"
+path.s3tc="res://.import/sand.png-25f55aa149d8384516952c588748ddcf.s3tc.stex"
+path.etc2="res://.import/sand.png-25f55aa149d8384516952c588748ddcf.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://WorldMap/textures/water.png"
-dest_files=[ "res://.import/water.png-967117f14da441032d752ab3df37bf37.s3tc.stex", "res://.import/water.png-967117f14da441032d752ab3df37bf37.etc2.stex" ]
+source_file="res://WorldMap/textures/sand.png"
+dest_files=[ "res://.import/sand.png-25f55aa149d8384516952c588748ddcf.s3tc.stex", "res://.import/sand.png-25f55aa149d8384516952c588748ddcf.etc2.stex" ]
 
 [params]
 

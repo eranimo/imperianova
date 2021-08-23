@@ -163,6 +163,7 @@ enabled=PoolStringArray( "res://addons/integer_resolution_handler/plugin.cfg", "
 default_clear_color=true
 margin=false
 line=false
+terrain=false
 
 [input]
 
