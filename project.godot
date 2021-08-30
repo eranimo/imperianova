@@ -144,7 +144,7 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/integer_resolution_handler/plugin.cfg", "res://addons/quentincaffeino-console/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/MagicaVoxelImporter/plugin.cfg", "res://addons/integer_resolution_handler/plugin.cfg", "res://addons/quentincaffeino-console/plugin.cfg" )
 
 [global]
 

@@ -1,0 +1,13 @@
+[remap]
+
+importer="MagicaVoxel-Importer"
+type="Mesh"
+path="res://.import/ocean.vox-fcc2520fc3cc982e3b832c4b65475a92.mesh"
+
+[deps]
+
+source_file="res://assets/models/ocean.vox"
+dest_files=[ "res://.import/ocean.vox-fcc2520fc3cc982e3b832c4b65475a92.mesh" ]
+
+[params]
+
