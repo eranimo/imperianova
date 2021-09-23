@@ -26,7 +26,7 @@ func _exit_tree():
 
 func update_colors():
 	var map_mode = MapManager.current_map_mode.value
-	if map_mode == MapManager.MapMode.NONE:
+	if map_mode == MapManager.MapMode.TERRAIN:
 		tile_colors = {}
 		return
 	var sealevel = float(MapData.game_world.map_options.sealevel)

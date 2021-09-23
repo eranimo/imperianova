@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://scenes/WorldMap/MapChunk.gd" type="Script" id=2]
 [ext_resource path="res://scenes/WorldMap/ChunkOverlay.gd" type="Script" id=4]
-[ext_resource path="res://scenes/WorldMap/ChunkTerrain.gd" type="Script" id=5]
 
 [node name="MapChunk" type="TileMap"]
 cell_size = Vector2( 49, 60 )
@@ -17,17 +16,6 @@ __meta__ = {
 
 [node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
 rect = Rect2( 0, 0, 10, 10 )
-
-[node name="ChunkTerrain" type="TileMap" parent="."]
-cell_size = Vector2( 49, 60 )
-cell_quadrant_size = 128
-cell_custom_transform = Transform2D( 64, 0, 0, 60, 0, 0 )
-cell_half_offset = 1
-format = 1
-script = ExtResource( 5 )
-__meta__ = {
-"_editor_description_": ""
-}
 
 [node name="ChunkOverlay" type="TileMap" parent="."]
 cell_size = Vector2( 49, 60 )

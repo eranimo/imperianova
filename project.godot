@@ -59,11 +59,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/ReactiveState.gd"
 }, {
-"base": "HexMap",
-"class": "SectionalTilemap",
-"language": "GDScript",
-"path": "res://scenes/WorldMap/SectionalTilemap.gd"
-}, {
 "base": "CollisionShape2D",
 "class": "Selectable",
 "language": "GDScript",
@@ -105,7 +100,6 @@ _global_script_class_icons={
 "NameGen": "",
 "ReactiveSet": "",
 "ReactiveState": "",
-"SectionalTilemap": "",
 "Selectable": "",
 "SmoothPath": "",
 "System": "",

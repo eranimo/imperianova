@@ -13,20 +13,20 @@ var selected_tile = ReactiveState.new(null)
 var selected_units = ReactiveSet.new()
 
 enum MapMode {
-	NONE,
+	TERRAIN,
 	HEIGHT,
 	TEMPERATURE,
 	RAINFALL,
 }
 
 var map_mode_titles = {
-	MapMode.NONE: 'None',
+	MapMode.TERRAIN: 'Terrain',
 	MapMode.HEIGHT: 'Height',
 	MapMode.TEMPERATURE: 'Temperature',
 	MapMode.RAINFALL: 'Rainfall',
 }
 
-var current_map_mode = ReactiveState.new(MapMode.NONE)
+var current_map_mode = ReactiveState.new(MapMode.TERRAIN)
 
 func set_map_mode(map_mode):
 	current_map_mode.next(map_mode)

@@ -26,7 +26,6 @@ func render():
 				"local": local_tile,
 			})
 
-	$ChunkTerrain.render()
 	$ChunkOverlay.render()
 
 	should_render = false
