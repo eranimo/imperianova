@@ -1,6 +1,5 @@
-extends HexMap
+extends Node2D
 
-var tile_colors = {}
 
 var height_gradient = preload("res://resources/colormaps/mapmode-height.tres")
 var temperature_gradient = preload("res://resources/colormaps/mapmode-temperature.tres")
@@ -26,15 +25,15 @@ func _exit_tree():
 
 func update_colors():
 	var map_mode = MapManager.current_map_mode.value
-	if map_mode == MapManager.MapMode.TERRAIN:
-		tile_colors = {}
-		return
 	var sealevel = float(MapData.game_world.map_options.sealevel)
 	for chunk_tile in get_parent().chunk_tiles:
 		var pos = chunk_tile.global
 		var color = Color(0, 0, 0)
 		var tile_data = MapData.get_tile(pos)
-		if map_mode == MapManager.MapMode.HEIGHT:
+		if map_mode == MapManager.MapMode.TERRAIN:
+			var terrainType =  MapData.get_tile(pos).terrain_type
+			color = MapData.terrain_colors[terrainType]
+		elif map_mode == MapManager.MapMode.HEIGHT:
 			var height = tile_data.height
 			var ratio
 			if height < sealevel:
@@ -49,19 +48,11 @@ func update_colors():
 			var rainfall = tile_data.rainfall
 			color = rainfall_colors.get(int(stepify(rainfall, 0.05) * 100), Color(0, 0, 0))
 		
-		tile_colors[pos] = color
+		$HexMeshGrid.set_hex_color(chunk_tile.local, color)
 
 func _map_mode_change(_map_mode):
 	update_colors()
-	render()
 
 func render():
+	$HexMeshGrid.setup_grid()
 	update_colors()
-	update()
-
-func _draw():
-	for chunk_tile in get_parent().chunk_tiles:
-		if tile_colors.has(chunk_tile.global):
-			var color = tile_colors[chunk_tile.global]
-			var center = map_to_world(chunk_tile.local)
-			draw_texture(HexShape, center, color)

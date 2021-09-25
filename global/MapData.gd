@@ -23,6 +23,13 @@ var terrain_title = {
 	TerrainType.FOREST: "Forest",
 }
 
+var terrain_colors = {
+	TerrainType.OCEAN: Color("#ff1f538c"),
+	TerrainType.GRASSLAND: Color("#ff529a3b"),
+	TerrainType.DESERT: Color("#ffcec27e"),
+	TerrainType.FOREST: Color("#ff25562e"),
+}
+
 const terrain_transitions = {
 	TerrainType.OCEAN: [TerrainType.GRASSLAND, TerrainType.DESERT, TerrainType.FOREST],
 	TerrainType.GRASSLAND: [TerrainType.DESERT, TerrainType.FOREST],

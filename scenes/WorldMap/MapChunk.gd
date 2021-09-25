@@ -1,4 +1,4 @@
-extends HexMap
+extends Node2D
 
 var chunk_position: Vector2 setget _set_chunk_position
 var should_render = true
@@ -29,7 +29,7 @@ func render():
 	$ChunkOverlay.render()
 
 	should_render = false
-	# print("Render chunk %s (%d ms)" % [str(chunk_position), OS.get_ticks_msec() - time_start])
+	print("Render chunk %s (%d ms)" % [str(chunk_position), OS.get_ticks_msec() - time_start])
 
 
 func _on_entered(viewport):

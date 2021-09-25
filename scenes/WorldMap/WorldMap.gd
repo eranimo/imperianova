@@ -24,10 +24,10 @@ func _ready():
 	MapManager.connect("tile_hovered", self, "_on_tile_hover")
 	MapManager.selected_tile.subscribe(self, "_update_selected_tile")
 
-	for _i in range(5):
-		var unit = Unit.instance()
-		unit.setup(Vector2(randi()%50+1, randi()%50+1))
-		$Units.add_child(unit)
+	# for _i in range(5):
+	# 	var unit = Unit.instance()
+	# 	unit.setup(Vector2(randi()%50+1, randi()%50+1))
+	# 	$Units.add_child(unit)
 
 func _exit_tree():
 	MapManager.selected_tile.unsubscribe(self)
@@ -45,9 +45,9 @@ func render():
 			map_chunk.name = "MapChunk (%d, %d)" % [cx, cy]
 			$MapChunks.add_child(map_chunk)
 			var first_hex = Vector2(cx * MapData.CHUNK_SIZE.x, cy * MapData.CHUNK_SIZE.y)
-			map_chunk.position = map_to_world(to_global(first_hex))
-
-	# DEBUG: render bitmask IDs on tiles
+			map_chunk.position = HexUtils.oddr_offset_to_pixel(first_hex.x, first_hex.y)
+	
+			# DEBUG: render bitmask IDs on tiles
 	for pos in MapData.tiles():
 		$GridLines.set_cellv(pos, 0)
 

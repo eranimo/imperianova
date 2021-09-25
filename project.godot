@@ -128,6 +128,7 @@ Utils="*res://global/Utils.gd"
 MapTilesets="*res://global/MapTilesets.gd"
 IntegerResolutionHandler="*res://addons/integer_resolution_handler/integer_resolution_handler.gd"
 Global="*res://global/Global.cs"
+HexUtils="*res://global/HexUtils.gd"
 
 [display]
 
