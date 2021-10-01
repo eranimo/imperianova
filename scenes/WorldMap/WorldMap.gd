@@ -10,8 +10,6 @@ var selected = []
 var drag_start = Vector2.ZERO  
 var select_rect = RectangleShape2D.new()
 
-onready var GridLines: Node = find_node("GridLines")
-
 onready var OverlayTexture = preload("res://assets/textures/overlay.tres")
 onready var MapChunk = preload("res://scenes/WorldMap/MapChunk.tscn")
 onready var Unit = preload("res://scenes/WorldMap/Unit.tscn")
@@ -32,9 +30,6 @@ func _ready():
 func _exit_tree():
 	MapManager.selected_tile.unsubscribe(self)
 
-func _update_grid_visibility(_offset, zoom):
-	GridLines.visible = zoom.x < 3
-
 func render():
 	var chunk_width = MapData.game_world.map_width / MapData.CHUNK_SIZE.x
 	var chunk_height = MapData.game_world.map_height / MapData.CHUNK_SIZE.y
@@ -45,11 +40,7 @@ func render():
 			map_chunk.name = "MapChunk (%d, %d)" % [cx, cy]
 			$MapChunks.add_child(map_chunk)
 			var first_hex = Vector2(cx * MapData.CHUNK_SIZE.x, cy * MapData.CHUNK_SIZE.y)
-			map_chunk.position = HexUtils.oddr_offset_to_pixel(first_hex.x, first_hex.y)
-	
-			# DEBUG: render bitmask IDs on tiles
-	for pos in MapData.tiles():
-		$GridLines.set_cellv(pos, 0)
+			map_chunk.position = HexUtils.oddq_offset_to_pixel(first_hex.y, first_hex.x)
 
 func _unhandled_input(event) -> void:
 	var grid_pos: Vector2 = world_to_map(get_global_mouse_position()) 
@@ -92,10 +83,8 @@ func _unhandled_input(event) -> void:
 			_last_hovered_tile_pos = hexCell.offset_coords
 	
 	if event.is_action_pressed("map_toggle_grid"):
-		if $GridLines.visible:
-			$GridLines.hide()
-		else:
-			$GridLines.show()
+		# TODO: implement
+		pass
 
 func _on_tile_hover(tile_pos, world_pos):
 	if tile_pos == null:
