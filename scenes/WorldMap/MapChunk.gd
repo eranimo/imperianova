@@ -17,8 +17,8 @@ func render():
 
 	var first_x = chunk_position.x * MapData.CHUNK_SIZE.x
 	var first_y = chunk_position.y * MapData.CHUNK_SIZE.y
-	for x in range(0, MapData.CHUNK_SIZE.x):
-		for y in range(0, MapData.CHUNK_SIZE.y):
+	for x in range(MapData.CHUNK_SIZE.x):
+		for y in range(MapData.CHUNK_SIZE.y):
 			var global_tile = Vector2(first_x + x, first_y + y)
 			var local_tile = Vector2(x, y)
 			chunk_tiles.append({

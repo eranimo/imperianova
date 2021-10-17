@@ -24,10 +24,11 @@ func setup_grid():
 	var i = 0
 	for x in range(MapData.CHUNK_SIZE.x):
 		for y in range(MapData.CHUNK_SIZE.y):
-			var hex_center = HexUtils.oddq_offset_to_pixel(y, x)
+			var hex = Vector2(x, y)
+			var hex_center = HexUtils.hex_to_pixel(hex)
 			var transform = Transform2D(0, hex_center)
 			multi_mesh.set_instance_transform_2d(i, transform)
-			hexes[Vector2(x, y)] = i
+			hexes[hex] = i
 			i += 1
 	is_setup = true
 
