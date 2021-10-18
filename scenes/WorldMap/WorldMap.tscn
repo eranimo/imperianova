@@ -1,6 +1,5 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://assets/textures/grid-ui.png" type="Texture" id=1]
 [ext_resource path="res://ui/interface/UnitsInterface.cs" type="Script" id=2]
 [ext_resource path="res://scenes/WorldMap/WorldMap.gd" type="Script" id=3]
 [ext_resource path="res://scenes/WorldMap/TileUI.gd" type="Script" id=4]
@@ -10,12 +9,7 @@
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 512, 300 )
 
-[node name="WorldMap" type="TileMap"]
-cell_size = Vector2( 49, 60 )
-cell_quadrant_size = 128
-cell_custom_transform = Transform2D( 64, 0, 0, 60, 0, 0 )
-cell_half_offset = 1
-format = 1
+[node name="WorldMap" type="Node2D"]
 script = ExtResource( 3 )
 __meta__ = {
 "_editor_description_": ""
@@ -44,15 +38,18 @@ script = ExtResource( 4 )
 visible = false
 shape = SubResource( 1 )
 
-[node name="HoverTile" type="Sprite" parent="TileUI"]
-modulate = Color( 0.901961, 0.901961, 0.901961, 1 )
-texture = ExtResource( 1 )
-centered = false
-region_enabled = true
-region_rect = Rect2( 64, 0, 64, 60 )
+[node name="HoverTile" type="Line2D" parent="TileUI"]
+points = PoolVector2Array( 16, 0, 48, 0, 64, 27.71, 48, 55.42, 16, 55.42, 0, 27.71, 16, 0 )
+width = 2.0
+default_color = Color( 0.588235, 0.588235, 0.588235, 1 )
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
 
-[node name="SelectedTile" type="Sprite" parent="TileUI"]
-texture = ExtResource( 1 )
-centered = false
-region_enabled = true
-region_rect = Rect2( 256, 0, 64, 60 )
+[node name="SelectedTile" type="Line2D" parent="TileUI"]
+points = PoolVector2Array( 16, 0, 48, 0, 64, 27.71, 48, 55.42, 16, 55.42, 0, 27.71, 16, 0 )
+width = 2.0
+default_color = Color( 1, 1, 1, 1 )
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2

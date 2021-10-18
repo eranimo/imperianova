@@ -3,7 +3,6 @@ extends Node
 const SIZE = 32.0 # distance from hex center to corner
 const hex_width = 2 * SIZE
 const hex_height = sqrt(3) * SIZE
-const _origin = Vector2(0, 0)
 var hex_mesh: Mesh
 
 
@@ -21,7 +20,7 @@ func flat_hex_corner(center, i) -> Vector2:
 		center.y + SIZE * sin(angle_rad)
 	)
 
-func round_hex(cube: Vector3):
+func cube_round(cube: Vector3):
 	var rx = round(cube.x)
 	var ry = round(cube.y)
 	var rz = round(cube.z)
@@ -39,11 +38,25 @@ func round_hex(cube: Vector3):
 
 	return Vector3(rx, ry, rz) # cube
 
+func hex_round(hex):
+	return cube_to_axial(cube_round(axial_to_cube(hex)))
+
 func offset_to_axial(hex: Vector2):
 	return Vector2(
 		hex.x,
 		hex.y - floor(hex.x / 2)
 	)
+
+func cube_to_axial(cube: Vector3):
+	var q = cube.x
+	var r = cube.z
+	return Vector2(q, r)
+
+func axial_to_cube(hex: Vector2):
+	var x = hex.x
+	var z = hex.y
+	var y = -x-z
+	return Vector3(x, y, z)
 
 func axial_to_offset(hex: Vector2):
 	return Vector2(
@@ -51,31 +64,27 @@ func axial_to_offset(hex: Vector2):
 		hex.y + floor(hex.x / 2)
 	)
 
-func cube_to_offset(cube):
+func cube_to_offset(cube: Vector3):
 	var col = cube.x
 	var row = cube.z + (cube.x - (int(cube.x) & 1)) / 2
 	return Vector2(col, row)
 
-func offset_to_cube(hex):
+func offset_to_cube(hex: Vector2):
 	var x = hex.x
 	var z = hex.y - (hex.x - (int(hex.x) & 1)) / 2
 	var y = -x-z
 	return Vector3(x, y, z)
 
-func hex_to_pixel(hex_offset):
+func hex_to_pixel(hex_offset: Vector2):
 	var hex = offset_to_axial(hex_offset)
 	var x = (_orientation[0] * hex.x + _orientation[1] * hex.y) * SIZE
 	var y = (_orientation[2] * hex.x + _orientation[3] * hex.y) * SIZE
-	return Vector2(x + _origin.x, y + _origin.y);
+	return Vector2(x, y)
 
-func pixel_to_hex(hex_offset):
-	var pt = Vector2(
-		(hex_offset.x - _origin.x) / SIZE,
-		(hex_offset.y - _origin.y) / SIZE
-	);
-	var q = _orientation[4] * pt.x + _orientation[5] * pt.y;
-	var r = _orientation[6] * pt.x + _orientation[7] * pt.y;
-	return cube_to_offset(round_hex(Vector3(q, r, -q - r)))
+func pixel_to_hex(point: Vector2):
+	var q = (2.0/3 * point.x) / SIZE
+	var r = (-1.0/3 * point.x + sqrt(3)/3 * point.y) / SIZE
+	return cube_to_offset(cube_round(Vector3(q, -q-r, r)))
 
 func create_hex_mesh() -> ArrayMesh:
 	var vertices = PoolVector2Array()

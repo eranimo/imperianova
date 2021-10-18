@@ -1,6 +1,6 @@
 extends Node
 
-var world_map: HexMap
+var world_map
 signal tile_pressed(tile_pos)
 signal tile_hovered(tile_pos, world_pos)
 signal tile_updated(tile_pos, data)
@@ -31,7 +31,7 @@ var current_map_mode = ReactiveState.new(MapMode.TERRAIN)
 func set_map_mode(map_mode):
 	current_map_mode.next(map_mode)
 
-func connect_map(_map: HexMap):
+func connect_map(_map):
 	world_map = _map
 	world_map.connect("tile_pressed", self, "_on_tile_pressed")
 	world_map.connect("tile_hovered", self, "_on_tile_hovered")

@@ -1,4 +1,4 @@
-extends HexMap
+extends Node2D
 
 signal tile_pressed(tile_pos)
 signal tile_hovered(tile_pos, world_pos)
@@ -43,13 +43,11 @@ func render():
 			map_chunk.position = HexUtils.hex_to_pixel(first_hex)
 
 func _unhandled_input(event) -> void:
-	# var pos = get_global_mouse_position()
-	# prints('Pos:', pos)
-	# prints('Hex', HexUtils.pixel_to_hex(pos))
-	var grid_pos: Vector2 = world_to_map(get_global_mouse_position()) 
-	var hexCell: HexCell = get_hex_at(grid_pos)
-	var hexWorldPos: Vector2 = map_to_world(hexCell.get_offset_coords())
-
+	var pos = get_global_mouse_position() - Vector2(HexUtils.SIZE, HexUtils.SIZE)
+	prints('Pos:', pos)
+	var grid_pos = HexUtils.pixel_to_hex(pos)
+	prints('Hex', grid_pos)
+	var hexWorldPos = HexUtils.hex_to_pixel(grid_pos)
 
 	if event.is_action_pressed("ui_select"):
 		is_dragging = true
@@ -58,7 +56,7 @@ func _unhandled_input(event) -> void:
 	if event.is_action_released("ui_select"):
 
 		if get_global_mouse_position().is_equal_approx(drag_start):
-			emit_signal("tile_pressed", hexCell.offset_coords)
+			emit_signal("tile_pressed", grid_pos)
 
 		if is_dragging:
 			is_dragging = false
@@ -81,9 +79,9 @@ func _unhandled_input(event) -> void:
 		if is_dragging:
 			$TileUI.update_selection_rect(Rect2(drag_start, get_global_mouse_position() - drag_start))
 		elif _last_hovered_tile_pos == null or \
-			not hexCell.offset_coords.is_equal_approx(_last_hovered_tile_pos):
-			emit_signal("tile_hovered", hexCell.offset_coords, hexWorldPos)
-			_last_hovered_tile_pos = hexCell.offset_coords
+			not grid_pos.is_equal_approx(_last_hovered_tile_pos):
+			emit_signal("tile_hovered", grid_pos, hexWorldPos)
+			_last_hovered_tile_pos = grid_pos
 	
 	if event.is_action_pressed("map_toggle_grid"):
 		# TODO: implement toggling grid
@@ -101,4 +99,4 @@ func _update_selected_tile(selected_tile):
 		$TileUI/SelectedTile.hide()
 	else:
 		$TileUI/SelectedTile.show()
-		$TileUI/SelectedTile.position = map_to_world(selected_tile)
+		$TileUI/SelectedTile.position = HexUtils.hex_to_pixel(selected_tile)
