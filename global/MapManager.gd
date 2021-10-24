@@ -41,19 +41,19 @@ func connect_map(_map):
 func is_valid_pos(pos: Vector2):
 	if pos.x < 0 or pos.y < 0:
 		return false
-	if pos.x >= MapData.game_world.map_width or pos.y >= MapData.game_world.map_height:
+	if pos.x >= WorldData.mapSize[0] or pos.y >= WorldData.mapSize[1]:
 		return false
 	return true
 
 func _on_tile_pressed(tile_pos: Vector2):
 	if not is_valid_pos(tile_pos):
 		return
-	var tile = MapData.get_tile(tile_pos)
+	var tile = WorldData.GetTile(tile_pos.x, tile_pos.y)
 	print("Tile pressed: %s (%s)" % [tile_pos, MapData.terrain_title[tile.terrain_type]])
-	for dir in MapData.tile_neighbors[tile_pos]:
-		var pos = MapData.tile_neighbors[tile_pos][dir]
-		var n_tile = MapData.get_tile(pos)
-		print("\tNeighbor %s:  %s (%s)" % [MapData.direction_titles[dir], pos, MapData.terrain_title[n_tile.terrain_type]])
+	# for dir in MapData.tile_neighbors[tile_pos]:
+	# 	var pos = MapData.tile_neighbors[tile_pos][dir]
+	# 	var n_tile = MapData.get_tile(pos)
+	# 	print("\tNeighbor %s:  %s (%s)" % [MapData.direction_titles[dir], pos, MapData.terrain_title[n_tile.terrain_type]])
 	print('Terrain type: ', MapData.terrain_title[tile.terrain_type])
 	emit_signal("tile_pressed", tile_pos)
 

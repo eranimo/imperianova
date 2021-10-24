@@ -17,7 +17,7 @@ func _ready():
 		SaveSystem.pending_save = null
 	
 	if not SaveSystem.current_save:
-		$Game.generate()
+		$Game.NewGame()
 	
 	emit_signal("game_loaded")
 

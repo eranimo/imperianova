@@ -1,16 +1,17 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://resources/fonts/ui-labels-normal.tres" type="DynamicFont" id=1]
-[ext_resource path="res://scenes/GameView/GameWorld.tscn" type="PackedScene" id=2]
-[ext_resource path="res://scenes/GameView/Game.gd" type="Script" id=3]
+[ext_resource path="res://scenes/GameView/MapCamera.gd" type="Script" id=2]
+[ext_resource path="res://scenes/WorldMap/WorldMap.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/GameView/TileData.gd" type="Script" id=4]
-[ext_resource path="res://scenes/GameView/GameHeader.gd" type="Script" id=5]
+[ext_resource path="res://scenes/GameView/GameHeader.cs" type="Script" id=5]
 [ext_resource path="res://scenes/GameView/MapModeSelect.gd" type="Script" id=6]
 [ext_resource path="res://ui/TileHoverInfoRow.tscn" type="PackedScene" id=7]
 [ext_resource path="res://ui/SelectedUnits.tscn" type="PackedScene" id=8]
 [ext_resource path="res://ui/SelectedTileInfo.tscn" type="PackedScene" id=9]
 [ext_resource path="res://game/GameState.cs" type="Script" id=10]
 [ext_resource path="res://game/managers/UnitManager.cs" type="Script" id=11]
+[ext_resource path="res://game/Game.cs" type="Script" id=12]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.152941, 0.152941, 0.152941, 1 )
@@ -21,11 +22,29 @@ bg_color = Color( 0.137255, 0.137255, 0.137255, 1 )
 [node name="Game" type="Node" groups=[
 "persist",
 ]]
-script = ExtResource( 3 )
+script = ExtResource( 12 )
 
-[node name="GameWorld" parent="." instance=ExtResource( 2 )]
-world_data = {
+[node name="MapViewport" type="ViewportContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 1024.0
+margin_bottom = 600.0
+mouse_filter = 2
+stretch = true
+__meta__ = {
+"_edit_use_anchors_": false
 }
+
+[node name="Viewport" type="Viewport" parent="MapViewport"]
+size = Vector2( 2048, 1200 )
+handle_input_locally = false
+render_target_update_mode = 3
+
+[node name="MapCamera" type="Camera2D" parent="MapViewport/Viewport"]
+current = true
+script = ExtResource( 2 )
+
+[node name="WorldMap" parent="MapViewport/Viewport" instance=ExtResource( 3 )]
 
 [node name="UI" type="CanvasLayer" parent="."]
 

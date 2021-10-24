@@ -18,7 +18,6 @@ func _init():
 	MapManager.connect_map(self)
 
 func _ready():
-	MapManager.connect("camera_moved", self, "_update_grid_visibility")
 	MapManager.connect("tile_hovered", self, "_on_tile_hover")
 	MapManager.selected_tile.subscribe(self, "_update_selected_tile")
 
@@ -31,15 +30,15 @@ func _exit_tree():
 	MapManager.selected_tile.unsubscribe(self)
 
 func render():
-	var chunk_width = floor(MapData.game_world.map_width / MapData.CHUNK_SIZE.y)
-	var chunk_height = floor(MapData.game_world.map_height / MapData.CHUNK_SIZE.x)
+	var chunk_width = floor(WorldData.mapSize[0] / WorldData.CHUNK_SIZE.y)
+	var chunk_height = floor(WorldData.mapSize[1] / WorldData.CHUNK_SIZE.x)
 	for cx in chunk_width:
 		for cy in chunk_height:
 			var map_chunk = MapChunk.instance()
 			map_chunk.chunk_position = Vector2(cx, cy)
 			map_chunk.name = "MapChunk (%d, %d)" % [cx, cy]
 			$MapChunks.add_child(map_chunk)
-			var first_hex = Vector2(cx * MapData.CHUNK_SIZE.x, cy * MapData.CHUNK_SIZE.y)
+			var first_hex = Vector2(cx * WorldData.CHUNK_SIZE.x, cy * WorldData.CHUNK_SIZE.y)
 			map_chunk.position = HexUtils.hex_to_pixel(first_hex)
 
 func _unhandled_input(event) -> void:

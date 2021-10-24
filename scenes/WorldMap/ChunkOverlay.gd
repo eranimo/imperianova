@@ -25,13 +25,13 @@ func _exit_tree():
 
 func update_colors():
 	var map_mode = MapManager.current_map_mode.value
-	var sealevel = float(MapData.game_world.map_options.sealevel)
+	var sealevel = float(WorldData.sealevel)
 	for chunk_tile in get_parent().chunk_tiles:
 		var pos = chunk_tile.global
 		var color = Color(0, 0, 0)
-		var tile_data = MapData.get_tile(pos)
+		var tile_data = WorldData.GetTile(pos.x, pos.y)
 		if map_mode == MapManager.MapMode.TERRAIN:
-			var terrainType =  MapData.get_tile(pos).terrain_type
+			var terrainType =  tile_data.terrain_type
 			color = MapData.terrain_colors[terrainType]
 		elif map_mode == MapManager.MapMode.HEIGHT:
 			var height = tile_data.height
