@@ -5,6 +5,6 @@ font_path = "res://assets/fonts/FiraSans-Regular.ttf"
 
 [resource]
 resource_local_to_scene = true
-size = 12
+size = 24
 extra_spacing_char = 1
 font_data = SubResource( 2 )

@@ -1,8 +1,8 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://scenes/MainMenu/MainMenu.gd" type="Script" id=1]
 [ext_resource path="res://scenes/LoadDialog/LoadDialog.tscn" type="PackedScene" id=2]
-[ext_resource path="res://assets/fonts/Minecraftia-Regular.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://resources/fonts/ui-labels-large.tres" type="DynamicFont" id=3]
 [ext_resource path="res://assets/fonts/Pixel Musketeer.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://resources/theme.tres" type="Theme" id=5]
 
@@ -11,10 +11,6 @@ resource_local_to_scene = true
 size = 48
 outline_color = Color( 1, 1, 1, 0.435294 )
 font_data = ExtResource( 4 )
-
-[sub_resource type="DynamicFont" id=2]
-size = 24
-font_data = ExtResource( 3 )
 
 [node name="MainMenu" type="Control"]
 anchor_right = 1.0
@@ -76,9 +72,9 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
-margin_top = 4.0
+margin_top = 8.0
 margin_right = 302.0
-margin_bottom = 66.0
+margin_bottom = 70.0
 custom_fonts/font = SubResource( 1 )
 text = "ImperiaNova"
 align = 1
@@ -89,11 +85,11 @@ __meta__ = {
 [node name="NewGame" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer" groups=[
 "buttons",
 ]]
-margin_top = 76.0
+margin_top = 80.0
 margin_right = 302.0
-margin_bottom = 117.0
+margin_bottom = 118.0
 theme = ExtResource( 5 )
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "New Game"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -102,11 +98,11 @@ __meta__ = {
 [node name="LoadGame" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer" groups=[
 "buttons",
 ]]
-margin_top = 127.0
+margin_top = 128.0
 margin_right = 302.0
-margin_bottom = 168.0
+margin_bottom = 166.0
 theme = ExtResource( 5 )
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "Load Game"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -115,14 +111,15 @@ __meta__ = {
 [node name="ExitGame" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer" groups=[
 "buttons",
 ]]
-margin_top = 178.0
+margin_top = 176.0
 margin_right = 302.0
-margin_bottom = 219.0
+margin_bottom = 214.0
 theme = ExtResource( 5 )
-custom_fonts/font = SubResource( 2 )
+custom_fonts/font = ExtResource( 3 )
 text = "Exit"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="LoadDialog" parent="." instance=ExtResource( 2 )]
+visible = false

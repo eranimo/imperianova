@@ -53,6 +53,7 @@ margin_bottom = 100.0
 grow_horizontal = 2
 rect_min_size = Vector2( 300, 100 )
 size_flags_horizontal = 3
+custom_constants/separation = 0
 script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -63,27 +64,27 @@ margin_right = 300.0
 label = "Tile"
 
 [node name="Terrain" parent="UI/TileData" instance=ExtResource( 7 )]
-margin_top = 20.0
+margin_top = 28.0
 margin_right = 300.0
-margin_bottom = 36.0
+margin_bottom = 56.0
 label = "Terrain"
 
 [node name="Height" parent="UI/TileData" instance=ExtResource( 7 )]
-margin_top = 40.0
+margin_top = 56.0
 margin_right = 300.0
-margin_bottom = 56.0
+margin_bottom = 84.0
 label = "Height"
 
 [node name="Temperature" parent="UI/TileData" instance=ExtResource( 7 )]
-margin_top = 60.0
+margin_top = 84.0
 margin_right = 300.0
-margin_bottom = 76.0
+margin_bottom = 112.0
 label = "Temperature"
 
 [node name="Rainfall" parent="UI/TileData" instance=ExtResource( 7 )]
-margin_top = 80.0
+margin_top = 112.0
 margin_right = 300.0
-margin_bottom = 96.0
+margin_bottom = 140.0
 label = "Rainfall"
 
 [node name="GameHeader" type="PanelContainer" parent="UI"]
