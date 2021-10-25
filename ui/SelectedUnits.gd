@@ -1,4 +1,4 @@
-extends PanelContainer
+extends WindowDialog
 
 onready var UnitPanelContainer: Node = find_node("UnitPanelContainer")
 onready var UnitPanel = preload("res://ui/UnitPanel.tscn")

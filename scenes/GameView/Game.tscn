@@ -192,7 +192,6 @@ theme = ExtResource( 13 )
 text = "Menu"
 
 [node name="SelectedTileInfo" parent="UI" instance=ExtResource( 9 )]
-visible = true
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_top = -200.0

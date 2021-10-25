@@ -1,4 +1,4 @@
-extends PopupDialog
+extends WindowDialog
 
 onready var Title = $Control/ScrollContainer/MarginContainer/VBoxContainer/Title
 onready var Details = $Control/ScrollContainer/MarginContainer/VBoxContainer/Details
