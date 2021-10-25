@@ -24,15 +24,15 @@ public class GameHeader : PanelContainer {
 			this.playButton.Text = isPlaying ? "Pause" : "Play"; 
 		});
 
-		this.game.speed.Subscribe((Speed speed) => {
+		this.game.speed.Subscribe((GameSpeed speed) => {
 			switch (speed) {
-				case Speed.Slow:
+				case GameSpeed.Slow:
 					this.changeSpeed.Text = "Slow";
 					return;
-				case Speed.Normal:
+				case GameSpeed.Normal:
 					this.changeSpeed.Text = "Normal";
 					return;
-				case Speed.Fast:
+				case GameSpeed.Fast:
 					this.changeSpeed.Text = "Fast";
 					return;
 			}
@@ -40,6 +40,7 @@ public class GameHeader : PanelContainer {
 
 		this.playButton.Connect("pressed", this, "_play_pressed");
 		this.changeSpeed.Connect("pressed", this, "_speed_pressed");
+		this.menu.Connect("pressed", this, "_menu_pressed");
 	}
 
 	private void _play_pressed() {
@@ -48,5 +49,10 @@ public class GameHeader : PanelContainer {
 
 	private void _speed_pressed() {
 		this.game.ToggleSpeed();
+	}
+
+	private void _menu_pressed() {
+		var gameView = GetNode("/root/GameView");
+		gameView.Call("open_menu");
 	}
 }

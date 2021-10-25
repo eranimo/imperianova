@@ -3,7 +3,7 @@ using System;
 using System.Reactive.Subjects;
 using GameWorld;
 
-public enum Speed {
+public enum GameSpeed {
 	Slow,
 	Normal,
 	Fast,
@@ -16,7 +16,7 @@ public class Game : Node {
 
 	public BehaviorSubject<int> date = new BehaviorSubject<int>(0);
 	public BehaviorSubject<bool> playState = new BehaviorSubject<bool>(false);
-	public BehaviorSubject<Speed> speed = new BehaviorSubject<Speed>(Speed.Normal);
+	public BehaviorSubject<GameSpeed> speed = new BehaviorSubject<GameSpeed>(GameSpeed.Normal);
 
 	private GameState gameState;
 	private Godot.Object worldMap;
@@ -66,14 +66,14 @@ public class Game : Node {
 
 	public void ToggleSpeed() {
 		switch (this.speed.Value) {
-			case Speed.Slow: 
-				this.speed.OnNext(Speed.Normal);
+			case GameSpeed.Slow: 
+				this.speed.OnNext(GameSpeed.Normal);
 				return;
-			case Speed.Normal:
-				this.speed.OnNext(Speed.Fast);
+			case GameSpeed.Normal:
+				this.speed.OnNext(GameSpeed.Fast);
 				return;
-			case Speed.Fast:
-				this.speed.OnNext(Speed.Slow);
+			case GameSpeed.Fast:
+				this.speed.OnNext(GameSpeed.Slow);
 				return;
 		}
 	}
@@ -111,9 +111,9 @@ public class Game : Node {
 
 	private int GetSpeedTicks() {
 		switch (this.speed.Value) {
-			case Speed.Slow: return 4 * this.TICKS_PER_DAY;
-			case Speed.Normal: return 2 * this.TICKS_PER_DAY;
-			case Speed.Fast: return 1 * this.TICKS_PER_DAY;
+			case GameSpeed.Slow: return 4 * this.TICKS_PER_DAY;
+			case GameSpeed.Normal: return 2 * this.TICKS_PER_DAY;
+			case GameSpeed.Fast: return 1 * this.TICKS_PER_DAY;
 			default: throw new Exception("Unknown Speed");
 		}
 	}

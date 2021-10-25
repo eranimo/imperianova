@@ -43,9 +43,7 @@ func render():
 
 func _unhandled_input(event) -> void:
 	var pos = get_global_mouse_position() - Vector2(HexUtils.SIZE, HexUtils.SIZE)
-	prints('Pos:', pos)
 	var grid_pos = HexUtils.pixel_to_hex(pos)
-	prints('Hex', grid_pos)
 	var hexWorldPos = HexUtils.hex_to_pixel(grid_pos)
 
 	if event.is_action_pressed("ui_select"):
@@ -67,7 +65,6 @@ func _unhandled_input(event) -> void:
 			query.set_shape(select_rect)
 			query.transform = Transform2D(0, (drag_end + drag_start) / 2)
 			selected = space.intersect_shape(query)
-			print(selected)
 
 			if not Input.is_key_pressed(KEY_SHIFT):
 				MapManager.clear_selected_units()

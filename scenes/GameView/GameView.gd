@@ -4,9 +4,6 @@ var is_menu_open = false
 
 signal game_loaded
 
-const SAVE_PATH = "user://saves"
-const SAVE_FILE = "user://saves/%s.res"
-
 func _ready():
 	print("GameView ready")
 	$GameMenu.connect("hide", self, '_on_menu_close')
@@ -40,5 +37,8 @@ func open_menu():
 
 func _input(event):
 	if event.is_action_pressed("ui_exit"):
-		open_menu()
-	get_tree().is_input_handled()
+		if $GameMenu.visible:
+			$GameMenu.hide();
+		else:
+			open_menu()
+		get_tree().set_input_as_handled()

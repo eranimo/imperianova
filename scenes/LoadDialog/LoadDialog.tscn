@@ -1,9 +1,12 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://scenes/LoadDialog/LoadDialog.gd" type="Script" id=1]
+[ext_resource path="res://resources/theme.tres" type="Theme" id=2]
 
 [node name="LoadDialog" type="WindowDialog"]
+visible = true
 rect_min_size = Vector2( 400, 300 )
+theme = ExtResource( 2 )
 window_title = "Load Game"
 resizable = true
 script = ExtResource( 1 )
@@ -11,9 +14,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Panel" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
 [node name="Container" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -25,6 +33,7 @@ margin_bottom = -50.0
 grow_horizontal = 2
 grow_vertical = 2
 rect_min_size = Vector2( 400, 250 )
+theme = ExtResource( 2 )
 follow_focus = true
 scroll_horizontal_enabled = false
 __meta__ = {
@@ -33,8 +42,9 @@ __meta__ = {
 
 [node name="MarginContainer" type="MarginContainer" parent="Container/ScrollContainer"]
 margin_right = 400.0
-margin_bottom = 38.0
+margin_bottom = 57.0
 size_flags_horizontal = 3
+theme = ExtResource( 2 )
 custom_constants/margin_right = 10
 custom_constants/margin_top = 10
 custom_constants/margin_left = 10
@@ -44,20 +54,23 @@ custom_constants/margin_bottom = 10
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 390.0
-margin_bottom = 28.0
+margin_bottom = 47.0
+theme = ExtResource( 2 )
 
 [node name="Label" type="Label" parent="Container/ScrollContainer/MarginContainer/VBoxContainer"]
 margin_right = 380.0
-margin_bottom = 14.0
+margin_bottom = 24.0
+theme = ExtResource( 2 )
 text = "Select a saved game to load:"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="ItemList" type="ItemList" parent="Container/ScrollContainer/MarginContainer/VBoxContainer"]
-margin_top = 18.0
+margin_top = 28.0
 margin_right = 380.0
-margin_bottom = 27.0
+margin_bottom = 37.0
+theme = ExtResource( 2 )
 auto_height = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -68,6 +81,7 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = -40.0
+theme = ExtResource( 2 )
 custom_constants/margin_right = 10
 custom_constants/margin_top = 10
 custom_constants/margin_left = 10
@@ -80,19 +94,22 @@ __meta__ = {
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 390.0
-margin_bottom = 30.0
+margin_bottom = 34.0
 size_flags_vertical = 4
+theme = ExtResource( 2 )
 custom_constants/separation = 10
 alignment = 2
 
 [node name="Cancel" type="Button" parent="Container/MarginContainer/HBoxContainer"]
-margin_left = 232.0
-margin_right = 286.0
-margin_bottom = 20.0
+margin_left = 233.0
+margin_right = 288.0
+margin_bottom = 24.0
+theme = ExtResource( 2 )
 text = "Cancel"
 
 [node name="LoadGame" type="Button" parent="Container/MarginContainer/HBoxContainer"]
-margin_left = 296.0
+margin_left = 298.0
 margin_right = 380.0
-margin_bottom = 20.0
+margin_bottom = 24.0
+theme = ExtResource( 2 )
 text = "Load Game"

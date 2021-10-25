@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://resources/fonts/ui-labels-normal.tres" type="DynamicFont" id=1]
 [ext_resource path="res://scenes/GameView/MapCamera.gd" type="Script" id=2]
@@ -12,12 +12,7 @@
 [ext_resource path="res://game/GameState.cs" type="Script" id=10]
 [ext_resource path="res://game/managers/UnitManager.cs" type="Script" id=11]
 [ext_resource path="res://game/Game.cs" type="Script" id=12]
-
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.152941, 0.152941, 0.152941, 1 )
-
-[sub_resource type="StyleBoxFlat" id=2]
-bg_color = Color( 0.137255, 0.137255, 0.137255, 1 )
+[ext_resource path="res://resources/theme.tres" type="Theme" id=13]
 
 [node name="Game" type="Node" groups=[
 "persist",
@@ -94,23 +89,21 @@ label = "Rainfall"
 [node name="GameHeader" type="PanelContainer" parent="UI"]
 anchor_right = 1.0
 margin_bottom = 40.0
-custom_styles/panel = SubResource( 1 )
+theme = ExtResource( 13 )
 script = ExtResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Panel" type="Panel" parent="UI/GameHeader"]
-visible = false
-margin_left = 7.0
-margin_top = 7.0
-margin_right = 1017.0
-margin_bottom = 50.0
-custom_styles/panel = SubResource( 2 )
+margin_right = 1024.0
+margin_bottom = 44.0
+theme = ExtResource( 13 )
 
 [node name="Content" type="MarginContainer" parent="UI/GameHeader"]
 margin_right = 1024.0
-margin_bottom = 40.0
+margin_bottom = 44.0
+theme = ExtResource( 13 )
 custom_constants/margin_right = 10
 custom_constants/margin_top = 10
 custom_constants/margin_left = 10
@@ -120,46 +113,49 @@ custom_constants/margin_bottom = 10
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 1014.0
-margin_bottom = 30.0
+margin_bottom = 34.0
+theme = ExtResource( 13 )
 columns = 2
 
 [node name="LeftColumn" type="HBoxContainer" parent="UI/GameHeader/Content/Grid"]
-margin_right = 156.0
-margin_bottom = 20.0
+margin_right = 172.0
+margin_bottom = 24.0
 grow_horizontal = 0
 size_flags_horizontal = 2
+theme = ExtResource( 13 )
 custom_constants/separation = 10
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="PlayButton" type="Button" parent="UI/GameHeader/Content/Grid/LeftColumn"]
-margin_right = 38.0
-margin_bottom = 20.0
+margin_right = 39.0
+margin_bottom = 24.0
+theme = ExtResource( 13 )
 text = "Play"
 
 [node name="ChangeSpeed" type="Button" parent="UI/GameHeader/Content/Grid/LeftColumn"]
-margin_left = 48.0
+margin_left = 49.0
 margin_right = 107.0
-margin_bottom = 20.0
+margin_bottom = 24.0
+theme = ExtResource( 13 )
 text = "Normal"
 
 [node name="DateLabel" type="Label" parent="UI/GameHeader/Content/Grid/LeftColumn"]
 margin_left = 117.0
-margin_top = 2.0
-margin_right = 146.0
-margin_bottom = 18.0
-custom_fonts/font = ExtResource( 1 )
+margin_right = 154.0
+margin_bottom = 24.0
+theme = ExtResource( 13 )
 text = "Date"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Date" type="Label" parent="UI/GameHeader/Content/Grid/LeftColumn"]
-margin_left = 156.0
-margin_top = 2.0
-margin_right = 156.0
-margin_bottom = 18.0
+margin_left = 164.0
+margin_right = 172.0
+margin_bottom = 24.0
+theme = ExtResource( 13 )
 custom_fonts/font = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -168,28 +164,31 @@ __meta__ = {
 [node name="RightColumn" type="HBoxContainer" parent="UI/GameHeader/Content/Grid"]
 margin_left = 847.0
 margin_right = 1004.0
-margin_bottom = 20.0
+margin_bottom = 24.0
 size_flags_horizontal = 0
+theme = ExtResource( 13 )
 
 [node name="Label" type="Label" parent="UI/GameHeader/Content/Grid/RightColumn"]
-margin_top = 3.0
-margin_right = 72.0
-margin_bottom = 17.0
+margin_right = 76.0
+margin_bottom = 24.0
+theme = ExtResource( 13 )
 text = "Map mode:"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="MapModeSelect" type="OptionButton" parent="UI/GameHeader/Content/Grid/RightColumn"]
-margin_left = 76.0
-margin_right = 105.0
-margin_bottom = 20.0
+margin_left = 80.0
+margin_right = 108.0
+margin_bottom = 24.0
+theme = ExtResource( 13 )
 script = ExtResource( 6 )
 
 [node name="Menu" type="Button" parent="UI/GameHeader/Content/Grid/RightColumn"]
-margin_left = 109.0
+margin_left = 112.0
 margin_right = 157.0
-margin_bottom = 20.0
+margin_bottom = 24.0
+theme = ExtResource( 13 )
 text = "Menu"
 
 [node name="SelectedTileInfo" parent="UI" instance=ExtResource( 9 )]

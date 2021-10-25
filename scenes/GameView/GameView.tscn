@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://resources/fonts/ui-labels-normal.tres" type="DynamicFont" id=1]
 [ext_resource path="res://scenes/GameView/Game.tscn" type="PackedScene" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://scenes/GameView/GameMenu.gd" type="Script" id=6]
 [ext_resource path="res://scenes/GameView/SaveDialog.tscn" type="PackedScene" id=7]
 [ext_resource path="res://scenes/LoadDialog/LoadDialog.tscn" type="PackedScene" id=8]
+[ext_resource path="res://resources/theme.tres" type="Theme" id=9]
 
 [sub_resource type="DynamicFont" id=1]
 resource_local_to_scene = true
@@ -121,7 +122,8 @@ __meta__ = {
 "buttons",
 ]]
 margin_right = 84.0
-margin_bottom = 20.0
+margin_bottom = 24.0
+theme = ExtResource( 9 )
 text = "Continue"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -130,31 +132,35 @@ __meta__ = {
 [node name="SaveGame" type="Button" parent="GameMenu/VBoxContainer" groups=[
 "buttons",
 ]]
-margin_top = 24.0
+margin_top = 28.0
 margin_right = 84.0
-margin_bottom = 44.0
+margin_bottom = 52.0
+theme = ExtResource( 9 )
 text = "Save Game"
 
 [node name="LoadGame" type="Button" parent="GameMenu/VBoxContainer" groups=[
 "buttons",
 ]]
-margin_top = 48.0
+margin_top = 56.0
 margin_right = 84.0
-margin_bottom = 68.0
+margin_bottom = 80.0
+theme = ExtResource( 9 )
 text = "Load Game"
 
 [node name="MainMenu" type="Button" parent="GameMenu/VBoxContainer" groups=[
 "buttons",
 ]]
-margin_top = 72.0
+margin_top = 84.0
 margin_right = 84.0
-margin_bottom = 92.0
+margin_bottom = 108.0
+theme = ExtResource( 9 )
 text = "Main Menu"
 
 [node name="ExitGame" type="Button" parent="GameMenu/VBoxContainer" groups=[
 "buttons",
 ]]
-margin_top = 96.0
+margin_top = 112.0
 margin_right = 84.0
-margin_bottom = 116.0
+margin_bottom = 136.0
+theme = ExtResource( 9 )
 text = "Exit Game"
