@@ -2,11 +2,34 @@ using Godot;
 using System;
 using System.Reactive.Subjects;
 using GameWorld;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using System.Collections.Generic;
+using Entitas;
+using Entitas.CodeGeneration.Attributes;
 
 public enum GameSpeed {
 	Slow,
 	Normal,
 	Fast,
+}
+
+[Game]
+public class NameComponent : IComponent {
+	[PrimaryEntityIndex]
+	public string value;
+}
+
+public class GameState {
+	public Systems systems;
+
+	public GameState() {
+		var e = Contexts.sharedInstance.game.CreateEntity();
+	}
+
+	public void Process() {
+		
+	}
 }
 
 
@@ -24,7 +47,7 @@ public class Game : Node {
 
 	public override void _Ready() {
 		this.ticksInDay = 0;
-		this.gameState = GetNode<GameState>("GameState");
+		this.gameState = new GameState();
 		this.worldMap = GetNode("MapViewport/Viewport/WorldMap");
 	}
 
@@ -102,6 +125,24 @@ public class Game : Node {
 	public void Pause() {
 		this.playState.OnNext(false);
 	}
+
+	// public void export(Godot.File file) {
+	// 	var formatter = new BinaryFormatter();
+	// 	var stream = new MemoryStream();
+	// 	formatter.Serialize(stream, this.gameState.entities);
+	// 	file.StoreBuffer(stream.ToArray());
+	// }
+
+	// public void import(Godot.File file) {
+	// 	this.gameState.clear();
+
+	// 	var formatter = new BinaryFormatter();
+	// 	var stream = new MemoryStream();
+	// 	var entities = (HashSet<Entity>) formatter.Deserialize(stream);
+	// 	foreach (Entity entity in entities) {
+	// 		this.gameState.AddEntity(entity);
+	// 	}
+	// }
 
 	private void Render() {
 		WorldData worldData = GetNode<WorldData>("/root/WorldData");

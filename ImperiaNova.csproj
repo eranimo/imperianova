@@ -1,10 +1,28 @@
 <Project Sdk="Godot.NET.Sdk/3.3.0">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Reactive" Version="5.0.0"/>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
     <PackageReference Include="LibNoise" Version="0.2.0" />
+    <PackageReference Include="Entitas" Version="1.13.0" />
+    <PackageReference Include="Entitas.CodeGeneration.Attributes" Version="1.13.0" />
+    <PackageReference Include="DesperateDevs.Utils" Version="0.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Generated\Game\GameComponentsLookup.cs" />
+    <Compile Include="Generated\Game\GameAttribute.cs" />
+    <Compile Include="Generated\Game\GameContext.cs" />
+    <Compile Include="Generated\Game\GameMatcher.cs" />
+    <Compile Include="Generated\Contexts.cs" />
+    <Compile Include="Generated\Game\GameEntity.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="game/Game.cs" />
+    <Compile Include="game\**\*.cs" />
+    <Compile Include="scenes\**\*.cs" />
+    <Compile Include="global\**\*.cs" />
   </ItemGroup>
 </Project>

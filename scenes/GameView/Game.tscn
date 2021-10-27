@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://resources/fonts/ui-labels-normal.tres" type="DynamicFont" id=1]
 [ext_resource path="res://scenes/GameView/MapCamera.gd" type="Script" id=2]
@@ -9,14 +9,10 @@
 [ext_resource path="res://ui/TileHoverInfoRow.tscn" type="PackedScene" id=7]
 [ext_resource path="res://ui/SelectedUnits.tscn" type="PackedScene" id=8]
 [ext_resource path="res://ui/SelectedTileInfo.tscn" type="PackedScene" id=9]
-[ext_resource path="res://game/GameState.cs" type="Script" id=10]
-[ext_resource path="res://game/managers/UnitManager.cs" type="Script" id=11]
 [ext_resource path="res://game/Game.cs" type="Script" id=12]
 [ext_resource path="res://resources/theme.tres" type="Theme" id=13]
 
-[node name="Game" type="Node" groups=[
-"persist",
-]]
+[node name="Game" type="Node"]
 script = ExtResource( 12 )
 
 [node name="MapViewport" type="ViewportContainer" parent="."]
@@ -206,12 +202,6 @@ margin_top = -200.0
 margin_bottom = 0.0
 mouse_filter = 1
 size_flags_vertical = 3
-
-[node name="GameState" type="Node" parent="."]
-script = ExtResource( 10 )
-
-[node name="UnitManager" type="Node" parent="GameState"]
-script = ExtResource( 11 )
 
 [connection signal="item_selected" from="UI/GameHeader/Content/Grid/RightColumn/MapModeSelect" to="UI/GameHeader/Content/Grid/RightColumn/MapModeSelect" method="_on_MapModeSelect_item_selected"]
 [connection signal="pressed" from="UI/GameHeader/Content/Grid/RightColumn/Menu" to="." method="_on_menu_pressed"]
