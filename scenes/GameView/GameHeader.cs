@@ -6,14 +6,14 @@ public class GameHeader : PanelContainer {
 	private Godot.Button changeSpeed;
 	private Godot.Label dateDisplay;
 	private Godot.Button menu;
-	private Game game;
+	private GameController game;
 
 	public override void _Ready() {
 		this.playButton = GetNode<Godot.Button>("Content/Grid/LeftColumn/PlayButton");
 		this.dateDisplay = GetNode<Godot.Label>("Content/Grid/LeftColumn/Date");
 		this.changeSpeed = GetNode<Godot.Button>("Content/Grid/LeftColumn/ChangeSpeed");
 		this.menu = GetNode<Godot.Button>("Content/Grid/RightColumn/Menu");
-		this.game = (Game) GetTree().CurrentScene.FindNode("Game");
+		this.game = (GameController) GetTree().CurrentScene.FindNode("Game");
 
 		this.game.date.Subscribe((int date) => {
 			GD.PrintS("New Date", date);

@@ -39,11 +39,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/MapSet.gd"
 }, {
-"base": "Node",
-"class": "Movement",
-"language": "GDScript",
-"path": "res://game/components/Movement.gd"
-}, {
 "base": "Object",
 "class": "NameGen",
 "language": "GDScript",
@@ -59,11 +54,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/ReactiveState.gd"
 }, {
-"base": "CollisionShape2D",
-"class": "Selectable",
-"language": "GDScript",
-"path": "res://game/components/Selectable.gd"
-}, {
 "base": "Path2D",
 "class": "SmoothPath",
 "language": "GDScript",
@@ -73,16 +63,6 @@ _global_script_classes=[ {
 "class": "System",
 "language": "GDScript",
 "path": "res://scripts/System.gd"
-}, {
-"base": "Node",
-"class": "TileLocation",
-"language": "GDScript",
-"path": "res://game/components/TileLocation.gd"
-}, {
-"base": "Node",
-"class": "TilePosition",
-"language": "GDScript",
-"path": "res://game/components/TilePosition.gd"
 }, {
 "base": "OpenSimplexNoise",
 "class": "WorldNoise",
@@ -96,15 +76,11 @@ _global_script_class_icons={
 "HexCell": "",
 "HexMap": "",
 "MapSet": "",
-"Movement": "",
 "NameGen": "",
 "ReactiveSet": "",
 "ReactiveState": "",
-"Selectable": "",
 "SmoothPath": "",
 "System": "",
-"TileLocation": "",
-"TilePosition": "",
 "WorldNoise": ""
 }
 
@@ -126,7 +102,6 @@ Console="*res://addons/quentincaffeino-console/src/Console.tscn"
 EntitySystem="*res://global/EntitySystem.gd"
 Utils="*res://global/Utils.gd"
 IntegerResolutionHandler="*res://addons/integer_resolution_handler/integer_resolution_handler.gd"
-Global="*res://global/Global.cs"
 HexUtils="*res://global/HexUtils.gd"
 WorldData="*res://global/WorldData.cs"
 

@@ -10,7 +10,7 @@ public enum GameSpeed {
 }
 
 
-public class Game : Node {
+public class GameController : Node {
 	public GameWorld.World world;
 	public readonly int TICKS_PER_DAY = 4;
 
@@ -18,13 +18,11 @@ public class Game : Node {
 	public BehaviorSubject<bool> playState = new BehaviorSubject<bool>(false);
 	public BehaviorSubject<GameSpeed> speed = new BehaviorSubject<GameSpeed>(GameSpeed.Normal);
 
-	private GameState gameState;
 	private Godot.Object worldMap;
 	private int ticksInDay = 0;
 
 	public override void _Ready() {
 		this.ticksInDay = 0;
-		this.gameState = GetNode<GameState>("GameState");
 		this.worldMap = GetNode("MapViewport/Viewport/WorldMap");
 	}
 
@@ -33,9 +31,6 @@ public class Game : Node {
 	}
 
 	public override void _Process(float delta) {
-		base._Process(delta);
-		this.gameState.Process();
-		
 		if (!this.IsPlaying()) {
 			return;
 		}
