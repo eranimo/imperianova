@@ -12,7 +12,7 @@ var select_rect = RectangleShape2D.new()
 
 onready var OverlayTexture = preload("res://assets/textures/overlay.tres")
 onready var MapChunk = preload("res://scenes/WorldMap/MapChunk.tscn")
-onready var Unit = preload("res://scenes/WorldMap/Unit.tscn")
+# onready var Unit = preload("res://scenes/WorldMap/Unit.tscn")
 
 func _init():
 	MapManager.connect_map(self)

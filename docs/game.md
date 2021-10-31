@@ -1,9 +1,7 @@
 # Gameplay
 The player controls a political entity in a procedurally generated historical simulation of a random Earth-like planet. Events happen within the simulation in a similar manner that they did in Earth's history but on a planet with a completely random geography.
 
-The player controls a Polity.
-
-Important characters throughout history exist in a detailed political simulation. Combined these characters form Organizations which greatly influential to history.
+Important characters throughout history exist in a detailed political simulation. These characters combine to form a wide array of Organizations that greatly influence events in the game.
 
 Cultures are groups of Pops and Cultures with a distinct identity.
 
@@ -16,7 +14,9 @@ Polities control Territories, which are groups of Tiles with a name.
 
 Polities are controlled by the AI or the player.
 
-Polities can be either alive or dead.
+Polities can be subservient to other polities. The Player might play a polity that is subservient to an AI controlled polity.
+
+Polities can be either alive or dead. A dead polity is one that has no Organizations.
 
 Polities are created by other polities.
 
@@ -31,18 +31,132 @@ Cultures have a name and parent and children cultures.
 
 A culture with no Pops and Characters is dead.
 
-Cultures have Traditions
-
 ### Traditions
-Traditions are attributes that Cultures earn.
+Traditions are attributes that Cultures earn through regular actions. Each tradition type has a list of required actions and a count of the number of times they must be performed to unlock the tradition. Traditions give bonuses to gameplay.
+
+Traditions have a decay rate and a reinforcement rate. Traditions that were unlocked by actions no longer performed will eventually be removed.
+
+
+
+## Units
+Units are groups of Pops that exist on the map and can move. They are led by Characters and belong to Organizations.
+
+Units may be disbanded, which removes them from the map. The constituent Pops and Characters are not deleted.
+
+Units have cohorts, to which several Pops are assigned. Each Cohort type has a max pop size.
+
+### Unit types
+Unit types are preselected groups of cohorts. The Player can create new unit types.
+
+### Cohort Types
+Military:
+- Archer
+- Slinger
+- Spearman
+- Calvary
+- Chariot
+- Horse Archer
+
+Civilian:
+- Caravan (transports resources)
+- Laborers: performs civilian Construction
+- Engineers: performs military construction
+- Craftsman: performs Production
+
+### Raising units
+TODO
+
+### Orders
+Units are given orders by their Organization (or the Player, if the Organization is controlled by the Player)
+
+- Move
+- Disband
+- Attack
+- Migrate
+
+### Supply
+Units consume Resources, the amount of which depends on the Pops in the Unit.
+
+## Battles
+Two units on the same Tile that are enemies initiates a battle.
+
+## Resources
+ResourceTypes are distinct types of resources (e.g. Corn)
+ResourceCategories are classes of resources (e.g. Food)
+
+- Food
+  - Corn
+  - Wheat
+  - Berries
+  - Vegetables
+  - Mushrooms
+  - Meat
+- Materials
+  - Wood
+  - Stone
+  - Flint
+- Ore
+  - Gold ore
+  - Tin ore
+  - Copper ore
+  - Iron ore
+- Metal
+  - Gold
+  - Tin
+  - Copper
+  - Bronze
+  - Iron
+  - Steel
+- Animal
+  - Horses
+
+### Resource stats
+- Weight: determines storage, movement speed of Caravans
+- Nutrition: amount this resource provides as a food item to pops
+
+### Resource Nodes
+Resource Nodes exist on Tiles, they are responsible for generating Resources (besides Improvements and Districts)
+Resource Nodes have a maximum size and an optional replenish rate (depending on the resource)
+
+### Production
+Some Resources require other resources to produce.
 
 ## World (Tiles)
 The world is split into a hexagon grid with cells called Tile entities.
 
+Tiles can have one District or one Improvement, which allows Tiles to be exploited.
+
+## Improvements
+
+
+### Improvement types
+- Farm (must be build on tile with fertility)
+- Mine (must be built on Resource Node)
+
+## Cities Districts
+A District can have multiple Buildings. Each district can only have one of each building type.
+
+Cities are a group of neighboring districts, each District belongs to one city. Cities have Government Organizations.
+
+District types and buildings:
+- Fortress
+  - Keep
+- Settlement
+  - Houses
+
+
+District stats:
+- Housing
+- Storage
+
+
+#### Building limit
+A District has a maximum number of buildings. This is determined by the district type.
+
 ## Population (Pops)
 Population is represented as Pop entities, which live in Tiles and belong to Cultures.
 
-Population can move to neighboring Tiles in a Migration event. 
+Population can move to neighboring Tiles by *Migration*.
 
 ### Needs
 There are three categories of needs:
@@ -73,7 +187,7 @@ Modelled on DND
 - Health: current health points
 - MaxHealth: max health the character can have
 - HealthRate: change in health per day
-- Efficiency: defines how good Characters are at performing tasks at a given time. This is influenced by other stats.
+- Efficiency: defines how good Characters are at performing Jobs. This is influenced by other stats.
 - Strength
 - Dexterity
 - Constitution 
@@ -99,6 +213,8 @@ A Character can belong to multiple Organizations.
 
 Organizations issue Orders, which allow Organizations to perform actions in the simulation. They are assigned to Jobs. When controlled by a Polity that is controlled by the player, Orders are performed by the player.
 
+Organizations own Buildings.
+
 ### Subsidiary
 Organizations have subsidiary organizations, which they control. Subsidiaries need not be of the same type.
 
@@ -109,7 +225,6 @@ Organizations have subsidiary organizations, which they control. Subsidiaries ne
   - Unit (controlled by Army)
   - Militia (controlled by a group of Pops)
   - Mercenary company
-  - Criminal organization
 - Economic
   - Company
   - Guild
@@ -117,10 +232,10 @@ Organizations have subsidiary organizations, which they control. Subsidiaries ne
   - Family
 
 #### Government
-Government is the primary organization in a Polity and the primary way it is controlled.
+Government is the primary Organization in a Polity and the primary way it is controlled.
 
 #### Unit
-Units belonging to Organizations controlled by the Player are visible on the map.
+Units belonging to Organizations controlled by the Player can be directly controlled.
 
 ### Jobs
 Organizations have Jobs, which are assigned to Characters. They have a type, which defines their actions.
@@ -140,6 +255,15 @@ OrganizationPower = Sum of all PowerPoints for all Jobs in this Organization +
 
 # Game architecture
 
+## World
+The world is split into Tile classes, representing hexes in a rectangular grid.
+
+Tiles have a Temperature and Rainfall.
+
+Tiles have a *TerrainType*, determined by Temperature and Rainfall. For example, Desert and Grasslands.
+
+The TerrainType determines *MovementCost*, which is an integer value representing how hard it is to move across this particular Tile.
+
 ## Game Logic
 
 Events are messages associated with a Date, a MessageType, and a Message
@@ -152,15 +276,12 @@ Events are messages associated with a Date, a MessageType, and a Message
 
 ### Entities
 - Unit
-  - TileLocation
+  - TilePosition
   - UnitData
   - Moveable
   - Health
-- Tile
-  - TileLocation
-  - TileData
 - Pop
-  - TileLocation
+  - TilePosition
   - PopData
   - Moveable
   - Consumption
@@ -168,7 +289,7 @@ Events are messages associated with a Date, a MessageType, and a Message
 - Territory
   - TerritoryData
 - Improvement
-  - TileLocation
+  - TilePosition
   - ImprovementData
 - Country
   - CountryData
@@ -176,15 +297,16 @@ Events are messages associated with a Date, a MessageType, and a Message
   - OrganizationData
 
 ### Components
-- TileLocation
+- TilePosition
   - location
 - UnitData
   - unitType
   - health
 - Movable
-  - currentTarget
-  - movementSpeed
-  - movementQueue
+  - currentTarget: world Tile ref
+  - movementType: land or water
+  - movementSpeed: movement cost that can be spent per day
+  - movementQueue: list of tiles to move to next
 - Consumption: an entity that consumes resources
   - requirements
   - status
@@ -195,13 +317,6 @@ Events are messages associated with a Date, a MessageType, and a Message
 - PopData
   - size
   - popType
-- TileData
-  - height
-  - temperature
-  - rainfall
-  - terrainType
-  - riverMap
-  - hasRoad
 - ImprovementData
   - improvementType
   - isConstructed
@@ -214,6 +329,6 @@ Events are messages associated with a Date, a MessageType, and a Message
   - isPlayer
   - territories
 
-### Engines
-- UnitMovementEngine (UnitData, TileLocation)
+### Systems
+- MovementSystem (Movable, TilePosition)
 - 

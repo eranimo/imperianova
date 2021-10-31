@@ -1,6 +1,5 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://ui/interface/UnitsInterface.cs" type="Script" id=2]
 [ext_resource path="res://scenes/WorldMap/WorldMap.gd" type="Script" id=3]
 [ext_resource path="res://scenes/WorldMap/TileUI.gd" type="Script" id=4]
 
@@ -14,9 +13,6 @@ __meta__ = {
 }
 
 [node name="MapChunks" type="YSort" parent="."]
-
-[node name="Units" type="Node2D" parent="."]
-script = ExtResource( 2 )
 
 [node name="TileUI" type="Area2D" parent="."]
 script = ExtResource( 4 )
