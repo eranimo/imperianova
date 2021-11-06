@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Reactive.Subjects;
 using GameWorld;
+using DefaultEcs;
 
 public enum GameSpeed {
 	Slow,
@@ -31,12 +32,12 @@ public class GameController : Node {
 	}
 
 	public override void _Process(float delta) {
-		if (!this.IsPlaying()) {
+		if (!this.Playing) {
 			return;
 		}
 
 		if (this.ticksInDay == 0) {
-			int ticksLeft = this.GetSpeedTicks();
+			int ticksLeft = this.SpeedTicks;
 			this.date.OnNext(date.Value + 1);
 			this.ticksInDay = ticksLeft;
 		} else {
@@ -51,12 +52,13 @@ public class GameController : Node {
 		}
 	}
 
-	public bool IsPlaying() {
-		return this.playState.Value;
-	}
-
-	public void SetPlaying(bool playing) {
-		this.playState.OnNext(playing);
+	public bool Playing {
+		get {
+			return this.playState.Value;
+		}
+		set {
+			this.playState.OnNext(value);
+		}
 	}
 
 	public void ToggleSpeed() {
@@ -74,7 +76,7 @@ public class GameController : Node {
 	}
 
 	public void TogglePlay() {
-		if (this.IsPlaying()) {
+		if (this.Playing) {
 			this.Pause();
 		} else {
 			this.Play();
@@ -104,12 +106,14 @@ public class GameController : Node {
 		this.worldMap.Call("render");
 	}
 
-	private int GetSpeedTicks() {
-		switch (this.speed.Value) {
-			case GameSpeed.Slow: return 4 * this.TICKS_PER_DAY;
-			case GameSpeed.Normal: return 2 * this.TICKS_PER_DAY;
-			case GameSpeed.Fast: return 1 * this.TICKS_PER_DAY;
-			default: throw new Exception("Unknown Speed");
+	private int SpeedTicks {
+		get {
+			switch (this.speed.Value) {
+				case GameSpeed.Slow: return 4 * this.TICKS_PER_DAY;
+				case GameSpeed.Normal: return 2 * this.TICKS_PER_DAY;
+				case GameSpeed.Fast: return 1 * this.TICKS_PER_DAY;
+				default: throw new Exception("Unknown Speed");
+			}
 		}
 	}
 }
