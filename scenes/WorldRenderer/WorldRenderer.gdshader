@@ -76,6 +76,7 @@ void fragment() {
 	//vec2 point = vec2(FRAGCOORD.x, FRAGCOORD.y);
 	vec2 point = UV * 500.0 + vec2(-hexSize, -hexSize);
 	vec2 hex = axialRound(pixelToHex_FlatTop(point));
+	vec2 offset = axialToOffset(hex);
  
 	float width = 2.0 * hexSize;
 	float height = sqrt(3.0) * hexSize;
@@ -85,16 +86,17 @@ void fragment() {
 
 	vec2 textureCoord = vec2(((point.x - origin.x) / width), 1.0 - ((point.y - origin.y) / height));
 	
-    // vec4 color = texture(hexColors, hex);
-    vec4 color = vec4(0.1 * hex.x, 0.1 * hex.y, 0.5, 1.0);
-	
-	vec2 offset = axialToOffset(hex);
-	
-	if (offset.x < 0.0 || offset.y < 0.0 || offset.x > gridSize.x || offset.y > gridSize.y) {
+    vec4 color;
+    if (offset.x < 0.0 || offset.y < 0.0 || offset.x >= gridSize.x || offset.y >= gridSize.y) {
 		color = vec4(0.0, 0.0, 0.0, 0.0)
-	} else if (highlight == hex) {
-	    color = mix(color, vec4(0.0, 0.0, 0.0, 1.0), 0.5);
-	}
+	} else {
+        vec4 texel = texelFetch(hexColors, ivec2(int(offset.x), int(offset.y)), 0);
+        color = vec4(texel.x, texel.y, texel.z, 1.0);
+        
+        if (highlight == hex) {
+            color = mix(color, vec4(0.0, 0.0, 0.0, 1.0), 0.5);
+        }
+    }
  
 	COLOR = color;
 }

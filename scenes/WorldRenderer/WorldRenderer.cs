@@ -17,17 +17,18 @@ public class WorldRenderer : Node2D {
 		shader.SetShaderParam("hexSize", 32.0);
 		shader.SetShaderParam("highlight", new Vector2(2, 2));
 
-		// ImageTexture hexColors = new ImageTexture();
-		// Image hexColorsImage = new Image();
-		// hexColorsImage.Lock();
-		// hexColorsImage.Create(width, height, false, Image.Format.Rgb8);
-		// for (var x = 0; x < width; x++) {
-		// 	for (var y = 0; y < height; y++) {
-		// 		hexColorsImage.SetPixel(x, y, new Color(0.1f * x, 0.1f * y, 0.5f, 1.0f));
-		// 	}
-		// }
-		// hexColorsImage.Unlock();
-		// hexColors.CreateFromImage(hexColorsImage);
-		// shader.SetShaderParam("hexColors", hexColors);
+		Image hexColorsImage = new Image();
+		hexColorsImage.Create(width, height, false, Image.Format.Rgbaf);
+		hexColorsImage.Lock();
+		for (var x = 0; x < width; x++) {
+			for (var y = 0; y < height; y++) {
+				Color hexColor = new Color(0.1f * x, 0.1f * y, 0.5f, 1.0f);
+				hexColorsImage.SetPixel(x, y, hexColor);
+			}
+		}
+		hexColorsImage.Unlock();
+		ImageTexture hexColors = new ImageTexture();
+		hexColors.CreateFromImage(hexColorsImage);
+		shader.SetShaderParam("hexColors", hexColors);
 	}
 }
