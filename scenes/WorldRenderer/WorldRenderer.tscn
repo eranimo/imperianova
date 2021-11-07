@@ -1,21 +1,23 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://assets/textures/one-pixel-white.png" type="Texture" id=1]
 [ext_resource path="res://scenes/WorldRenderer/WorldRenderer.gdshader" type="Shader" id=2]
 [ext_resource path="res://scenes/WorldRenderer/WorldRenderer.cs" type="Script" id=3]
+[ext_resource path="res://scenes/WorldRenderer/WorldGrid.cs" type="Script" id=4]
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 2 )
 shader_param/hexSize = 32.0
 shader_param/highlight = Vector2( 1, 1 )
-shader_param/gridSize = Vector2( 10, 10 )
+shader_param/gridSize = Vector2( 0, 0 )
 
 [node name="WorldRenderer" type="Node2D"]
 script = ExtResource( 3 )
 
-[node name="Grid" type="Polygon2D" parent="."]
+[node name="WorldGrid" type="Polygon2D" parent="."]
 material = SubResource( 2 )
 scale = Vector2( 1.02812, 1.10344 )
 texture = ExtResource( 1 )
 polygon = PoolVector2Array( 0, 0, 0, 500, 500, 500, 500, 0 )
 uv = PoolVector2Array( 0, 0, 0, 1, 1, 1, 1, 0 )
+script = ExtResource( 4 )

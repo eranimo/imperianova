@@ -13,6 +13,7 @@ namespace Hex {
 		S = 5,
 	}
 
+	/// <summary>Offset coordinates in odd-r style</summary>
 	public struct OffsetCoord {
 		public int Row;
 		public int Col;
@@ -20,6 +21,97 @@ namespace Hex {
 		public OffsetCoord(int Row, int Col) {
 			this.Row = Row;
 			this.Col = Col;
+		}
+		
+		public AxialCoord ToAxial() {
+			var q = this.Col - (this.Row - (this.Row & 1)) / 2;
+			var r = this.Row;
+			return new AxialCoord(q, r);
+		}
+
+		public CubeCoord ToCube() {
+			return this.ToAxial().ToCube();
+		}
+
+		public override string ToString() {
+			return base.ToString() + string.Format("({0}, {1})", this.Row, this.Col);
+		}
+	}
+
+	public struct AxialCoord {
+		public double q;
+		public double r;
+
+		public AxialCoord(double q, double r) {
+			this.q = q;
+			this.r = r;
+		}
+
+		public CubeCoord ToCube() {
+			var q = this.q;
+			var r = this.r;
+			var s = -q - r;
+			return new CubeCoord(q, r, s);
+		}
+
+		public OffsetCoord ToOffset() {
+			var col = this.q + (this.r - ((int) this.r & 1)) / 2;
+			var row = this.r;
+			return new OffsetCoord((int) col, (int) row);
+		}
+
+		public AxialCoord Round() {
+			return this.ToCube().Round().ToAxial();
+		}
+
+		public override string ToString() {
+			return base.ToString() + string.Format("({0}, {1})", this.q, this.r);
+		}
+	}
+
+	public struct CubeCoord {
+		public double q;
+		public double r;
+		public double s;
+
+		public CubeCoord(double q, double r, double s) {
+			this.q = q;
+			this.r = r;
+			this.s = s;
+		}
+
+		public AxialCoord ToAxial() {
+			var q = this.q;
+			var r = this.r;
+			return new AxialCoord(q, r);
+		}
+
+		public OffsetCoord ToOffset() {
+			return this.ToAxial().ToOffset();
+		}
+
+		public CubeCoord Round() {
+			var q = Math.Round(this.q);
+			var r = Math.Round(this.r);
+			var s = Math.Round(this.s);
+
+			var q_diff = Math.Abs(q - this.q);
+			var r_diff = Math.Abs(r - this.r);
+			var s_diff = Math.Abs(s - this.s);
+
+			if (q_diff > r_diff && q_diff > s_diff) {
+				q = -r-s;
+			} else if(r_diff > s_diff) {
+				r = -q-s;
+			} else {
+				s = -q-r;
+			}
+
+			return new CubeCoord(q, r, s);
+		}
+
+		public override string ToString() {
+			return base.ToString() + string.Format("({0}, {1}, {2})", this.q, this.r, this.s);
 		}
 	}
 
@@ -41,6 +133,25 @@ namespace Hex {
 			var parity = hex.Col & 1;
 			var dir = HexConstants.oddq_directions[parity, (int) direction];
 			return new OffsetCoord(hex.Col + dir.Col, hex.Row + dir.Row);
+		}
+
+		///<summary>Converts between pixels to offset coordinates</summary>
+		public static OffsetCoord PixelToHex(Vector2 point, int size) {
+			var q = (2.0 / 3 * point.x) / size;
+			var r = (-1.0 / 3 * point.x + Math.Sqrt(3) / 3 * point.y) / size;
+			return new AxialCoord(q, r).Round().ToOffset();
+		}
+
+		public static OffsetCoord HexToPixel(OffsetCoord hex, int size) {
+			var x = size * Math.Sqrt(3) * (hex.Col + 0.5 * (hex.Row & 1));
+			var y = size * 3/2 * hex.Row;
+			return new OffsetCoord((int) x, (int) y);
+		}
+
+		public static AxialCoord HexToPixel(AxialCoord hex, int size) {
+			var x = size * (3.0/2 * hex.q);
+			var y = size * (Math.Sqrt(3) / 2 * hex.q + Math.Sqrt(3) * hex.r);
+			return new AxialCoord(x, y);
 		}
 	}
 }

@@ -74,7 +74,7 @@ vec2 hexToPixel_FlatTop(vec2 hex) {
 // Main shader.
 void fragment() {
 	//vec2 point = vec2(FRAGCOORD.x, FRAGCOORD.y);
-	vec2 point = UV * 500.0 + vec2(-hexSize, -hexSize);
+	vec2 point = UV * 500.0;
 	vec2 hex = axialRound(pixelToHex_FlatTop(point));
 	vec2 offset = axialToOffset(hex);
  

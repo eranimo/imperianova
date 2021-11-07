@@ -1,34 +1,23 @@
 using Godot;
 using System;
+using Hex;
 
 public class WorldRenderer : Node2D {
-	private Polygon2D Grid;
+	private WorldGrid Grid;
 
 	public override void _Ready() {
-		this.Grid = (Polygon2D) FindNode("Grid");
+		this.Grid = (WorldGrid) FindNode("WorldGrid");
 		this.SetWorld();
 	}
 
-	public void SetWorld() {
-		int width = 10;
-		int height = 10;
-		var shader = (this.Grid.Material as ShaderMaterial);
-		shader.SetShaderParam("gridSize", new Vector2(width, height));
-		shader.SetShaderParam("hexSize", 32.0);
-		shader.SetShaderParam("highlight", new Vector2(2, 2));
-
-		Image hexColorsImage = new Image();
-		hexColorsImage.Create(width, height, false, Image.Format.Rgbaf);
-		hexColorsImage.Lock();
-		for (var x = 0; x < width; x++) {
-			for (var y = 0; y < height; y++) {
-				Color hexColor = new Color(0.1f * x, 0.1f * y, 0.5f, 1.0f);
-				hexColorsImage.SetPixel(x, y, hexColor);
-			}
+	public override void _Input(InputEvent @event) {
+		if (@event is InputEventMouseMotion) {
+			var point = (@event as InputEventMouseMotion).Position;
+			GD.PrintS("Hex:", HexUtils.PixelToHex(point, 24));
 		}
-		hexColorsImage.Unlock();
-		ImageTexture hexColors = new ImageTexture();
-		hexColors.CreateFromImage(hexColorsImage);
-		shader.SetShaderParam("hexColors", hexColors);
+	}
+
+	public void SetWorld() {
+		this.Grid.Setup();
 	}
 }
