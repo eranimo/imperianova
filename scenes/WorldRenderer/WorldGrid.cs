@@ -20,19 +20,16 @@ public class WorldGrid : Polygon2D {
 		this.gridColumns = cols;
 		this.gridRows = rows;
 
-		var lastHexPoint = Hex.HexUtils.HexToPixel(new OffsetCoord(this.gridRows, this.gridColumns));
-		var gridWidth = lastHexPoint.x;
-		var gridHeight = lastHexPoint.y;
-		GD.PrintS("Hex container size", gridWidth, gridHeight);
+		var containerSize = HexUtils.GetGridDimensions(this.gridColumns, this.gridRows);
 		
 		this.shader.SetShaderParam("hexSize", HexConstants.HEX_SIZE);
 		this.shader.SetShaderParam("gridSize", new Vector2(this.gridColumns, this.gridRows));
-		this.shader.SetShaderParam("containerSize", new Vector2(gridWidth, gridHeight));
+		this.shader.SetShaderParam("containerSize", containerSize);
 		this.Polygon = new Vector2[] {
 			new Vector2(0, 0),
-			new Vector2(0, gridHeight),
-			new Vector2(gridWidth, gridHeight),
-			new Vector2(gridWidth, 0),
+			new Vector2(0, containerSize.y),
+			new Vector2(containerSize.x, containerSize.y),
+			new Vector2(containerSize.x, 0),
 		};
 	}
 

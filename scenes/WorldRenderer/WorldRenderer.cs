@@ -15,7 +15,7 @@ public class WorldRenderer : Node2D {
 			var point = (@event as InputEventMouseMotion).Position;
 			var pointCorrected = point - new Vector2(HexUtils.HexWidth / 2, HexUtils.HexHeight / 2);
 			var hex = HexUtils.PixelToHexOffset(pointCorrected);
-			GD.PrintS("Hex:", hex, hex.AsVector());
+			// GD.PrintS("Hex:", hex, hex.AsVector());
 			this.Grid.setHighlight(hex);
 
 		}

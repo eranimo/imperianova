@@ -151,6 +151,18 @@ namespace Hex {
 			}
 		}
 
+		public static Vector2 GetGridDimensions(int cols, int rows) {
+			var lastHexPoint = Hex.HexUtils.HexToPixel(new OffsetCoord(cols - 1, rows - 1));
+			var gridWidth = lastHexPoint.x + (HexUtils.HexWidth);
+			float gridHeight;
+			if ((rows & 2) == 0) {
+				gridHeight = lastHexPoint.y + (HexUtils.HexHeight) + (HexUtils.HexHeight / 2);
+			} else {
+				gridHeight = lastHexPoint.y + (HexUtils.HexHeight);
+			}
+			return new Vector2(gridWidth, gridHeight);
+		}
+
 		public static OffsetCoord oddq_offset_neighbor(OffsetCoord hex, Direction direction) {
 			var parity = hex.Col & 1;
 			var dir = HexConstants.oddq_directions[parity, (int) direction];
@@ -169,8 +181,8 @@ namespace Hex {
 		}
 
 		public static Vector2 HexToPixel(OffsetCoord hex) {
-			var x = HexConstants.HEX_SIZE * Math.Sqrt(3) * (hex.Col + 0.5 * (hex.Row & 1));
-			var y = HexConstants.HEX_SIZE * 3/2 * hex.Row;
+			var x = HexConstants.HEX_SIZE * 3/2 * hex.Col;
+			var y = HexConstants.HEX_SIZE * Math.Sqrt(3) * (hex.Row + 0.5 * (hex.Col&1));
 			return new Vector2((int) x, (int) y);
 		}
 
