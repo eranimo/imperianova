@@ -1,26 +1,48 @@
 using Godot;
 using System;
+using Hex;
 
 public class WorldGrid : Polygon2D {
 	private Polygon2D Grid;
+	public int gridColumns;
+	public int gridRows;
+
+	public ShaderMaterial shader {
+		get {
+			return (this.Material as ShaderMaterial);
+		}
+	}
 
 	public override void _Ready() {
-		this.Setup();
+	}
+
+	public void SetupGrid(int rows, int cols) {
+		this.gridColumns = cols;
+		this.gridRows = rows;
+
+		var lastHexPoint = Hex.HexUtils.HexToPixel(new OffsetCoord(this.gridRows, this.gridColumns));
+		var gridWidth = lastHexPoint.x;
+		var gridHeight = lastHexPoint.y;
+		GD.PrintS("Hex container size", gridWidth, gridHeight);
+		
+		this.shader.SetShaderParam("hexSize", HexConstants.HEX_SIZE);
+		this.shader.SetShaderParam("gridSize", new Vector2(this.gridColumns, this.gridRows));
+		this.shader.SetShaderParam("containerSize", new Vector2(gridWidth, gridHeight));
+		this.Polygon = new Vector2[] {
+			new Vector2(0, 0),
+			new Vector2(0, gridHeight),
+			new Vector2(gridWidth, gridHeight),
+			new Vector2(gridWidth, 0),
+		};
 	}
 
 	public void Setup() {
-		int width = 10;
-		int height = 10;
 		var shader = (this.Material as ShaderMaterial);
-		shader.SetShaderParam("gridSize", new Vector2(width, height));
-		shader.SetShaderParam("hexSize", 24.0);
-		shader.SetShaderParam("highlight", new Vector2(2, 2));
-
 		Image hexColorsImage = new Image();
-		hexColorsImage.Create(width, height, false, Image.Format.Rgbaf);
+		hexColorsImage.Create(this.gridRows, this.gridColumns, false, Image.Format.Rgbaf);
 		hexColorsImage.Lock();
-		for (var x = 0; x < width; x++) {
-			for (var y = 0; y < height; y++) {
+		for (var y = 0; y < this.gridRows; y++) {
+			for (var x = 0; x < this.gridColumns; x++) {
 				Color hexColor = new Color(0.1f * x, 0.1f * y, 0.5f, 1.0f);
 				hexColorsImage.SetPixel(x, y, hexColor);
 			}
@@ -29,5 +51,9 @@ public class WorldGrid : Polygon2D {
 		ImageTexture hexColors = new ImageTexture();
 		hexColors.CreateFromImage(hexColorsImage);
 		shader.SetShaderParam("hexColors", hexColors);
+	}
+
+	public void setHighlight(OffsetCoord hex) {
+		this.shader.SetShaderParam("highlight", hex.ToAxial().AsVector());
 	}
 }

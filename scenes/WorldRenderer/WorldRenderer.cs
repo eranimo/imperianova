@@ -13,11 +13,16 @@ public class WorldRenderer : Node2D {
 	public override void _Input(InputEvent @event) {
 		if (@event is InputEventMouseMotion) {
 			var point = (@event as InputEventMouseMotion).Position;
-			GD.PrintS("Hex:", HexUtils.PixelToHex(point, 24));
+			var pointCorrected = point - new Vector2(HexUtils.HexWidth / 2, HexUtils.HexHeight / 2);
+			var hex = HexUtils.PixelToHexOffset(pointCorrected);
+			GD.PrintS("Hex:", hex, hex.AsVector());
+			this.Grid.setHighlight(hex);
+
 		}
 	}
 
 	public void SetWorld() {
+		this.Grid.SetupGrid(10, 10);
 		this.Grid.Setup();
 	}
 }

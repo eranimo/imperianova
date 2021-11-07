@@ -13,19 +13,19 @@ namespace Hex {
 		S = 5,
 	}
 
-	/// <summary>Offset coordinates in odd-r style</summary>
+	/// <summary>Offset coordinates in odd-q style</summary>
 	public struct OffsetCoord {
-		public int Row;
 		public int Col;
+		public int Row;
 
-		public OffsetCoord(int Row, int Col) {
-			this.Row = Row;
+		public OffsetCoord(int Col, int Row) {
 			this.Col = Col;
+			this.Row = Row;
 		}
 		
 		public AxialCoord ToAxial() {
-			var q = this.Col - (this.Row - (this.Row & 1)) / 2;
-			var r = this.Row;
+			var q = this.Col;
+			var r = this.Row - (this.Col - (this.Col & 1)) / 2;
 			return new AxialCoord(q, r);
 		}
 
@@ -34,7 +34,11 @@ namespace Hex {
 		}
 
 		public override string ToString() {
-			return base.ToString() + string.Format("({0}, {1})", this.Row, this.Col);
+			return base.ToString() + string.Format("({0}, {1})", this.Col, this.Row);
+		}
+
+		public Vector2 AsVector() {
+			return new Vector2(this.Col, this.Row);
 		}
 	}
 
@@ -55,8 +59,8 @@ namespace Hex {
 		}
 
 		public OffsetCoord ToOffset() {
-			var col = this.q + (this.r - ((int) this.r & 1)) / 2;
-			var row = this.r;
+			var col = this.q;
+			var row = this.r + (this.q - ((int) this.q & 1)) / 2;
 			return new OffsetCoord((int) col, (int) row);
 		}
 
@@ -66,6 +70,10 @@ namespace Hex {
 
 		public override string ToString() {
 			return base.ToString() + string.Format("({0}, {1})", this.q, this.r);
+		}
+
+		public Vector2 AsVector() {
+			return new Vector2((float) this.q, (float) this.r);
 		}
 	}
 
@@ -91,20 +99,20 @@ namespace Hex {
 		}
 
 		public CubeCoord Round() {
-			var q = Math.Round(this.q);
-			var r = Math.Round(this.r);
-			var s = Math.Round(this.s);
+			var q = (int) Math.Round(this.q);
+			var r = (int) Math.Round(this.r);
+			var s = (int) Math.Round(this.s);
 
 			var q_diff = Math.Abs(q - this.q);
 			var r_diff = Math.Abs(r - this.r);
 			var s_diff = Math.Abs(s - this.s);
 
 			if (q_diff > r_diff && q_diff > s_diff) {
-				q = -r-s;
+				q = -r - s;
 			} else if(r_diff > s_diff) {
-				r = -q-s;
+				r = -q - s;
 			} else {
-				s = -q-r;
+				s = -q - r;
 			}
 
 			return new CubeCoord(q, r, s);
@@ -116,6 +124,8 @@ namespace Hex {
 	}
 
 	public static class HexConstants {
+		public const int HEX_SIZE = 24;
+
 		public static OffsetCoord[,] oddq_directions = new OffsetCoord[2, 6] {
 			{
 				new OffsetCoord(1,  0), new OffsetCoord(1, -1), new OffsetCoord(0, -1),
@@ -129,6 +139,18 @@ namespace Hex {
 	}
 
 	public class HexUtils {
+		public static float HexWidth {
+			get {
+				return 2 * HexConstants.HEX_SIZE;
+			}
+		}
+
+		public static float HexHeight {
+			get {
+				return (float) Math.Sqrt(3) * HexConstants.HEX_SIZE;
+			}
+		}
+
 		public static OffsetCoord oddq_offset_neighbor(OffsetCoord hex, Direction direction) {
 			var parity = hex.Col & 1;
 			var dir = HexConstants.oddq_directions[parity, (int) direction];
@@ -136,21 +158,25 @@ namespace Hex {
 		}
 
 		///<summary>Converts between pixels to offset coordinates</summary>
-		public static OffsetCoord PixelToHex(Vector2 point, int size) {
-			var q = (2.0 / 3 * point.x) / size;
-			var r = (-1.0 / 3 * point.x + Math.Sqrt(3) / 3 * point.y) / size;
-			return new AxialCoord(q, r).Round().ToOffset();
+		public static OffsetCoord PixelToHexOffset(Vector2 point) {
+			return HexUtils.PixelToHexAxial(point).ToOffset();
 		}
 
-		public static OffsetCoord HexToPixel(OffsetCoord hex, int size) {
-			var x = size * Math.Sqrt(3) * (hex.Col + 0.5 * (hex.Row & 1));
-			var y = size * 3/2 * hex.Row;
-			return new OffsetCoord((int) x, (int) y);
+		public static AxialCoord PixelToHexAxial(Vector2 point) {
+			var q = (2.0 / 3 * point.x) / HexConstants.HEX_SIZE;
+			var r = (-1.0 / 3 * point.x + Math.Sqrt(3) / 3 * point.y) / HexConstants.HEX_SIZE;
+			return new AxialCoord(q, r).Round();
 		}
 
-		public static AxialCoord HexToPixel(AxialCoord hex, int size) {
-			var x = size * (3.0/2 * hex.q);
-			var y = size * (Math.Sqrt(3) / 2 * hex.q + Math.Sqrt(3) * hex.r);
+		public static Vector2 HexToPixel(OffsetCoord hex) {
+			var x = HexConstants.HEX_SIZE * Math.Sqrt(3) * (hex.Col + 0.5 * (hex.Row & 1));
+			var y = HexConstants.HEX_SIZE * 3/2 * hex.Row;
+			return new Vector2((int) x, (int) y);
+		}
+
+		public static AxialCoord HexToPixel(AxialCoord hex) {
+			var x = HexConstants.HEX_SIZE * (3.0/2 * hex.q);
+			var y = HexConstants.HEX_SIZE * (Math.Sqrt(3) / 2 * hex.q + Math.Sqrt(3) * hex.r);
 			return new AxialCoord(x, y);
 		}
 	}

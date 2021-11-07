@@ -4,6 +4,7 @@ shader_type canvas_item;
 uniform float hexSize;
 uniform vec2 highlight;
 uniform vec2 gridSize;
+uniform vec2 containerSize;
 uniform sampler2D hexColors;
  
 // Function to convert cubial coords to axial coords.
@@ -64,17 +65,14 @@ vec2 axialRound(vec2 axial) {
 vec2 pixelToHex_FlatTop(vec2 point) {
 	return vec2((2.0/3.0 * point.x) / hexSize, ((-1.0/3.0 * point.x) + (sqrt(3.0)/3.0 * point.y)) / hexSize);
 }
-
  
 // Function to return a screen position, given axial hex-grid coords (vertical, flat-top hex layout).
 vec2 hexToPixel_FlatTop(vec2 hex) {
 	return vec2((3.0/2.0 * hex.x) * hexSize, ((sqrt(3.0)/2.0 * hex.x) + (sqrt(3.0) * hex.y)) * hexSize);
 }
- 
-// Main shader.
+
 void fragment() {
-	//vec2 point = vec2(FRAGCOORD.x, FRAGCOORD.y);
-	vec2 point = UV * 500.0;
+	vec2 point = UV * containerSize - vec2((2.0 * hexSize) / 2.0, (sqrt(3.0) * hexSize) / 2.0);
 	vec2 hex = axialRound(pixelToHex_FlatTop(point));
 	vec2 offset = axialToOffset(hex);
  
