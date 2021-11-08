@@ -11,12 +11,14 @@ shader_param/hexSize = 24.0
 shader_param/highlight = Vector2( -1, -1 )
 shader_param/gridSize = Vector2( 0, 0 )
 shader_param/containerSize = Vector2( 0, 0 )
+shader_param/gridThickness = 1.5
 
 [node name="WorldRenderer" type="Node2D"]
 script = ExtResource( 3 )
 
 [node name="WorldGrid" type="Polygon2D" parent="."]
 material = SubResource( 2 )
+antialiased = true
 texture = ExtResource( 1 )
 polygon = PoolVector2Array( 0, 0, 0, 500, 500, 500, 500, 0 )
 uv = PoolVector2Array( 0, 0, 0, 1, 1, 1, 1, 0 )
