@@ -8,6 +8,8 @@ public class WorldGrid : Polygon2D {
 	public int gridRows;
 
 	private GameWorld.World world;
+	private InputManager inputManager;
+	private bool _hasRendered = false;
 
 	public ShaderMaterial shader {
 		get {
@@ -16,14 +18,21 @@ public class WorldGrid : Polygon2D {
 	}
 
 	public override void _Ready() {
+		inputManager = GetNode<InputManager>("/root/InputManager");
+		inputManager.ActiveMapMode.Subscribe((MapModes.MapMode mapMode) => {
+			if (_hasRendered) {
+				UpdateHexColors(mapMode);
+			}
+		});
 	}
 
 	public void Render(GameWorld.World world) {
+		_hasRendered = true;
 		this.world = world;
 		GD.PrintS("[WorldGrid] Render world:", this.world.TileWidth, this.world.TileHeight);
 		this.SetGridVisibility(true);
 		this.SetupGrid();
-		this.UpdateHexColors();
+		this.UpdateHexColors(inputManager.ActiveMapMode.Value);
 	}
 
 	private void SetupGrid() {
@@ -43,12 +52,14 @@ public class WorldGrid : Polygon2D {
 		};
 	}
 
-	private void UpdateHexColors() {
+	private void UpdateHexColors(MapModes.MapMode mapModeType) {
+		GD.PrintS("Set map mode", mapModeType);
 		Image hexColorsImage = new Image();
 		hexColorsImage.Create(this.gridColumns, this.gridRows, false, Image.Format.Rgbaf);
 		hexColorsImage.Lock();
+		var mapMode = MapModes.mapModes[mapModeType];
 		foreach (GameWorld.Tile tile in this.world.Tiles) {
-			Color hexColor = GameWorld.TileConstants.TerrainColors[tile.terrainType];
+			Color hexColor = mapMode.GetTileColor(tile);
 			hexColorsImage.SetPixel(tile.position.Col, tile.position.Row, hexColor);
 		}
 

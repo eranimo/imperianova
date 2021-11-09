@@ -4,6 +4,7 @@ using System.Reactive.Subjects;
 
 public class InputManager : Node {
 	public BehaviorSubject<GameWorld.Tile> SelectedTile = new BehaviorSubject<GameWorld.Tile>(null);
+    public BehaviorSubject<MapModes.MapMode> ActiveMapMode = new BehaviorSubject<MapModes.MapMode>(MapModes.MapMode.Terrain);
 
 	[Signal]
 	public delegate void CameraZoom(float zoom);
