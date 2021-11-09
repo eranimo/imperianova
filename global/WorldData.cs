@@ -23,6 +23,10 @@ public class WorldData : Node {
         this.sealevel = world.options.Sealevel;
     }
 
+    public bool IsValidTile(int x, int y) {
+        return this.world.IsValidTile(new Hex.OffsetCoord(x, y));
+    }
+
     public Godot.Collections.Dictionary GetTile(int x, int y) {
         var tile = this.world.GetTile(new Hex.OffsetCoord(x, y));
         var data = new Godot.Collections.Dictionary();

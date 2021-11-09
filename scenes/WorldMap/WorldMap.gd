@@ -1,3 +1,4 @@
+# DEPRECATED
 extends Node2D
 
 signal tile_pressed(tile_pos)

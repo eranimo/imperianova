@@ -3,10 +3,12 @@ shader_type canvas_item;
 
 uniform float hexSize;
 uniform vec2 highlight;
+uniform vec2 selectedHex;
 uniform vec2 gridSize;
 uniform vec2 containerSize;
 uniform sampler2D hexColors;
 uniform float gridThickness;
+uniform bool gridVisible;
 
 const float PI = 3.14159265358979323846;
  
@@ -126,24 +128,35 @@ void fragment() {
 		vec4 texel = texelFetch(hexColors, ivec2(int(offset.x), int(offset.y)), 0);
 		color = vec4(texel.x, texel.y, texel.z, 1.0);
 		
+		// highlight rendering
 		if (highlight == hex) {
 			color = mix(color, vec4(0.0, 0.0, 0.0, 1.0), 0.5);
 		}
 
-		// SE border
-		for (int i = 0; i <= 5; i++) {
-			int j;
-			if (i == 5) {
-				j = 0;
-			} else {
-				j = i + 1;
-			}
-			vec2 SE_n = axial_neighbor(hex, i);
-			vec2 SE_p1 = flat_hex_corner(center, i);
-			vec2 SE_p2 = flat_hex_corner(center, j);
-			float SE_d = distance_to_line(SE_p1, SE_p2, point);
-			if (SE_d < gridThickness) {
-				color = mix(color, vec4(0, 0, 0, 1), smoothstep(gridThickness, 0.0, SE_d));
+		// grid lines rendering
+		if (hex == selectedHex || gridVisible) {
+			for (int i = 0; i <= 5; i++) {
+				int j;
+				if (i == 5) {
+					j = 0;
+				} else {
+					j = i + 1;
+				}
+				vec2 SE_n = axial_neighbor(hex, i);
+				vec2 SE_p1 = flat_hex_corner(center, i);
+				vec2 SE_p2 = flat_hex_corner(center, j);
+				float SE_d = distance_to_line(SE_p1, SE_p2, point);
+
+				vec4 borderColor = vec4(0, 0, 0, 1);
+				float borderThickness = gridThickness;
+				if (hex == selectedHex) {
+					borderColor = vec4(1, 1, 1, 1);
+					borderThickness = gridThickness * 2.0;
+				}
+
+				if (SE_d < borderThickness) {
+					color = mix(color, borderColor, smoothstep(borderThickness, 0.0, SE_d));
+				}
 			}
 		}
 	

@@ -75,9 +75,9 @@ text = "Foobar"
 margin_top = 66.0
 margin_right = 176.0
 margin_bottom = 82.0
+custom_fonts/font = ExtResource( 1 )
 custom_styles/fg = SubResource( 2 )
 custom_styles/bg = SubResource( 3 )
-custom_fonts/font = ExtResource( 1 )
 value = 50.0
 
 [node name="GameMenu" type="Popup" parent="."]
@@ -122,9 +122,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Continue" type="Button" parent="GameMenu/VBoxContainer" groups=[
-"buttons",
-]]
+[node name="Continue" type="Button" parent="GameMenu/VBoxContainer" groups=["buttons"]]
 pause_mode = 2
 margin_right = 84.0
 margin_bottom = 24.0
@@ -134,9 +132,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="SaveGame" type="Button" parent="GameMenu/VBoxContainer" groups=[
-"buttons",
-]]
+[node name="SaveGame" type="Button" parent="GameMenu/VBoxContainer" groups=["buttons"]]
 pause_mode = 2
 margin_top = 28.0
 margin_right = 84.0
@@ -144,9 +140,7 @@ margin_bottom = 52.0
 theme = ExtResource( 9 )
 text = "Save Game"
 
-[node name="LoadGame" type="Button" parent="GameMenu/VBoxContainer" groups=[
-"buttons",
-]]
+[node name="LoadGame" type="Button" parent="GameMenu/VBoxContainer" groups=["buttons"]]
 pause_mode = 2
 margin_top = 56.0
 margin_right = 84.0
@@ -154,9 +148,7 @@ margin_bottom = 80.0
 theme = ExtResource( 9 )
 text = "Load Game"
 
-[node name="MainMenu" type="Button" parent="GameMenu/VBoxContainer" groups=[
-"buttons",
-]]
+[node name="MainMenu" type="Button" parent="GameMenu/VBoxContainer" groups=["buttons"]]
 pause_mode = 2
 margin_top = 84.0
 margin_right = 84.0
@@ -164,9 +156,7 @@ margin_bottom = 108.0
 theme = ExtResource( 9 )
 text = "Main Menu"
 
-[node name="ExitGame" type="Button" parent="GameMenu/VBoxContainer" groups=[
-"buttons",
-]]
+[node name="ExitGame" type="Button" parent="GameMenu/VBoxContainer" groups=["buttons"]]
 pause_mode = 2
 margin_top = 112.0
 margin_right = 84.0

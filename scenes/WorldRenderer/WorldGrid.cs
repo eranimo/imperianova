@@ -7,6 +7,8 @@ public class WorldGrid : Polygon2D {
 	public int gridColumns;
 	public int gridRows;
 
+	private GameWorld.World world;
+
 	public ShaderMaterial shader {
 		get {
 			return (this.Material as ShaderMaterial);
@@ -16,9 +18,17 @@ public class WorldGrid : Polygon2D {
 	public override void _Ready() {
 	}
 
-	public void SetupGrid(int rows, int cols) {
-		this.gridColumns = cols;
-		this.gridRows = rows;
+	public void Render(GameWorld.World world) {
+		this.world = world;
+		GD.PrintS("[WorldGrid] Render world:", this.world.TileWidth, this.world.TileHeight);
+		this.SetGridVisibility(true);
+		this.SetupGrid();
+		this.UpdateHexColors();
+	}
+
+	private void SetupGrid() {
+		this.gridColumns = this.world.TileWidth;
+		this.gridRows = this.world.TileHeight;
 
 		var containerSize = HexUtils.GetGridDimensions(this.gridColumns, this.gridRows);
 		
@@ -33,24 +43,30 @@ public class WorldGrid : Polygon2D {
 		};
 	}
 
-	public void Setup() {
-		var shader = (this.Material as ShaderMaterial);
+	private void UpdateHexColors() {
 		Image hexColorsImage = new Image();
-		hexColorsImage.Create(this.gridRows, this.gridColumns, false, Image.Format.Rgbaf);
+		hexColorsImage.Create(this.gridColumns, this.gridRows, false, Image.Format.Rgbaf);
 		hexColorsImage.Lock();
-		for (var y = 0; y < this.gridRows; y++) {
-			for (var x = 0; x < this.gridColumns; x++) {
-				Color hexColor = new Color(0.1f * x, 0.1f * y, 0.5f, 1.0f);
-				hexColorsImage.SetPixel(x, y, hexColor);
-			}
+		foreach (GameWorld.Tile tile in this.world.Tiles) {
+			Color hexColor = GameWorld.TileConstants.TerrainColors[tile.terrainType];
+			hexColorsImage.SetPixel(tile.position.Col, tile.position.Row, hexColor);
 		}
+
 		hexColorsImage.Unlock();
 		ImageTexture hexColors = new ImageTexture();
 		hexColors.CreateFromImage(hexColorsImage);
-		shader.SetShaderParam("hexColors", hexColors);
+		this.shader.SetShaderParam("hexColors", hexColors);
 	}
 
-	public void setHighlight(OffsetCoord hex) {
+	public void SetHighlightedHex(OffsetCoord hex) {
 		this.shader.SetShaderParam("highlight", hex.ToAxial().AsVector());
+	}
+
+	public void SetSelectedHex(OffsetCoord hex) {
+		this.shader.SetShaderParam("selectedHex", hex.ToAxial().AsVector());
+	}
+
+	public void SetGridVisibility(bool visible) {
+		this.shader.SetShaderParam("gridVisible", visible);
 	}
 }

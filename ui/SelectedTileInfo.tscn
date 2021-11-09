@@ -5,7 +5,6 @@
 [ext_resource path="res://resources/theme.tres" type="Theme" id=3]
 
 [node name="SelectedTileInfo" type="WindowDialog"]
-visible = true
 margin_right = 400.0
 margin_bottom = 212.0
 grow_horizontal = 2

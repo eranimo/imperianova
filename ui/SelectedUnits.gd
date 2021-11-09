@@ -1,3 +1,4 @@
+# DEPRECATED
 extends WindowDialog
 
 onready var UnitPanelContainer: Node = find_node("UnitPanelContainer")

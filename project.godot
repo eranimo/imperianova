@@ -54,11 +54,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/SmoothPath.gd"
 }, {
-"base": "Node",
-"class": "System",
-"language": "GDScript",
-"path": "res://scripts/System.gd"
-}, {
 "base": "OpenSimplexNoise",
 "class": "WorldNoise",
 "language": "GDScript",
@@ -74,7 +69,6 @@ _global_script_class_icons={
 "ReactiveSet": "",
 "ReactiveState": "",
 "SmoothPath": "",
-"System": "",
 "WorldNoise": ""
 }
 
@@ -88,16 +82,13 @@ config/version="0.0.1"
 [autoload]
 
 SaveSystem="*res://global/SaveSystem.gd"
-RefSaver="*res://global/RefSaver.gd"
 MapManager="*res://global/MapManager.gd"
 MapData="*res://global/MapData.gd"
-GameData="*res://global/GameData.gd"
 Console="*res://addons/quentincaffeino-console/src/Console.tscn"
-EntitySystem="*res://global/EntitySystem.gd"
-Utils="*res://global/Utils.gd"
 IntegerResolutionHandler="*res://addons/integer_resolution_handler/integer_resolution_handler.gd"
 HexUtils="*res://global/HexUtils.gd"
 WorldData="*res://global/WorldData.cs"
+InputManager="*res://global/InputManager.cs"
 
 [display]
 

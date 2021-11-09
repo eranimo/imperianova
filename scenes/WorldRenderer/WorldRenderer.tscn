@@ -9,9 +9,11 @@
 shader = ExtResource( 2 )
 shader_param/hexSize = 24.0
 shader_param/highlight = Vector2( -1, -1 )
+shader_param/selectedHex = Vector2( -1, -1 )
 shader_param/gridSize = Vector2( 0, 0 )
 shader_param/containerSize = Vector2( 0, 0 )
 shader_param/gridThickness = 1.5
+shader_param/gridVisible = null
 
 [node name="WorldRenderer" type="Node2D"]
 script = ExtResource( 3 )

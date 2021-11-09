@@ -7,6 +7,7 @@
 [sub_resource type="StyleBoxEmpty" id=1]
 
 [node name="SelectedUnits" type="WindowDialog"]
+visible = true
 margin_right = 400.0
 margin_bottom = 200.0
 size_flags_horizontal = 0

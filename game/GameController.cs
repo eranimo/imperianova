@@ -19,12 +19,12 @@ public class GameController : Node {
 	public BehaviorSubject<bool> playState = new BehaviorSubject<bool>(false);
 	public BehaviorSubject<GameSpeed> speed = new BehaviorSubject<GameSpeed>(GameSpeed.Normal);
 
-	private Godot.Object worldMap;
+	private WorldRenderer worldRenderer;
 	private int ticksInDay = 0;
 
 	public override void _Ready() {
 		this.ticksInDay = 0;
-		this.worldMap = GetNode("MapViewport/Viewport/WorldMap");
+		this.worldRenderer = (WorldRenderer) GetNode("MapViewport/Viewport/WorldRenderer");
 	}
 
 	public override void _ExitTree() {
@@ -103,7 +103,7 @@ public class GameController : Node {
 	private void Render() {
 		WorldData worldData = GetNode<WorldData>("/root/WorldData");
 		worldData.AttachWorld(this.world);
-		this.worldMap.Call("render");
+		this.worldRenderer.RenderWorld(this.world);
 	}
 
 	private int SpeedTicks {

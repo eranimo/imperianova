@@ -56,7 +56,7 @@ func _process(delta):
 		offset += panning_vec * pan_speed * delta * zoom
 	
 	if not offset.is_equal_approx(last_position):
-		MapManager.emit_signal("camera_moved", offset, zoom)
+		InputManager.emit_signal("CameraMove", offset)
 	last_position = offset
 
 func zoom_camera(zoom_factor, mouse_position):
@@ -66,3 +66,4 @@ func zoom_camera(zoom_factor, mouse_position):
 	zoom.x = max(zoom.x, min_zoom)
 	zoom.y = max(zoom.y, min_zoom)
 	offset += ((viewport_size * 0.5) - mouse_position) * (zoom-previous_zoom)
+	InputManager.emit_signal("CameraZoom", zoom.x)

@@ -1,3 +1,4 @@
+# DEPRECATED
 extends WindowDialog
 
 onready var Title = $Control/ScrollContainer/MarginContainer/VBoxContainer/Title

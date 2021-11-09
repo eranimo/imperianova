@@ -1,7 +1,7 @@
 using Godot;
 using System;
 using LibNoise;
-
+using System.Collections.Generic;
 
 namespace Hex {
 	public enum Direction {
@@ -202,6 +202,15 @@ namespace GameWorld {
 		Forest,
 	}
 
+	public static class TileConstants {
+		public static Dictionary<TerrainType, Color> TerrainColors = new Dictionary<TerrainType, Color> () {
+			{ TerrainType.Ocean, new Color("#ff1f538c") },
+			{ TerrainType.Grassland, new Color("#ff529a3b") },
+			{ TerrainType.Desert, new Color("#ffcec27e") },
+			{ TerrainType.Forest, new Color("#ff25562e") }
+		};
+	}
+
 	public class Tile {
 		private World world;
 		public Hex.OffsetCoord position;
@@ -346,7 +355,11 @@ namespace GameWorld {
 		}
 
 		public Tile GetTile(Hex.OffsetCoord coord) {
-			return this.Tiles[coord.Row, coord.Col];
+			return this.Tiles[coord.Col, coord.Row];
+		}
+
+		public bool IsValidTile(Hex.OffsetCoord coord) {
+			return coord.Col >= 0 && coord.Row >= 0 && coord.Col < TileWidth && coord.Row < TileHeight;
 		}
 
 		public static World Generate() {
