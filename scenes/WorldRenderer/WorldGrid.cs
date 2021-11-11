@@ -32,6 +32,7 @@ public class WorldGrid : Polygon2D {
 		GD.PrintS("[WorldGrid] Render world:", this.world.TileWidth, this.world.TileHeight);
 		this.SetGridVisibility(true);
 		this.SetupGrid();
+		this.UpdateTerritoryMap();
 		this.UpdateHexColors(inputManager.ActiveMapMode.Value);
 	}
 
@@ -67,6 +68,24 @@ public class WorldGrid : Polygon2D {
 		ImageTexture hexColors = new ImageTexture();
 		hexColors.CreateFromImage(hexColorsImage);
 		this.shader.SetShaderParam("hexColors", hexColors);
+	}
+
+	private void UpdateTerritoryMap() {
+		Image hexTerritoryColorImage = new Image();
+		hexTerritoryColorImage.Create(this.gridColumns, this.gridRows, false, Image.Format.Rgbaf);
+
+		hexTerritoryColorImage.Lock();
+
+		hexTerritoryColorImage.SetPixel(1, 1, new Color(0.4f, 0.2f, 0.8f, 1 / 10_000f));
+		hexTerritoryColorImage.SetPixel(1, 2, new Color(0.4f, 0.2f, 0.8f, 1 / 10_000f));
+		hexTerritoryColorImage.SetPixel(2, 3, new Color(0.1f, 0.6f, 0.1f, 2 / 10_000f));
+		hexTerritoryColorImage.SetPixel(3, 3, new Color(0.1f, 0.6f, 0.1f, 2 / 10_000f));
+		hexTerritoryColorImage.SetPixel(3, 4, new Color(0.1f, 0.6f, 0.1f, 2 / 10_000f));
+
+		hexTerritoryColorImage.Unlock();
+		ImageTexture hexTerritoryColors = new ImageTexture();
+		hexTerritoryColors.CreateFromImage(hexTerritoryColorImage);
+		this.shader.SetShaderParam("hexTerritoryColor", hexTerritoryColors);
 	}
 
 	public void SetHighlightedHex(OffsetCoord hex) {

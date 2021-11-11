@@ -9,6 +9,7 @@ uniform vec2 containerSize;
 uniform sampler2D hexColors;
 uniform float gridThickness;
 uniform bool gridVisible;
+uniform sampler2D hexTerritoryColor;
 
 const float PI = 3.14159265358979323846;
  
@@ -78,18 +79,14 @@ vec2 hexToPixel_FlatTop(vec2 hex) {
 
 vec2 axial_direction(int direction) {
 	vec2 directions[] = {
-		vec2(1, 0), vec2(1, -1), vec2(0, -1),
-		vec2(-1, 0), vec2(-1, 1), vec2(0, 1)
+		vec2(1, 0), vec2(0, 1), vec2(-1, 1),
+		vec2(-1, 0), vec2(0, -1), vec2(1, -1)
 	};
 	return directions[direction];
 }
 
-vec2 axial_add(vec2 hex, vec2 vec) {
-	return vec2(hex.x + vec.x, hex.y + vec.x);
-}
-
 vec2 axial_neighbor(vec2 hex, int direction) {
-	return axial_add(hex, axial_direction(direction));
+	return hex + axial_direction(direction);
 }
 
 float distance_to_line(vec2 pt1, vec2 pt2, vec2 testPt) {
@@ -133,6 +130,30 @@ void fragment() {
 			color = mix(color, vec4(0.0, 0.0, 0.0, 1.0), 0.5);
 		}
 
+		vec4 territoryColor = texelFetch(hexTerritoryColor, ivec2(int(offset.x), int(offset.y)), 0);
+		if (territoryColor != vec4(0)) {
+			for (int i = 0; i <= 5; i++) {
+				int j;
+				if (i == 5) {
+					j = 0;
+				} else {
+					j = i + 1;
+				}
+				vec2 neighbor_axial = axial_neighbor(hex, i);
+				vec2 p1 = flat_hex_corner(center, i);
+				vec2 p2 = flat_hex_corner(center, j);
+				float dist = distance_to_line(p1, p2, point);
+
+				vec2 neighbor_offset = axialToOffset(neighbor_axial);
+				vec4 neighborTerritoryColor = texelFetch(hexTerritoryColor, ivec2(int(neighbor_offset.x), int(neighbor_offset.y)), 0);
+				bool is_same_territory = neighborTerritoryColor.a == territoryColor.a;
+
+				if (!is_same_territory && dist < 10.0) {
+					color = mix(color, vec4(territoryColor.xyz, 1.0), smoothstep(10.0, 0.0, dist));
+				}
+			}
+		}
+
 		// grid lines rendering
 		if (hex == selectedHex || gridVisible) {
 			for (int i = 0; i <= 5; i++) {
@@ -142,10 +163,9 @@ void fragment() {
 				} else {
 					j = i + 1;
 				}
-				vec2 SE_n = axial_neighbor(hex, i);
-				vec2 SE_p1 = flat_hex_corner(center, i);
-				vec2 SE_p2 = flat_hex_corner(center, j);
-				float SE_d = distance_to_line(SE_p1, SE_p2, point);
+				vec2 p1 = flat_hex_corner(center, i);
+				vec2 p2 = flat_hex_corner(center, j);
+				float dist = distance_to_line(p1, p2, point);
 
 				vec4 borderColor = vec4(0, 0, 0, 1);
 				float borderThickness = gridThickness;
@@ -154,8 +174,8 @@ void fragment() {
 					borderThickness = gridThickness * 2.0;
 				}
 
-				if (SE_d < borderThickness) {
-					color = mix(color, borderColor, smoothstep(borderThickness, 0.0, SE_d));
+				if (dist < borderThickness) {
+					color = mix(color, borderColor, smoothstep(borderThickness, 0.0, dist));
 				}
 			}
 		}
