@@ -11,7 +11,7 @@ var panning_vec = Vector2()
 func _ready():
 	InputManager.zoom = zoom.x
 
-func _unhandled_input(event):
+func _input(event):
 	# Mouse zooming
 	if event.is_action_released('view_zoom_in'):
 		zoom_camera(-zoom_speed, event.position)

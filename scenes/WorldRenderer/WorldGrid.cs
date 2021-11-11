@@ -9,6 +9,7 @@ public class WorldGrid : Polygon2D {
 	public bool IsGridVisible = true;
 
 	private GameWorld.World world;
+	private WorldRenderer worldRenderer;
 	private InputManager inputManager;
 	private bool _hasRendered = false;
 
@@ -19,6 +20,7 @@ public class WorldGrid : Polygon2D {
 	}
 
 	public override void _Ready() {
+		this.worldRenderer = (WorldRenderer) GetTree().Root.FindNode("WorldRenderer", true, false);
 		inputManager = GetNode<InputManager>("/root/InputManager");
 		inputManager.ActiveMapMode.Subscribe((MapModes.MapMode mapMode) => {
 			if (_hasRendered) {

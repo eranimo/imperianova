@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://assets/textures/one-pixel-white.png" type="Texture" id=1]
 [ext_resource path="res://scenes/WorldRenderer/WorldGrid.gdshader" type="Shader" id=2]
 [ext_resource path="res://scenes/WorldRenderer/WorldRenderer.cs" type="Script" id=3]
 [ext_resource path="res://scenes/WorldRenderer/WorldGrid.cs" type="Script" id=4]
+[ext_resource path="res://scenes/WorldRenderer/MapLabels.cs" type="Script" id=5]
+[ext_resource path="res://scenes/WorldRenderer/WorldGridContainer.cs" type="Script" id=6]
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 2 )
@@ -20,10 +22,23 @@ shader_param/zoom = null
 [node name="WorldRenderer" type="Node2D"]
 script = ExtResource( 3 )
 
-[node name="WorldGrid" type="Polygon2D" parent="."]
+[node name="WorldGridContainer" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WorldGrid" type="Polygon2D" parent="WorldGridContainer"]
 material = SubResource( 2 )
 antialiased = true
 texture = ExtResource( 1 )
 polygon = PoolVector2Array( 0, 0, 0, 500, 500, 500, 500, 0 )
 uv = PoolVector2Array( 0, 0, 0, 1, 1, 1, 1, 0 )
 script = ExtResource( 4 )
+
+[node name="MapLabels" type="Node2D" parent="."]
+script = ExtResource( 5 )
+
+[node name="LabelsRoot" type="Node2D" parent="MapLabels"]

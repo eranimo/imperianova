@@ -38,6 +38,7 @@ script = ExtResource( 2 )
 [node name="WorldRenderer" parent="MapViewport/Viewport" instance=ExtResource( 3 )]
 
 [node name="UI" type="CanvasLayer" parent="."]
+layer = 2
 
 [node name="TileData" type="VBoxContainer" parent="UI"]
 anchor_left = 1.0
