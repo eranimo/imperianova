@@ -47,6 +47,8 @@ public class WorldRenderer : Node2D {
 					inputManager.SelectedTile.OnNext(tile);
 				}
 			}
+		} else if (@event.IsActionPressed("map_toggle_grid")) {
+			Grid.SetGridVisibility(!Grid.IsGridVisible);
 		}
 	}
 
@@ -56,6 +58,8 @@ public class WorldRenderer : Node2D {
 	}
 
 	private void _on_camera_zoom(float zoom) {
-		Grid.SetGridVisibility(zoom < 1.0);
+		if (Grid.IsGridVisible) {
+			Grid.SetGridVisibility(zoom < 1.0);
+		}
 	}
 }

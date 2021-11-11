@@ -148,8 +148,12 @@ void fragment() {
 				vec4 neighborTerritoryColor = texelFetch(hexTerritoryColor, ivec2(int(neighbor_offset.x), int(neighbor_offset.y)), 0);
 				bool is_same_territory = neighborTerritoryColor.a == territoryColor.a;
 
-				if (!is_same_territory && dist < 10.0) {
-					color = mix(color, vec4(territoryColor.xyz, 1.0), smoothstep(10.0, 0.0, dist));
+				if (!is_same_territory) {
+					if (dist <= 1.5) {
+						color = mix(color, vec4(territoryColor.xyz, 1.0), smoothstep(0.0, 1.5, dist));
+					} else if (dist < 10.0) {
+						color = mix(color, vec4(territoryColor.xyz, 0.8), smoothstep(10.0, 0.0, dist));
+					}
 				}
 			}
 		}

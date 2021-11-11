@@ -6,6 +6,7 @@ public class WorldGrid : Polygon2D {
 	private Polygon2D Grid;
 	public int gridColumns;
 	public int gridRows;
+	public bool IsGridVisible = true;
 
 	private GameWorld.World world;
 	private InputManager inputManager;
@@ -97,6 +98,7 @@ public class WorldGrid : Polygon2D {
 	}
 
 	public void SetGridVisibility(bool visible) {
+		IsGridVisible = visible;
 		this.shader.SetShaderParam("gridVisible", visible);
 	}
 }
