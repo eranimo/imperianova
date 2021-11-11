@@ -58,6 +58,7 @@ public class WorldRenderer : Node2D {
 	}
 
 	private void _on_camera_zoom(float zoom) {
+		Grid.SetZoom(zoom);
 		if (Grid.IsGridVisible) {
 			Grid.SetGridVisibility(zoom < 1.0);
 		}

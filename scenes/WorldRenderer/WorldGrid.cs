@@ -31,9 +31,11 @@ public class WorldGrid : Polygon2D {
 		_hasRendered = true;
 		this.world = world;
 		GD.PrintS("[WorldGrid] Render world:", this.world.TileWidth, this.world.TileHeight);
+		this.shader.SetShaderParam("zoom", inputManager.zoom);
 		this.SetGridVisibility(true);
 		this.SetupGrid();
 		this.UpdateTerritoryMap();
+		this.UpdateOccupiedMap();
 		this.UpdateHexColors(inputManager.ActiveMapMode.Value);
 	}
 
@@ -89,6 +91,20 @@ public class WorldGrid : Polygon2D {
 		this.shader.SetShaderParam("hexTerritoryColor", hexTerritoryColors);
 	}
 
+	private void UpdateOccupiedMap() {
+		Image hexOccupiedMapImage = new Image();
+		hexOccupiedMapImage.Create(this.gridColumns, this.gridRows, false, Image.Format.Rgbaf);
+
+		hexOccupiedMapImage.Lock();
+
+		hexOccupiedMapImage.SetPixel(1, 1, new Color(0.1f, 0.6f, 0.1f, 1.0f));
+
+		hexOccupiedMapImage.Unlock();
+		ImageTexture hexOccupiedMapTexture = new ImageTexture();
+		hexOccupiedMapTexture.CreateFromImage(hexOccupiedMapImage);
+		this.shader.SetShaderParam("hexOccupiedColor", hexOccupiedMapTexture);
+	}
+
 	public void SetHighlightedHex(OffsetCoord hex) {
 		this.shader.SetShaderParam("highlight", hex.ToAxial().AsVector());
 	}
@@ -100,5 +116,9 @@ public class WorldGrid : Polygon2D {
 	public void SetGridVisibility(bool visible) {
 		IsGridVisible = visible;
 		this.shader.SetShaderParam("gridVisible", visible);
+	}
+
+	public void SetZoom(float zoom) {
+		this.shader.SetShaderParam("zoom", zoom);
 	}
 }

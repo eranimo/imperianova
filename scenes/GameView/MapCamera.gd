@@ -8,6 +8,9 @@ var zoom_speed = 0.25
 var panning = false
 var panning_vec = Vector2()
 
+func _ready():
+	InputManager.zoom = zoom.x
+
 func _unhandled_input(event):
 	# Mouse zooming
 	if event.is_action_released('view_zoom_in'):
@@ -66,4 +69,5 @@ func zoom_camera(zoom_factor, mouse_position):
 	zoom.x = max(zoom.x, min_zoom)
 	zoom.y = max(zoom.y, min_zoom)
 	offset += ((viewport_size * 0.5) - mouse_position) * (zoom-previous_zoom)
+	InputManager.zoom = zoom.x
 	InputManager.emit_signal("CameraZoom", zoom.x)

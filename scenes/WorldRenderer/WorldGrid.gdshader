@@ -10,6 +10,9 @@ uniform sampler2D hexColors;
 uniform float gridThickness;
 uniform bool gridVisible;
 uniform sampler2D hexTerritoryColor;
+uniform bool territoriesVisible;
+uniform sampler2D hexOccupiedColor;
+uniform float zoom;
 
 const float PI = 3.14159265358979323846;
  
@@ -130,29 +133,41 @@ void fragment() {
 			color = mix(color, vec4(0.0, 0.0, 0.0, 1.0), 0.5);
 		}
 
-		vec4 territoryColor = texelFetch(hexTerritoryColor, ivec2(int(offset.x), int(offset.y)), 0);
-		if (territoryColor != vec4(0)) {
-			for (int i = 0; i <= 5; i++) {
-				int j;
-				if (i == 5) {
-					j = 0;
-				} else {
-					j = i + 1;
-				}
-				vec2 neighbor_axial = axial_neighbor(hex, i);
-				vec2 p1 = flat_hex_corner(center, i);
-				vec2 p2 = flat_hex_corner(center, j);
-				float dist = distance_to_line(p1, p2, point);
+		// occupied hex stripes
+		vec4 occupiedColor = texelFetch(hexOccupiedColor, ivec2(int(offset.x), int(offset.y)), 0);
+		if (occupiedColor != vec4(0)) {
+			float pos = mix(point.x / zoom, point.y / zoom, 0.6) * (3.0);
+			float value = floor(fract(pos) + 0.5);
+			vec4 new_color = mix(color, vec4(occupiedColor.xyz, 0.5), value);
+			color = new_color;
+		}
 
-				vec2 neighbor_offset = axialToOffset(neighbor_axial);
-				vec4 neighborTerritoryColor = texelFetch(hexTerritoryColor, ivec2(int(neighbor_offset.x), int(neighbor_offset.y)), 0);
-				bool is_same_territory = neighborTerritoryColor.a == territoryColor.a;
+		// territories
+		if (territoriesVisible) {
+			vec4 territoryColor = texelFetch(hexTerritoryColor, ivec2(int(offset.x), int(offset.y)), 0);
+			if (territoryColor != vec4(0)) {
+				for (int i = 0; i <= 5; i++) {
+					int j;
+					if (i == 5) {
+						j = 0;
+					} else {
+						j = i + 1;
+					}
+					vec2 neighbor_axial = axial_neighbor(hex, i);
+					vec2 p1 = flat_hex_corner(center, i);
+					vec2 p2 = flat_hex_corner(center, j);
+					float dist = distance_to_line(p1, p2, point);
 
-				if (!is_same_territory) {
-					if (dist <= 1.5) {
-						color = mix(color, vec4(territoryColor.xyz, 1.0), smoothstep(0.0, 1.5, dist));
-					} else if (dist < 10.0) {
-						color = mix(color, vec4(territoryColor.xyz, 0.8), smoothstep(10.0, 0.0, dist));
+					vec2 neighbor_offset = axialToOffset(neighbor_axial);
+					vec4 neighborTerritoryColor = texelFetch(hexTerritoryColor, ivec2(int(neighbor_offset.x), int(neighbor_offset.y)), 0);
+					bool is_same_territory = neighborTerritoryColor.a == territoryColor.a;
+
+					if (!is_same_territory) {
+						if (dist <= 0.5) {
+							color = mix(color, vec4(territoryColor.xyz, 1.0), smoothstep(0.0, 0.5, dist));
+						} else if (dist < 10.0) {
+							color = mix(color, vec4(territoryColor.xyz, 0.8), smoothstep(10.0, 0.0, dist));
+						}
 					}
 				}
 			}
