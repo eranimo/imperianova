@@ -3,6 +3,7 @@ using System;
 using System.Reactive.Subjects;
 using GameWorld;
 using DefaultEcs;
+using DefaultEcs.Threading;
 
 public enum GameSpeed {
 	Slow,
@@ -10,17 +11,17 @@ public enum GameSpeed {
 	Fast,
 }
 
-
 public class GameController : Node {
 	public GameWorld.World world;
 	public readonly int TICKS_PER_DAY = 4;
 
-	public BehaviorSubject<int> date = new BehaviorSubject<int>(0);
+	public BehaviorSubject<GameDate> date = new BehaviorSubject<GameDate>(new GameDate(0));
 	public BehaviorSubject<bool> playState = new BehaviorSubject<bool>(false);
 	public BehaviorSubject<GameSpeed> speed = new BehaviorSubject<GameSpeed>(GameSpeed.Normal);
 
 	private WorldRenderer worldRenderer;
 	private int ticksInDay = 0;
+	private GameLoop gameLoop;
 
 	public override void _Ready() {
 		this.ticksInDay = 0;
@@ -38,10 +39,20 @@ public class GameController : Node {
 
 		if (this.ticksInDay == 0) {
 			int ticksLeft = this.SpeedTicks;
-			this.date.OnNext(date.Value + 1);
+			this.ProcessDay();
 			this.ticksInDay = ticksLeft;
 		} else {
 			this.ticksInDay--;
+		}
+	}
+
+	private void ProcessDay() {
+		date.OnNext(date.Value.NextDay());
+
+		gameLoop.UpdateDay();
+
+		if (date.Value.isFirstOfMonth) {
+			gameLoop.UpdateMonth();
 		}
 	}
 
@@ -84,8 +95,8 @@ public class GameController : Node {
 	}
 
 	public void NewGame() {
-		this.world = GameWorld.World.Generate();
-		this.Render();
+		var world = GameWorld.World.Generate();
+		this.Init(world);
 	}
 
 	public void LoadGame() {
@@ -98,6 +109,13 @@ public class GameController : Node {
 
 	public void Pause() {
 		this.playState.OnNext(false);
+	}
+
+	private void Init(GameWorld.World world) {
+		this.world = world;
+		this.date.OnNext(new GameDate(0));
+		this.Render();
+		this.gameLoop = new GameLoop(this, world);
 	}
 
 	private void Render() {

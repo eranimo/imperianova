@@ -4,9 +4,9 @@ using GameWorld;
 using Hex;
 
 public struct TerritoryData {
-	public List<Hex.OffsetCoord> tiles;
+	public HashSet<Hex.OffsetCoord> tiles;
 
-    public TerritoryData(OffsetCoord position) {
-        this.tiles = new List<OffsetCoord>();
+    public TerritoryData(OffsetCoord[] tiles) {
+        this.tiles = new HashSet<OffsetCoord>(tiles);
     }
 }

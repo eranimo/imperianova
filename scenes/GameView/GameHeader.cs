@@ -15,8 +15,7 @@ public class GameHeader : PanelContainer {
 		this.menu = GetNode<Godot.Button>("Content/Grid/RightColumn/Menu");
 		this.game = (GameController) GetTree().CurrentScene.FindNode("Game");
 
-		this.game.date.Subscribe((int date) => {
-			GD.PrintS("New Date", date);
+		this.game.date.Subscribe((GameDate date) => {
 			this.dateDisplay.Text = date.ToString();
 		});
 

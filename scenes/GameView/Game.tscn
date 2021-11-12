@@ -116,7 +116,7 @@ theme = ExtResource( 13 )
 columns = 2
 
 [node name="LeftColumn" type="HBoxContainer" parent="UI/GameHeader/Content/Grid"]
-margin_right = 172.0
+margin_right = 125.0
 margin_bottom = 24.0
 grow_horizontal = 0
 size_flags_horizontal = 2
@@ -139,19 +139,9 @@ margin_bottom = 24.0
 theme = ExtResource( 13 )
 text = "Normal"
 
-[node name="DateLabel" type="Label" parent="UI/GameHeader/Content/Grid/LeftColumn"]
-margin_left = 117.0
-margin_right = 154.0
-margin_bottom = 24.0
-theme = ExtResource( 13 )
-text = "Date"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="Date" type="Label" parent="UI/GameHeader/Content/Grid/LeftColumn"]
-margin_left = 164.0
-margin_right = 172.0
+margin_left = 117.0
+margin_right = 125.0
 margin_bottom = 24.0
 theme = ExtResource( 13 )
 custom_fonts/font = ExtResource( 1 )
