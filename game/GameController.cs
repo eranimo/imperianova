@@ -4,6 +4,7 @@ using System.Reactive.Subjects;
 using GameWorld;
 using DefaultEcs;
 using DefaultEcs.Threading;
+using DefaultEcs.System;
 
 public enum GameSpeed {
 	Slow,
@@ -21,7 +22,10 @@ public class GameController : Node {
 
 	private WorldRenderer worldRenderer;
 	private int ticksInDay = 0;
-	private GameLoop gameLoop;
+	public GameLoop gameLoop;
+
+	[Signal]
+	public delegate void GameInit();
 
 	public override void _Ready() {
 		this.ticksInDay = 0;
@@ -116,6 +120,7 @@ public class GameController : Node {
 		this.date.OnNext(new GameDate(0));
 		this.Render();
 		this.gameLoop = new GameLoop(this, world);
+		EmitSignal(nameof(GameInit));
 	}
 
 	private void Render() {

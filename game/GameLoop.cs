@@ -1,12 +1,14 @@
 using Godot;
 using DefaultEcs.System;
+using System.Collections.Generic;
 
-class GameLoop {
+public class GameLoop {
 	GameController gameController;
-	DefaultEcs.World entityManager;
+	public DefaultEcs.World entityManager;
 
 	ISystem<GameDate> daySystems;
 	ISystem<GameDate> monthSystems;
+	List<ISystem<GameDate>> uiSystems = new List<ISystem<GameDate>>();
 
 	public GameLoop(GameController gameController, GameWorld.World world) {
 		this.gameController = gameController;
@@ -35,9 +37,22 @@ class GameLoop {
 
 	public void UpdateDay() {
 		daySystems.Update(this.gameController.date.Value);
+
+		foreach(ISystem<GameDate> system in uiSystems) {
+			system.Update(this.gameController.date.Value);
+		}
 	}
 
 	public void UpdateMonth() {
 		monthSystems.Update(this.gameController.date.Value);
 	}
+
+	public void RegisterViewSystem(ISystem<GameDate> system) {
+		uiSystems.Add(system);
+	}
+
+	public void UnregisterViewSystem(ISystem<GameDate> system) {
+		uiSystems.Remove(system);
+	}
+
 }
