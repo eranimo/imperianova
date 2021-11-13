@@ -1,6 +1,7 @@
 using Godot;
 using DefaultEcs.System;
 using System.Collections.Generic;
+using DefaultEcs;
 
 public class GameLoop {
 	GameController gameController;
@@ -25,6 +26,22 @@ public class GameLoop {
 			var popEntity = entityManager.CreateEntity();
 			popEntity.Set<TilePosition>(new TilePosition(new Hex.OffsetCoord(rand.RandiRange(0, 100), rand.RandiRange(0, 100))));
 			popEntity.Set<PopData>(new PopData(1000, 0.01f));
+		}
+
+		for (int i = 0; i < 10; i++) {
+			var unitEntity = entityManager.CreateEntity();
+			unitEntity.Set<TilePosition>(new TilePosition(new Hex.OffsetCoord(rand.RandiRange(0, 100), rand.RandiRange(0, 100))));
+
+			List<Entity> pops = new List<Entity>();
+			for (int u = 0; u < 5; u++) {
+				var popEntity = entityManager.CreateEntity();
+				popEntity.Set<TilePosition>(new TilePosition(new Hex.OffsetCoord(rand.RandiRange(0, 100), rand.RandiRange(0, 100))));
+				popEntity.Set<PopData>(new PopData(1000, 0.01f));
+				pops.Add(popEntity);
+			}
+			unitEntity.Set<UnitData>(new UnitData(pops.ToArray(), GameData.UnitType.Warrior));
+			Movement movement = new Movement();
+			unitEntity.Set<Movement>(movement);
 		}
 
 		daySystems = new SequentialSystem<GameDate>();
