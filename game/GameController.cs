@@ -104,10 +104,10 @@ public class GameController : Node {
 	}
 
 	public void TogglePlay() {
-		if (date.Value.DayTicks == 0) {
-			var gamePanel = (GamePanel) FindNode("GamePanel");
-			gamePanel.GetParent().RemoveChild(gamePanel);
-		}
+		// if (date.Value.DayTicks == 0) {
+		// 	var gamePanel = (GamePanel) FindNode("GamePanel");
+		// 	gamePanel.GetParent().RemoveChild(gamePanel);
+		// }
 		if (this.Playing) {
 			this.Pause();
 		} else {

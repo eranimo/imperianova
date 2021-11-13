@@ -20,7 +20,6 @@ class GamePanelViewSystem : EntityViewSystem {
 	}
 
 	protected override void AfterUpdate() {
-		GD.PrintS("Pop total size", _populationSize);
 		populationSize.OnNext(_populationSize);
 	}
 }

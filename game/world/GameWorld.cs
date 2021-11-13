@@ -186,10 +186,18 @@ namespace Hex {
 			return new Vector2((int) x, (int) y);
 		}
 
-		public static AxialCoord HexToPixel(AxialCoord hex) {
+		public static Vector2 HexToPixel(AxialCoord hex) {
 			var x = HexConstants.HEX_SIZE * (3.0/2 * hex.q);
 			var y = HexConstants.HEX_SIZE * (Math.Sqrt(3) / 2 * hex.q + Math.Sqrt(3) * hex.r);
-			return new AxialCoord(x, y);
+			return new Vector2((int) x, (int) y);
+		}
+
+		public static Vector2 HexToPixelCenter(OffsetCoord hex) {
+			return HexToPixel(hex) + new Vector2(HexWidth / 2, HexHeight / 2);
+		}
+
+		public static Vector2 HexToPixelCenter(AxialCoord hex) {
+			return HexToPixel(hex) + new Vector2(HexWidth / 2, HexHeight / 2);
 		}
 	}
 }

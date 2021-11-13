@@ -1,4 +1,7 @@
-public struct Movement {
-	public Hex.OffsetCoord destination;
-	public Hex.OffsetCoord[] movementQueue;
+using System;
+using System.Collections.Generic;
+
+public class Movement {
+	public Nullable<Hex.OffsetCoord> destination = null;
+	public List<Hex.OffsetCoord> movementQueue = new List<Hex.OffsetCoord>();
 }

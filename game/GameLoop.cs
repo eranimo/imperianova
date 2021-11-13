@@ -42,12 +42,16 @@ public class GameLoop {
 			var unitData = new UnitData(pops.ToArray(), GameData.UnitType.Warrior);
 			unitEntity.Set<UnitData>(unitData);
 			var movement = new Movement();
+			movement.destination = new Hex.OffsetCoord(rand.RandiRange(0, 100), rand.RandiRange(0, 100));
 			unitEntity.Set<Movement>(movement);
 		}
 
-		daySystems = new SequentialSystem<GameDate>();
+		daySystems = new SequentialSystem<GameDate>(
+			new MovementSystem(this.entityManager)
+		);
 		monthSystems = new SequentialSystem<GameDate>(
 			new PopGrowthSystem(this.entityManager)
+			
 		);
 
 		GD.PrintS($"GameLoop init: {watch.ElapsedMilliseconds}ms");
