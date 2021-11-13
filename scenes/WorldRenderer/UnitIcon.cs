@@ -2,11 +2,13 @@ using Godot;
 using System;
 
 public class UnitIcon : Panel {
-	private TextureRect icon;
+	private TextureRect Icon;
 
 	public override void _Ready() {
-		this.icon = (TextureRect) GetNode("MarginContainer/Icon");
+		this.Icon = (TextureRect) GetNode("MarginContainer/Icon");
 	}
 
-	
+	public void SetIcon(string icon) {
+		// load icon resource and replace texture
+	}
 }

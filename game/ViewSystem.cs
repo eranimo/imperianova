@@ -13,10 +13,6 @@ class EntityViewSystem : AEntitySetSystem<GameDate> {
         AfterUpdate();
     }
 
-    public bool FilterEntities(Entity entity) {
-        return true;
-    }
-
     protected virtual void BeforeUpdate() {}
     protected virtual void AfterUpdate() {}
     protected virtual void Process(ReadOnlySpan<Entity> entities) {}

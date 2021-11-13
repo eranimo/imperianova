@@ -5,12 +5,17 @@ using GameWorld;
 using DefaultEcs;
 using DefaultEcs.Threading;
 using DefaultEcs.System;
+using SimpleInjector;
 
 public enum GameSpeed {
 	Slow,
 	Normal,
 	Fast,
 }
+
+public class GameControllerAttribute : Attribute {}
+public class GameInitHandlerAttribute : Attribute {}
+public class AttachViewSystemAttribute : Attribute {}
 
 public class GameController : Node {
 	public GameWorld.World world;
@@ -24,8 +29,10 @@ public class GameController : Node {
 	private int ticksInDay = 0;
 	public GameLoop gameLoop;
 
-	[Signal]
-	public delegate void GameInit();
+	SimpleInjector.Container container;
+
+	public event EventHandler GameInit;
+	public bool IsInit = false;
 
 	public override void _Ready() {
 		this.ticksInDay = 0;
@@ -34,6 +41,12 @@ public class GameController : Node {
 
 	public override void _ExitTree() {
 		// TODO: implement exit
+	}
+
+	public override void _EnterTree() {
+		base._EnterTree();
+		container = new SimpleInjector.Container();
+		container.Register<GameController>(Lifestyle.Singleton);
 	}
 
 	public override void _Process(float delta) {
@@ -91,6 +104,10 @@ public class GameController : Node {
 	}
 
 	public void TogglePlay() {
+		if (date.Value.DayTicks == 0) {
+			var gamePanel = (GamePanel) FindNode("GamePanel");
+			gamePanel.GetParent().RemoveChild(gamePanel);
+		}
 		if (this.Playing) {
 			this.Pause();
 		} else {
@@ -120,7 +137,16 @@ public class GameController : Node {
 		this.date.OnNext(new GameDate(0));
 		this.Render();
 		this.gameLoop = new GameLoop(this, world);
-		EmitSignal(nameof(GameInit));
+		IsInit = true;
+		GameInit?.Invoke(this, EventArgs.Empty);
+	}
+
+	public void OnInit(Action callback) {
+		if (IsInit) {
+			callback();
+		} else {
+			GameInit += (object sender, EventArgs e) => callback();
+		}
 	}
 
 	private void Render() {

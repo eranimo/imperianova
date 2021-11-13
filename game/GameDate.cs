@@ -2,7 +2,7 @@ using System;
 
 public struct GameDate {
 	private DateTime _dateTime;
-	private int DayTicks;
+	public int DayTicks;
 
 	public GameDate(int dayTicks) {
 		_dateTime = new DateTime(1, 1, 1).AddDays(dayTicks);

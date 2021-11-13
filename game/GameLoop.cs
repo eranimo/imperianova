@@ -39,8 +39,9 @@ public class GameLoop {
 				popEntity.Set<PopData>(new PopData(1000, 0.01f));
 				pops.Add(popEntity);
 			}
-			unitEntity.Set<UnitData>(new UnitData(pops.ToArray(), GameData.UnitType.Warrior));
-			Movement movement = new Movement();
+			var unitData = new UnitData(pops.ToArray(), GameData.UnitType.Warrior);
+			unitEntity.Set<UnitData>(unitData);
+			var movement = new Movement();
 			unitEntity.Set<Movement>(movement);
 		}
 
