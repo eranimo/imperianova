@@ -14,21 +14,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://ui/DataTable.gd"
 }, {
-"base": "Node",
-"class": "GameWorld",
-"language": "GDScript",
-"path": "res://scenes/GameView/GameWorld.gd"
-}, {
-"base": "Resource",
-"class": "HexCell",
-"language": "GDScript",
-"path": "res://scenes/WorldMap/HexCell.gd"
-}, {
-"base": "TileMap",
-"class": "HexMap",
-"language": "GDScript",
-"path": "res://scenes/WorldMap/HexMap.gd"
-}, {
 "base": "Reference",
 "class": "MapSet",
 "language": "GDScript",
@@ -61,9 +46,6 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "DataTable": "",
-"GameWorld": "",
-"HexCell": "",
-"HexMap": "",
 "MapSet": "",
 "NameGen": "",
 "ReactiveSet": "",
