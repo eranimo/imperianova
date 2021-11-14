@@ -28,7 +28,7 @@ class MapUnitsViewSystem : AEntitySetSystem<GameDate> {
 		}
 		var tilePosition = entity.Get<TilePosition>();
 		var pos = Hex.HexUtils.HexToPixelCenter(tilePosition.position);
-		unitIcon.SetPosition(pos - new Vector2(12, 12));
+		unitIcon.Position = pos - new Vector2(16, 16);
 	}
 
 	public void AttachNode(Node2D node) {
