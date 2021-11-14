@@ -16,9 +16,13 @@ shader_param/highlight = Vector2( -1, -1 )
 shader_param/selectedHex = Vector2( -1, -1 )
 shader_param/gridSize = Vector2( 0, 0 )
 shader_param/containerSize = Vector2( 0, 0 )
-shader_param/gridThickness = 1.5
+shader_param/gridThickness = 1.0
 shader_param/gridVisible = false
 shader_param/territoriesVisible = true
+shader_param/territoryBorderThickness = 1.0
+shader_param/territoryGradientThickness = 6.0
+shader_param/territoryGradientOpacity = 0.6
+shader_param/gridLineOpacity = 0.75
 shader_param/zoom = null
 
 [node name="WorldRenderer" type="Node2D"]

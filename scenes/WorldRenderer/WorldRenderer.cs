@@ -40,7 +40,7 @@ public class WorldRenderer : Node2D {
 	}
 
 	private void _on_camera_zoom(float zoom) {
+		// GD.PrintS("Zoom", zoom);
 		Grid.SetZoom(zoom);
-		Grid.SetGridVisibility(Grid.IsGridVisible && zoom < 1.0);
 	}
 }
