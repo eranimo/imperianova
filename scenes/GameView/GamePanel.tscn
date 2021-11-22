@@ -1,37 +1,95 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://resources/theme.tres" type="Theme" id=1]
 [ext_resource path="res://scenes/GameView/GamePanel.cs" type="Script" id=2]
+[ext_resource path="res://resources/fonts/ui-labels-large.tres" type="DynamicFont" id=3]
+[ext_resource path="res://assets/icons/fontawesome/angle-down.svg" type="Texture" id=6]
 
 [node name="GamePanel" type="Panel"]
-margin_right = 1024.0
-margin_bottom = 600.0
+margin_right = 361.0
+margin_bottom = 354.0
 theme = ExtResource( 1 )
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TabContainer" type="TabContainer" parent="."]
+[node name="Container" type="VBoxContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="Container"]
+margin_right = 361.0
+margin_bottom = 44.0
+custom_constants/margin_right = 10
+custom_constants/margin_top = 3
+custom_constants/margin_left = 3
+custom_constants/margin_bottom = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Container/MarginContainer"]
+margin_left = 3.0
+margin_top = 3.0
+margin_right = 351.0
+margin_bottom = 41.0
+
+[node name="Label" type="Label" parent="Container/MarginContainer/HBoxContainer"]
+margin_right = 319.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+theme = ExtResource( 1 )
+custom_fonts/font = ExtResource( 3 )
+text = "Polity Name"
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Container/MarginContainer/HBoxContainer"]
+margin_left = 323.0
+margin_right = 348.0
+margin_bottom = 38.0
+size_flags_horizontal = 8
+alignment = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CollapseButton" type="TextureButton" parent="Container/MarginContainer/HBoxContainer/HBoxContainer"]
+margin_right = 25.0
+margin_bottom = 38.0
+rect_min_size = Vector2( 25, 25 )
+texture_normal = ExtResource( 6 )
+expand = true
+stretch_mode = 5
+
+[node name="TabContainer" type="TabContainer" parent="Container"]
+margin_top = 48.0
+margin_right = 361.0
+margin_bottom = 354.0
+size_flags_vertical = 3
 theme = ExtResource( 1 )
 tab_align = 0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Tabs" type="Tabs" parent="TabContainer"]
+[node name="Overview" type="Tabs" parent="Container/TabContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 5.0
 margin_top = 31.0
 margin_right = -5.0
 margin_bottom = -5.0
+grow_vertical = 0
 theme = ExtResource( 1 )
 tab_align = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Tabs"]
+[node name="MarginContainer" type="MarginContainer" parent="Container/TabContainer/Overview"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource( 1 )
@@ -43,31 +101,35 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Tabs/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Container/TabContainer/Overview/MarginContainer"]
 margin_left = 10.0
 margin_top = 10.0
-margin_right = 1004.0
-margin_bottom = 554.0
+margin_right = 341.0
+margin_bottom = 260.0
 custom_constants/separation = 10
 
-[node name="Panel" type="Panel" parent="TabContainer/Tabs/MarginContainer/VBoxContainer"]
-margin_right = 994.0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Tabs/MarginContainer/VBoxContainer/Panel"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+[node name="VBoxContainer" type="VBoxContainer" parent="Container/TabContainer/Overview/MarginContainer/VBoxContainer"]
+margin_right = 331.0
+margin_bottom = 24.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="TabContainer/Tabs/MarginContainer/VBoxContainer/Panel/HBoxContainer"]
-margin_right = 975.0
+[node name="HBoxContainer" type="HBoxContainer" parent="Container/TabContainer/Overview/MarginContainer/VBoxContainer/VBoxContainer"]
+margin_right = 331.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Container/TabContainer/Overview/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+margin_right = 312.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 text = "Total Population Size"
 
-[node name="StatPopulationSize" type="Label" parent="TabContainer/Tabs/MarginContainer/VBoxContainer/Panel/HBoxContainer"]
-margin_left = 979.0
-margin_right = 994.0
+[node name="StatPopulationSize" type="Label" parent="Container/TabContainer/Overview/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+margin_left = 316.0
+margin_right = 331.0
 margin_bottom = 24.0
 text = "0"
