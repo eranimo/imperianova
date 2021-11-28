@@ -24,6 +24,15 @@ func _on_button_pressed(name):
 		"ExitGame":
 			get_tree().quit()
 
+func _input(event):
+	if event.is_action_pressed("ui_exit"):
+		prints("close")
+		if visible:
+			get_parent().CloseMenu();
+		else:
+			get_parent().OpenMenu();
+		get_tree().set_input_as_handled()
+
 func _on_save_game(save_name):
 	self.hide()
 	SaveSystem.save_game(save_name)

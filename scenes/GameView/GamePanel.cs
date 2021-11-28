@@ -36,7 +36,7 @@ public class GamePanel : Panel {
 
 	public override void _ExitTree() {
 		GD.PrintS("GamePanel exited");
-		game.gameLoop.UnregisterViewSystem(viewSystem);
+		game.gameManager.UnregisterViewSystem(viewSystem);
 	}
 
 	[GameInitHandler]

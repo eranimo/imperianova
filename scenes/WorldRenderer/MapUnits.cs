@@ -55,7 +55,7 @@ public class MapUnits : Node2D {
 
 	public override void _ExitTree() {
 		base._ExitTree();
-		game.gameLoop.UnregisterViewSystem(viewSystem);
+		game.gameManager.UnregisterViewSystem(viewSystem);
 	}
 
 	[GameInitHandler]

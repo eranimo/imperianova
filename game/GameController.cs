@@ -17,6 +17,12 @@ public class GameControllerAttribute : Attribute {}
 public class GameInitHandlerAttribute : Attribute {}
 public class AttachViewSystemAttribute : Attribute {}
 
+
+/**
+- Handles game date
+- Handles play and pause state
+- Handles game speed
+*/
 public class GameController : Node {
 	public GameWorld.World world;
 	public readonly int TICKS_PER_DAY = 4;
@@ -28,7 +34,7 @@ public class GameController : Node {
 	private WorldRenderer worldRenderer;
 	private GameLoader gameLoader;
 	private int ticksInDay = 0;
-	public GameLoop gameLoop;
+	public GameManager gameManager;
 
 	SimpleInjector.Container container;
 
@@ -69,10 +75,10 @@ public class GameController : Node {
 	private void ProcessDay() {
 		date.OnNext(date.Value.NextDay());
 
-		gameLoop.UpdateDay();
+		gameManager.UpdateDay();
 
 		if (date.Value.isFirstOfMonth) {
-			gameLoop.UpdateMonth();
+			gameManager.UpdateMonth();
 		}
 	}
 
@@ -118,17 +124,6 @@ public class GameController : Node {
 		}
 	}
 
-	public void NewGame() {
-		GD.PrintS("[GameController] New game");
-		var world = GameWorld.World.Generate();
-		this.Init(world);
-	}
-
-	public void LoadGame() {
-		GD.PrintS("[GameController] Load game");
-		// TODO: implement
-	}
-
 	public void Play() {
 		this.playState.OnNext(true);
 	}
@@ -137,13 +132,13 @@ public class GameController : Node {
 		this.playState.OnNext(false);
 	}
 
-	private void Init(GameWorld.World world) {
+	public void Init(GameWorld.World world) {
 		this.world = world;
 		this.date.OnNext(new GameDate(0));
-		this.Render();
-		this.gameLoop = new GameLoop(this, world);
+		this.gameManager = new GameManager(this, world);
 		IsInit = true;
 		GameInit?.Invoke(this, EventArgs.Empty);
+		this.Render();
 	}
 
 	public void OnInit(Action callback) {
@@ -154,7 +149,7 @@ public class GameController : Node {
 		}
 	}
 
-	private void Render() {
+	public void Render() {
 		WorldData worldData = GetNode<WorldData>("/root/WorldData");
 		worldData.AttachWorld(this.world);
 		this.worldRenderer.RenderWorld(this.world);
@@ -169,5 +164,10 @@ public class GameController : Node {
 				default: throw new Exception("Unknown Speed");
 			}
 		}
+	}
+
+	private void _on_Menu_pressed() {
+		var gameView = (GameView) GetParent();
+		gameView.OpenMenu();
 	}
 }

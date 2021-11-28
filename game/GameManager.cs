@@ -3,7 +3,7 @@ using DefaultEcs.System;
 using System.Collections.Generic;
 using DefaultEcs;
 
-public class GameLoop {
+public class GameManager {
 	GameController gameController;
 	public DefaultEcs.World entityManager;
 
@@ -11,7 +11,7 @@ public class GameLoop {
 	ISystem<GameDate> monthSystems;
 	List<ISystem<GameDate>> uiSystems = new List<ISystem<GameDate>>();
 
-	public GameLoop(GameController gameController, GameWorld.World world) {
+	public GameManager(GameController gameController, GameWorld.World world) {
 		this.gameController = gameController;
 		var watch = System.Diagnostics.Stopwatch.StartNew();
 		entityManager = new DefaultEcs.World();

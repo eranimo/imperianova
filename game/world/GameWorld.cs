@@ -175,10 +175,6 @@ namespace GameWorld {
 		public WorldOptions options;
 		public Tile[,] Tiles;
 
-		public World() {
-
-		}
-
 		public Tile GetTile(Hex.OffsetCoord coord) {
 			return this.Tiles[coord.Col, coord.Row];
 		}

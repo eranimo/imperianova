@@ -17,7 +17,7 @@ public class GameView : Node2D {
 		GameLoader gameLoader = GetNode<GameLoader>("/root/GameLoader");
 
 		if (gameLoader.State == GameLoader.GameLoaderState.NewGame) {
-			Game.NewGame();
+			GameSetup.NewGame(Game);
 		}
 	}
 
@@ -30,12 +30,20 @@ public class GameView : Node2D {
 	public override void _Input(InputEvent @event) {
 		if (@event.IsActionPressed("ui_exit")) {
 			if (GameMenu.Visible) {
-				GameMenu.Hide();
+				CloseMenu();
 			} else {
-				GameMenu.PopupCentered();
+				OpenMenu();
 			}
 			GetTree().SetInputAsHandled();
 		}
+	}
+
+	public void OpenMenu() {
+		GameMenu.PopupCentered();
+	}
+
+	public void CloseMenu() {
+		GameMenu.Hide();
 	}
 
 	private void _on_menu_close() {

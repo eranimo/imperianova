@@ -93,6 +93,7 @@ __meta__ = {
 
 [node name="LoadDialog" parent="GameMenu" instance=ExtResource( 8 )]
 pause_mode = 2
+visible = false
 margin_right = 400.0
 margin_bottom = 300.0
 
@@ -108,58 +109,92 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GameMenu"]
-pause_mode = 2
+[node name="PanelContainer" type="PanelContainer" parent="GameMenu"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -42.0
-margin_top = -58.0
-margin_right = 42.0
-margin_bottom = 58.0
+margin_left = -103.0
+margin_top = -92.0
+margin_right = 103.0
+margin_bottom = 92.0
+theme = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Continue" type="Button" parent="GameMenu/VBoxContainer" groups=["buttons"]]
+[node name="Panel" type="Panel" parent="GameMenu/PanelContainer"]
+margin_right = 206.0
+margin_bottom = 184.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource( 9 )
+
+[node name="MarginContainer" type="MarginContainer" parent="GameMenu/PanelContainer"]
+margin_right = 206.0
+margin_bottom = 184.0
+custom_constants/margin_right = 10
+custom_constants/margin_top = 10
+custom_constants/margin_left = 10
+custom_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameMenu/PanelContainer/MarginContainer"]
 pause_mode = 2
-margin_right = 84.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 196.0
+margin_bottom = 174.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="GameMenu/PanelContainer/MarginContainer/VBoxContainer"]
+margin_right = 186.0
 margin_bottom = 24.0
+text = "Game Paused"
+align = 1
+
+[node name="Continue" type="Button" parent="GameMenu/PanelContainer/MarginContainer/VBoxContainer" groups=["buttons"]]
+pause_mode = 2
+margin_top = 28.0
+margin_right = 186.0
+margin_bottom = 52.0
 theme = ExtResource( 9 )
 text = "Continue"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="SaveGame" type="Button" parent="GameMenu/VBoxContainer" groups=["buttons"]]
+[node name="SaveGame" type="Button" parent="GameMenu/PanelContainer/MarginContainer/VBoxContainer" groups=["buttons"]]
 pause_mode = 2
-margin_top = 28.0
-margin_right = 84.0
-margin_bottom = 52.0
+margin_top = 56.0
+margin_right = 186.0
+margin_bottom = 80.0
 theme = ExtResource( 9 )
 text = "Save Game"
 
-[node name="LoadGame" type="Button" parent="GameMenu/VBoxContainer" groups=["buttons"]]
+[node name="LoadGame" type="Button" parent="GameMenu/PanelContainer/MarginContainer/VBoxContainer" groups=["buttons"]]
 pause_mode = 2
-margin_top = 56.0
-margin_right = 84.0
-margin_bottom = 80.0
+margin_top = 84.0
+margin_right = 186.0
+margin_bottom = 108.0
 theme = ExtResource( 9 )
 text = "Load Game"
 
-[node name="MainMenu" type="Button" parent="GameMenu/VBoxContainer" groups=["buttons"]]
+[node name="MainMenu" type="Button" parent="GameMenu/PanelContainer/MarginContainer/VBoxContainer" groups=["buttons"]]
 pause_mode = 2
-margin_top = 84.0
-margin_right = 84.0
-margin_bottom = 108.0
+margin_top = 112.0
+margin_right = 186.0
+margin_bottom = 136.0
 theme = ExtResource( 9 )
 text = "Main Menu"
 
-[node name="ExitGame" type="Button" parent="GameMenu/VBoxContainer" groups=["buttons"]]
+[node name="ExitGame" type="Button" parent="GameMenu/PanelContainer/MarginContainer/VBoxContainer" groups=["buttons"]]
 pause_mode = 2
-margin_top = 112.0
-margin_right = 84.0
-margin_bottom = 136.0
+margin_top = 140.0
+margin_right = 186.0
+margin_bottom = 164.0
 theme = ExtResource( 9 )
 text = "Exit Game"

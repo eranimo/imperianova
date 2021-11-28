@@ -196,9 +196,10 @@ mouse_filter = 1
 size_flags_vertical = 3
 
 [node name="GamePanel" parent="UI" instance=ExtResource( 11 )]
+visible = false
 margin_top = 44.0
 margin_right = 400.0
 margin_bottom = 175.0
 
 [connection signal="item_selected" from="UI/GameHeader/Content/Grid/RightColumn/MapModeSelect" to="UI/GameHeader/Content/Grid/RightColumn/MapModeSelect" method="_on_MapModeSelect_item_selected"]
-[connection signal="pressed" from="UI/GameHeader/Content/Grid/RightColumn/Menu" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="UI/GameHeader/Content/Grid/RightColumn/Menu" to="." method="_on_Menu_pressed"]

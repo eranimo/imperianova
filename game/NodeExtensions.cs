@@ -25,9 +25,9 @@ public static class NodeExtensions {
 			foreach(var field in viewSystemAttributes) {
 				var viewSystem = (ISystem<GameDate>) Activator.CreateInstance(
 					field.FieldType,
-					new object[]{game.gameLoop.entityManager}
+					new object[]{game.gameManager.entityManager}
 				);
-				game.gameLoop.RegisterViewSystem(viewSystem);
+				game.gameManager.RegisterViewSystem(viewSystem);
 				field.SetValue(node, viewSystem);
 			}
 		});
