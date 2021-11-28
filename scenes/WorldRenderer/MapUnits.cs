@@ -53,12 +53,12 @@ public class MapUnits : Node2D {
 		this.ResolveDependencies();
 	}
 
-    public override void _ExitTree() {
-        base._ExitTree();
+	public override void _ExitTree() {
+		base._ExitTree();
 		game.gameLoop.UnregisterViewSystem(viewSystem);
-    }
+	}
 
-    [GameInitHandler]
+	[GameInitHandler]
 	private void OnGameInit() {
 		viewSystem.AttachNode(this);
 	}

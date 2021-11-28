@@ -71,6 +71,7 @@ IntegerResolutionHandler="*res://addons/integer_resolution_handler/integer_resol
 HexUtils="*res://global/HexUtils.gd"
 WorldData="*res://global/WorldData.cs"
 InputManager="*res://global/InputManager.cs"
+GameLoader="*res://global/GameLoader.cs"
 
 [display]
 

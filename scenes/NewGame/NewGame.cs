@@ -37,9 +37,8 @@ public class NewGame : Control {
 	}
 	
 	private void _on_StartGame_pressed() {
-		// load to GameView scene
-		// find GameController and set GameSettings
-		// unload new game scene
-		// change scene to GameView scene
+		GameLoader gameLoader = GetNode<GameLoader>("/root/GameLoader");
+		gameLoader.NewGame(gameSettings);
+		GetTree().ChangeScene("res://scenes/GameView/GameView.tscn");
 	}
 }

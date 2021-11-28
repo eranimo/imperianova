@@ -12,7 +12,7 @@ func register_buttons():
 func _on_button_pressed(name):
 	match name:
 		"NewGame":
-			get_tree().change_scene("res://scenes/GameView/GameView.tscn")
+			get_tree().change_scene("res://scenes/NewGame/NewGame.tscn")
 		"LoadGame":
 			$LoadDialog.popup_centered()
 		"ExitGame":

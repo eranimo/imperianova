@@ -26,6 +26,7 @@ public class GameController : Node {
 	public BehaviorSubject<GameSpeed> speed = new BehaviorSubject<GameSpeed>(GameSpeed.Normal);
 
 	private WorldRenderer worldRenderer;
+	private GameLoader gameLoader;
 	private int ticksInDay = 0;
 	public GameLoop gameLoop;
 
@@ -35,8 +36,10 @@ public class GameController : Node {
 	public bool IsInit = false;
 
 	public override void _Ready() {
+		GD.PrintS("GameController ready");
 		this.ticksInDay = 0;
 		this.worldRenderer = (WorldRenderer) GetNode("MapViewport/Viewport/WorldRenderer");
+		this.gameLoader = (GameLoader) GetNode("/root/GameLoader");
 	}
 
 	public override void _ExitTree() {
@@ -116,11 +119,13 @@ public class GameController : Node {
 	}
 
 	public void NewGame() {
+		GD.PrintS("[GameController] New game");
 		var world = GameWorld.World.Generate();
 		this.Init(world);
 	}
 
 	public void LoadGame() {
+		GD.PrintS("[GameController] Load game");
 		// TODO: implement
 	}
 

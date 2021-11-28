@@ -149,20 +149,20 @@ size_flags_horizontal = 3
 custom_constants/hseparation = 10
 columns = 2
 
-[node name="GameOption-WorldSeed" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer"]
+[node name="GameOption1" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer"]
 margin_right = 452.0
 margin_bottom = 24.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer/GameOption-WorldSeed"]
+[node name="Label" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer/GameOption1"]
 margin_right = 80.0
 margin_bottom = 24.0
 size_flags_horizontal = 2
 text = "World seed"
 
-[node name="WorldSeed" type="SpinBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer/GameOption-WorldSeed"]
+[node name="WorldSeed" type="SpinBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer/GameOption1"]
 margin_left = 302.0
 margin_right = 452.0
 margin_bottom = 24.0
@@ -170,7 +170,7 @@ rect_min_size = Vector2( 150, 0 )
 theme = ExtResource( 2 )
 max_value = 1e+06
 
-[node name="GameOption-MapSize" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer"]
+[node name="GameOption2" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer"]
 margin_left = 462.0
 margin_right = 914.0
 margin_bottom = 24.0
@@ -179,13 +179,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer/GameOption-MapSize"]
+[node name="Label" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer/GameOption2"]
 margin_right = 63.0
 margin_bottom = 24.0
 size_flags_horizontal = 2
 text = "Map Size"
 
-[node name="WorldSize" type="OptionButton" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer/GameOption-MapSize"]
+[node name="WorldSize" type="OptionButton" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer/GameOption2"]
 margin_left = 388.0
 margin_right = 452.0
 margin_bottom = 24.0
@@ -194,7 +194,7 @@ text = "Small"
 items = [ "Small", null, false, 0, null, "Medium", null, false, 1, null, "Large", null, false, 2, null ]
 selected = 0
 
-[node name="GameOption-Sealevel" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer"]
+[node name="GameOption3" type="HBoxContainer" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer"]
 margin_top = 28.0
 margin_right = 452.0
 margin_bottom = 52.0
@@ -203,13 +203,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer/GameOption-Sealevel"]
+[node name="Label" type="Label" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer/GameOption3"]
 margin_right = 64.0
 margin_bottom = 24.0
 size_flags_horizontal = 2
 text = "Sealevel"
 
-[node name="WorldSealevel" type="SpinBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer/GameOption-Sealevel"]
+[node name="WorldSealevel" type="SpinBox" parent="MarginContainer/PanelContainer/MarginContainer/VBoxContainer/TabContainer/World settings/ScrollContainer/MarginContainer/HBoxContainer/VBoxContainer2/MarginContainer2/GridContainer/GameOption3"]
 margin_left = 302.0
 margin_right = 452.0
 margin_bottom = 24.0
