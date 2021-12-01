@@ -1,6 +1,110 @@
 using Godot;
 using System;
 using Hex;
+using DefaultEcs;
+using System.Collections.Generic;
+using DefaultEcs.System;
+using GameWorld;
+
+public class HexColorMap {
+	private readonly OffsetCoord size;
+
+	public Image hexColorsImage;
+	public ImageTexture hexColors;
+
+	public HexColorMap(OffsetCoord size) {
+		this.size = size;
+		this.hexColorsImage = new Image();
+		hexColorsImage.Create(size.Col, size.Row, false, Image.Format.Rgbaf);
+		this.hexColors = new ImageTexture();
+	}
+
+	public void PreUpdate() {
+		hexColorsImage.Lock();
+	}
+
+	public void UpdateHex(OffsetCoord pos, Color color) {
+		hexColorsImage.SetPixel(pos.Col, pos.Row, color);
+	}
+
+	public void PostUpdate() {
+		hexColorsImage.Unlock();
+		hexColors.CreateFromImage(hexColorsImage);
+	}
+}
+
+namespace MapModeSystems {
+	public abstract class MapModeSystem : AEntitySetSystem<GameDate> {
+		public abstract MapModes.MapMode mapMode { get; }
+		public WorldGrid Grid { get; }
+
+        protected HexColorMap hexColorMap;
+
+        public MapModeSystem(WorldGrid grid, DefaultEcs.World world) : base(world) {
+			Grid = grid;
+			this.hexColorMap = Grid.mapModeColors[mapMode];
+		}
+
+		protected override void Update(GameDate date, ReadOnlySpan<Entity> entities) {
+			hexColorMap.PreUpdate();
+			foreach (Entity entity in entities) {
+				ProcessEntity(entity);
+			}
+			hexColorMap.PostUpdate();
+			Grid.UpdateHexColors(mapMode);
+		}
+
+		protected virtual void ProcessEntity(Entity entity) {}
+	}
+
+	[With(typeof(TileData))]
+	[With(typeof(TilePosition))]
+	public class TerrainMapModeStartupSystem : MapModeSystem {
+		public override MapModes.MapMode mapMode { get { return MapModes.MapMode.Terrain; } }
+		public TerrainMapModeStartupSystem(WorldGrid grid, DefaultEcs.World world) : base(grid, world) {}
+
+		protected override void ProcessEntity(Entity entity) {
+			var tileData = entity.Get<TileData>();
+			var tilePos = entity.Get<TilePosition>();
+			Color color = TileConstants.TerrainColors[tileData.terrainType];
+			hexColorMap.UpdateHex(tilePos.position, color);
+		}
+	}
+
+	[With(typeof(TileData))]
+	[With(typeof(TilePosition))]
+	public class TemperatureMapModeStartupSystem : MapModeSystem {
+		public override MapModes.MapMode mapMode { get { return MapModes.MapMode.Temperature; } }
+		private Gradient _gradient;
+		public TemperatureMapModeStartupSystem(WorldGrid grid, DefaultEcs.World world) : base(grid, world) {
+			_gradient = ResourceLoader.Load("res://resources/colormaps/mapmode-temperature.tres") as Gradient;
+		}
+
+		protected override void ProcessEntity(Entity entity) {
+			var tileData = entity.Get<TileData>();
+			var tilePos = entity.Get<TilePosition>();
+			Color color = _gradient.Interpolate((float) decimal.Round((decimal) tileData.temperature, 2));
+			hexColorMap.UpdateHex(tilePos.position, color);
+		}
+	}
+
+	[With(typeof(TileData))]
+	[With(typeof(TilePosition))]
+	public class RainfallMapModeStartupSystem : MapModeSystem {
+		public override MapModes.MapMode mapMode { get { return MapModes.MapMode.Rainfall; } }
+		private Gradient _gradient;
+		public RainfallMapModeStartupSystem(WorldGrid grid, DefaultEcs.World world) : base(grid, world) {
+			_gradient = ResourceLoader.Load("res://resources/colormaps/mapmode-rainfall.tres") as Gradient;
+		}
+
+		protected override void ProcessEntity(Entity entity) {
+			var tileData = entity.Get<TileData>();
+			var tilePos = entity.Get<TilePosition>();
+			Color color = _gradient.Interpolate((float) decimal.Round((decimal) tileData.temperature, 2));
+			hexColorMap.UpdateHex(tilePos.position, color);
+		}
+	}
+}
 
 public class WorldGrid : Polygon2D {
 	private Polygon2D Grid;
@@ -13,13 +117,21 @@ public class WorldGrid : Polygon2D {
 	private InputManager inputManager;
 	private bool _hasRendered = false;
 
+	[GameController] private GameController game;
+	private Image hexColorsImage;
+	private ImageTexture hexColors;
+
+	public Dictionary<MapModes.MapMode, HexColorMap> mapModeColors;
+	private Nullable<MapModes.MapMode> _lastUpdateMapModeType = null;
+	private List<ISystem<GameDate>> initSystems;
+	private List<ISystem<GameDate>> viewSystems;
+
 	public ShaderMaterial shader {
-		get {
-			return (this.Material as ShaderMaterial);
-		}
+		get { return (this.Material as ShaderMaterial); }
 	}
 
 	public override void _Ready() {
+		this.ResolveDependencies();
 		this.worldRenderer = (WorldRenderer) GetTree().Root.FindNode("WorldRenderer", true, false);
 		inputManager = GetNode<InputManager>("/root/InputManager");
 		inputManager.ActiveMapMode.Subscribe((MapModes.MapMode mapMode) => {
@@ -29,21 +141,47 @@ public class WorldGrid : Polygon2D {
 		});
 	}
 
-	public void Render(GameWorld.World world) {
-		_hasRendered = true;
-		this.world = world;
-		GD.PrintS("[WorldGrid] Render world:", this.world.TileWidth, this.world.TileHeight);
-		this.shader.SetShaderParam("zoom", inputManager.zoom);
-		this.SetGridVisibility(true);
-		this.SetupGrid();
-		this.UpdateTerritoryMap();
-		this.UpdateOccupiedMap();
-		this.UpdateHexColors(inputManager.ActiveMapMode.Value);
+	[GameInitHandler]
+	public void OnGameInit() {
+		initSystems = new List<ISystem<GameDate>>();
+		viewSystems = new List<ISystem<GameDate>>();
+
+		var entityManager = game.gameManager.entityManager;
+		var worldInfo = entityManager.Get<WorldInfo>();
+		this.mapModeColors = new Dictionary<MapModes.MapMode, HexColorMap>() {
+			{ MapModes.MapMode.Terrain, new HexColorMap(worldInfo.size) },
+			{ MapModes.MapMode.Temperature, new HexColorMap(worldInfo.size) },
+			{ MapModes.MapMode.Rainfall, new HexColorMap(worldInfo.size) }
+		};
+
+		initSystems.Add(new MapModeSystems.TerrainMapModeStartupSystem(this, entityManager));
+		initSystems.Add(new MapModeSystems.TemperatureMapModeStartupSystem(this, entityManager));
+		initSystems.Add(new MapModeSystems.RainfallMapModeStartupSystem(this, entityManager));
+
+		foreach (ISystem<GameDate> system in initSystems) {
+			game.gameManager.CallInitSystem(system);
+		}
+
+		foreach (ISystem<GameDate> system in viewSystems) {
+			game.gameManager.RegisterViewSystem(system);
+		}
+
+		this.Setup(worldInfo.size.Col, worldInfo.size.Row);
 	}
 
-	private void SetupGrid() {
-		this.gridColumns = this.world.TileWidth;
-		this.gridRows = this.world.TileHeight;
+	public override void _ExitTree() {
+		foreach (ISystem<GameDate> system in viewSystems) {
+			game.gameManager.UnregisterViewSystem(system);
+		}
+	}
+
+	public void Setup(int TileWidth, int TileHeight) {
+		_hasRendered = true;
+		this.shader.SetShaderParam("zoom", inputManager.zoom);
+		this.SetGridVisibility(true);
+
+		this.gridColumns = TileWidth;
+		this.gridRows =TileHeight;
 
 		var containerSize = HexUtils.GetGridDimensions(this.gridColumns, this.gridRows);
 		
@@ -56,23 +194,22 @@ public class WorldGrid : Polygon2D {
 			new Vector2(containerSize.x, containerSize.y),
 			new Vector2(containerSize.x, 0),
 		};
+
+		this.hexColorsImage = new Image();
+		hexColorsImage.Create(this.gridColumns, this.gridRows, false, Image.Format.Rgbaf);
+		this.hexColors = new ImageTexture();
+
+		this.UpdateTerritoryMap();
+		this.UpdateOccupiedMap();
+		this.UpdateHexColors(inputManager.ActiveMapMode.Value);
 	}
 
-	private void UpdateHexColors(MapModes.MapMode mapModeType) {
-		GD.PrintS("Set map mode", mapModeType);
-		Image hexColorsImage = new Image();
-		hexColorsImage.Create(this.gridColumns, this.gridRows, false, Image.Format.Rgbaf);
-		hexColorsImage.Lock();
-		var mapMode = MapModes.mapModes[mapModeType];
-		foreach (GameWorld.Tile tile in this.world.Tiles) {
-			Color hexColor = mapMode.GetTileColor(tile);
-			hexColorsImage.SetPixel(tile.position.Col, tile.position.Row, hexColor);
+	public void UpdateHexColors(MapModes.MapMode mapModeType) {
+		if (mapModeType == inputManager.ActiveMapMode.Value) {
+			GD.PrintS("Set map mode", mapModeType);
+			var hexColors = mapModeColors[mapModeType].hexColors;
+			this.shader.SetShaderParam("hexColors", hexColors);
 		}
-
-		hexColorsImage.Unlock();
-		ImageTexture hexColors = new ImageTexture();
-		hexColors.CreateFromImage(hexColorsImage);
-		this.shader.SetShaderParam("hexColors", hexColors);
 	}
 
 	private void UpdateTerritoryMap() {

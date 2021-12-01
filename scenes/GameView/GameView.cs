@@ -7,7 +7,7 @@ public class GameView : Node2D {
 	bool isMenuOpen;
 
 	public override void _Ready() {
-		GD.PrintS("WHAT THE FUCK GODOT");
+		GD.PrintS("[GameView] ready");
 		GameMenu = (Popup) GetNode("GameMenu");
 		Game = (GameController) GetNode("Game");
 

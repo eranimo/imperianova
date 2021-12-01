@@ -8,7 +8,9 @@ public static class GameSetup {
 	}
 
 	public static void NewGame(GameController game) {
-		var world = GameWorld.World.Generate();
-		game.Init(world);
+		var worldGen = new GameWorld.WorldGenerator(game.gameManager);
+		var worldInfo = worldGen.Generate();
+		game.gameManager.entityManager.Set<WorldInfo>(worldInfo);
+		game.Init(worldInfo);
 	}
 }

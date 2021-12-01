@@ -40,6 +40,18 @@ namespace Hex {
 		public Vector2 AsVector() {
 			return new Vector2(this.Col, this.Row);
 		}
+
+		public override bool Equals(object obj) {
+			if ((obj == null) || ! this.GetType().Equals(obj.GetType())) {
+				return false;
+			}
+			OffsetCoord other = (OffsetCoord) obj;
+			return this.Row == other.Row && this.Col == other.Col;
+		}
+
+		public override int GetHashCode() {
+			return (Col, Row).GetHashCode();
+		}
 	}
 
 	public struct AxialCoord {
@@ -74,6 +86,18 @@ namespace Hex {
 
 		public Vector2 AsVector() {
 			return new Vector2((float) this.q, (float) this.r);
+		}
+
+		public override bool Equals(object obj) {
+			if ((obj == null) || ! this.GetType().Equals(obj.GetType())) {
+				return false;
+			}
+			AxialCoord other = (AxialCoord) obj;
+			return this.q == other.q && this.r == other.r;
+		}
+
+		public override int GetHashCode() {
+			return (q, r).GetHashCode();
 		}
 	}
 
@@ -120,6 +144,18 @@ namespace Hex {
 
 		public override string ToString() {
 			return base.ToString() + string.Format("({0}, {1}, {2})", this.q, this.r, this.s);
+		}
+
+		public override bool Equals(object obj) {
+			if ((obj == null) || ! this.GetType().Equals(obj.GetType())) {
+				return false;
+			}
+			CubeCoord other = (CubeCoord) obj;
+			return this.q == other.q && this.r == other.r && this.s == other.s;
+		}
+
+		public override int GetHashCode() {
+			return (q, r, s).GetHashCode();
 		}
 	}
 

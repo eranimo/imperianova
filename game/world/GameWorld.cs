@@ -2,6 +2,7 @@ using Godot;
 using System;
 using LibNoise;
 using System.Collections.Generic;
+using DefaultEcs;
 
 namespace GameWorld {
 	public enum TerrainType {
@@ -18,25 +19,6 @@ namespace GameWorld {
 			{ TerrainType.Desert, new Color("#ffcec27e") },
 			{ TerrainType.Forest, new Color("#ff25562e") }
 		};
-	}
-
-	public class Tile {
-		private World world;
-		public Hex.OffsetCoord position;
-
-		public TerrainType terrainType;
-		public float height;
-		public float temperature;
-		public float rainfall;
-
-		public Tile(World world, Hex.OffsetCoord position) {
-			this.world = world;
-			this.position = position;
-		}
-
-		public Tile GetNeighbor(Hex.Direction direction) {
-			return this.world.GetTile(Hex.HexUtils.oddq_offset_neighbor(this.position, direction));
-		}
 	}
 
 	public class WorldOptions {
@@ -97,10 +79,13 @@ namespace GameWorld {
 	*/
 	public class WorldGenerator {
 		public WorldOptions options;
-		private World world;
+		private GameManager gm;
+        private int TileWidth;
+        private int TileHeight;
+        private WorldInfo worldInfo;
 
-		public WorldGenerator(World world) {
-			this.world = world;
+        public WorldGenerator(GameManager gm) {
+			this.gm = gm;
 			this.options = new WorldOptions {
 				Size = WorldSize.Small,
 				Seed = 12345,
@@ -108,9 +93,10 @@ namespace GameWorld {
 			};
 		}
 
-		public void Generate() {
+		public WorldInfo Generate() {
 			this.InitializeTiles();
 			this.GenerateWorld();
+			return this.worldInfo;
 		}
 
 		private int GetWorldSize(WorldSize size) {
@@ -124,44 +110,55 @@ namespace GameWorld {
 
 		private void InitializeTiles() {
 			var size = GetWorldSize(this.options.Size);
-			this.world.TileWidth = size * 2;
-			this.world.TileHeight = size;
-			this.world.Tiles = new Tile[this.world.TileWidth, this.world.TileHeight];
-
-			for (var x = 0; x < this.world.TileWidth; x++) {
-				for (var y = 0; y < this.world.TileHeight; y++) {
-					this.world.Tiles[x, y] = new Tile(this.world, new Hex.OffsetCoord(x, y));
-				}
-			}
+			this.TileWidth = size * 2;
+			this.TileHeight = size;
+			worldInfo = new WorldInfo {
+				options = options,
+				size = new Hex.OffsetCoord(this.TileWidth, this.TileHeight),
+			};
 		}
 
 		private void GenerateWorld() {
-			var heightNoise = new WorldNoise(this.world.TileWidth, this.world.TileHeight, this.options.Seed);
-			var temperatureNoise = new WorldNoise(this.world.TileWidth, this.world.TileHeight, this.options.Seed * 2);
-			var rainfallNoise = new WorldNoise(this.world.TileWidth, this.world.TileHeight, this.options.Seed * 3);
+			var heightNoise = new WorldNoise(this.TileWidth, this.TileHeight, this.options.Seed);
+			var temperatureNoise = new WorldNoise(this.TileWidth, this.TileHeight, this.options.Seed * 2);
+			var rainfallNoise = new WorldNoise(this.TileWidth, this.TileHeight, this.options.Seed * 3);
 
-			for (var x = 0; x < this.world.TileWidth; x++) {
-				for (var y = 0; y < this.world.TileHeight; y++) {
-					this.world.Tiles[x, y].height = heightNoise.Get(x, y);
-					this.world.Tiles[x, y].temperature = temperatureNoise.Get(x, y) / 255;
-					this.world.Tiles[x, y].rainfall = rainfallNoise.Get(x, y) / 255;
+			var tiles = new List<Entity>();
+
+			for (var x = 0; x < this.TileWidth; x++) {
+				for (var y = 0; y < this.TileHeight; y++) {
+					var height = heightNoise.Get(x, y);
+					var temperature = temperatureNoise.Get(x, y) / 255;
+					var rainfall = rainfallNoise.Get(x, y) / 255;
+					var tilePosition = new TilePosition(new Hex.OffsetCoord(x, y));
+					var tileData = new TileData {
+						height = height,
+						temperature = temperature,
+						rainfall = rainfall,
+					};
+					var entity = this.gm.entityManager.CreateEntity();
+					entity.Set<TilePosition>(tilePosition);
+					entity.Set<TileData>(tileData);
+					tiles.Add(entity);
 				}
 			}
 
-			foreach (Tile tile in this.world.Tiles) {
-				if (tile.height < this.options.Sealevel) {
-					tile.terrainType = TerrainType.Ocean;
+			foreach (Entity tile in tiles) {
+				var tileData = tile.Get<TileData>();
+				if (tileData.height < this.options.Sealevel) {
+					tileData.terrainType = TerrainType.Ocean;
 				} else {
-					if (tile.temperature < 0.60) {
-						if (tile.rainfall < 0.5) {
-							tile.terrainType = TerrainType.Grassland;
+					if (tileData.temperature < 0.60) {
+						if (tileData.rainfall < 0.5) {
+							tileData.terrainType = TerrainType.Grassland;
 						} else {
-							tile.terrainType = TerrainType.Forest;
+							tileData.terrainType = TerrainType.Forest;
 						}
 					} else {
-						tile.terrainType = TerrainType.Desert;
+						tileData.terrainType = TerrainType.Desert;
 					}
 				}
+				tile.Set<TileData>(tileData);
 			}
 		}
 	}
@@ -170,31 +167,51 @@ namespace GameWorld {
 	Container for Tiles
 	*/
 	public class World {
-		public int TileWidth;
-		public int TileHeight;
-		public WorldOptions options;
-		public Tile[,] Tiles;
+        private WorldInfo worldInfo;
+        private Dictionary<TilePosition, TileData> tilePositionMap;
+		private Dictionary<Hex.OffsetCoord, TilePosition> tileCoordMap;
 
-		public Tile GetTile(Hex.OffsetCoord coord) {
-			return this.Tiles[coord.Col, coord.Row];
+        public IEnumerable<Entity> tiles { get; private set; }
+
+        public int TileWidth { get { return this.worldInfo.size.Col; } }
+		public int TileHeight { get { return this.worldInfo.size.Row; } }
+		public WorldOptions options { get { return this.worldInfo.options; } }
+
+        public World(GameManager gameManager) {
+			this.worldInfo = gameManager.entityManager.Get<WorldInfo>();
+			this.tilePositionMap = new Dictionary<TilePosition, TileData>();
+			this.tileCoordMap = new Dictionary<Hex.OffsetCoord, TilePosition>();
+
+			this.tiles = gameManager.entityManager.GetEntities()
+				.With<TilePosition>()
+				.With<TileData>()
+				.AsEnumerable();
+
+			foreach (Entity tile in tiles) {
+				var tp = tile.Get<TilePosition>();
+				tilePositionMap.Add(tp, tile.Get<TileData>());
+				tileCoordMap.Add(tp.position, tp);
+			}
+		}
+
+		public TileData GetTile(Hex.OffsetCoord coord) {
+			return GetTile(this.tileCoordMap[coord]);
+		}
+
+		public TileData GetTile(TilePosition tilePosition) {
+			return tilePositionMap[tilePosition];
 		}
 
 		public bool IsValidTile(Hex.OffsetCoord coord) {
-			return coord.Col >= 0 && coord.Row >= 0 && coord.Col < TileWidth && coord.Row < TileHeight;
+			return coord.Col >= 0 && coord.Row >= 0 && coord.Col < this.worldInfo.size.Col && coord.Row < this.worldInfo.size.Row;
 		}
 
-		public static World Generate() {
-			World world = new World();
-			WorldGenerator worldGenerator = new WorldGenerator(world);
-			worldGenerator.Generate();
-			world.options = worldGenerator.options; 
-			return world;
+		public TileData GetNeighbor(Hex.OffsetCoord position, Hex.Direction direction) {
+			return GetTile(GetNeighborCoord(position, direction));
 		}
 
-		public static World Load() {
-			World world = new World();
-			// TODO: implement
-			return world;
+		public Hex.OffsetCoord GetNeighborCoord(Hex.OffsetCoord position, Hex.Direction direction) {
+			return Hex.HexUtils.oddq_offset_neighbor(position, direction);
 		}
 	}
 }

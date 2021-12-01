@@ -1,6 +1,7 @@
 using Godot;
 using GameWorld;
 using System.Collections.Generic;
+using DefaultEcs;
 
 public static class MapModes {
 	public enum MapMode {
@@ -10,12 +11,13 @@ public static class MapModes {
 	}
 
 	public interface IMapMode {
-		Color GetTileColor(Tile tile);
+		Color GetTileColor(Entity tile);
 	}
 
 	class TerrainMapMode : IMapMode {
-		public Color GetTileColor(Tile tile) {
-			return TileConstants.TerrainColors[tile.terrainType];
+		public Color GetTileColor(Entity tile) {
+			var tileData = tile.Get<TileData>();
+			return TileConstants.TerrainColors[tileData.terrainType];
 		}
 	}
 
@@ -24,8 +26,9 @@ public static class MapModes {
 		public TemperatureMapMode() {
 			_gradient = ResourceLoader.Load("res://resources/colormaps/mapmode-temperature.tres") as Gradient;
 		}
-		public Color GetTileColor(Tile tile) {
-			return _gradient.Interpolate((float) decimal.Round((decimal) tile.temperature, 2));
+		public Color GetTileColor(Entity tile) {
+			var tileData = tile.Get<TileData>();
+			return _gradient.Interpolate((float) decimal.Round((decimal) tileData.temperature, 2));
 		}
 	}
 
@@ -34,8 +37,9 @@ public static class MapModes {
 		public RainfallMapMode() {
 			_gradient = ResourceLoader.Load("res://resources/colormaps/mapmode-rainfall.tres") as Gradient;
 		}
-		public Color GetTileColor(Tile tile) {
-			return _gradient.Interpolate((float) decimal.Round((decimal) tile.temperature, 2));
+		public Color GetTileColor(Entity tile) {
+			var tileData = tile.Get<TileData>();
+			return _gradient.Interpolate((float) decimal.Round((decimal) tileData.temperature, 2));
 		}
 	}
 

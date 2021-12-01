@@ -10,16 +10,12 @@ public class GameManager {
 	ISystem<GameDate> daySystems;
 	ISystem<GameDate> monthSystems;
 	List<ISystem<GameDate>> uiSystems = new List<ISystem<GameDate>>();
+	List<ISystem<GameDate>> initSystems = new List<ISystem<GameDate>>();
 
-	public GameManager(GameController gameController, GameWorld.World world) {
+	public GameManager(GameController gameController) {
 		this.gameController = gameController;
 		var watch = System.Diagnostics.Stopwatch.StartNew();
 		entityManager = new DefaultEcs.World();
-
-		// foreach (Tile tile in world.Tiles) {
-		// 	var tileEntity = entityManager.CreateEntity();
-		// 	tileEntity.Set<TilePosition>(new TilePosition(tile.position));
-		// }
 
 		var rand = new RandomNumberGenerator();
 		for (int i = 0; i < 2; i++) {
@@ -51,7 +47,6 @@ public class GameManager {
 		);
 		monthSystems = new SequentialSystem<GameDate>(
 			new PopGrowthSystem(this.entityManager)
-			
 		);
 
 		GD.PrintS($"GameLoop init: {watch.ElapsedMilliseconds}ms");
@@ -75,6 +70,10 @@ public class GameManager {
 
 	public void UnregisterViewSystem(ISystem<GameDate> system) {
 		uiSystems.Remove(system);
+	}
+
+	public void CallInitSystem(ISystem<GameDate> system) {
+		system.Update(this.gameController.date.Value);
 	}
 
 }

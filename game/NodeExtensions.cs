@@ -38,7 +38,6 @@ public static class NodeExtensions {
 			.Where(f => f.GetCustomAttributes(typeof(GameInitHandlerAttribute), true).Any());
 
 		foreach(var method in gameInitAttributes) {
-			GD.PrintS(method.Name, game);
 			game.OnInit(() => method.Invoke(node, new object[]{}));
 		}
 	}

@@ -9,11 +9,6 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Control",
-"class": "DataTable",
-"language": "GDScript",
-"path": "res://ui/DataTable.gd"
-}, {
 "base": "Reference",
 "class": "MapSet",
 "language": "GDScript",
@@ -45,7 +40,6 @@ _global_script_classes=[ {
 "path": "res://scripts/WorldNoise.gd"
 } ]
 _global_script_class_icons={
-"DataTable": "",
 "MapSet": "",
 "NameGen": "",
 "ReactiveSet": "",
@@ -64,7 +58,6 @@ config/version="0.0.1"
 [autoload]
 
 SaveSystem="*res://global/SaveSystem.gd"
-MapManager="*res://global/MapManager.gd"
 MapData="*res://global/MapData.gd"
 Console="*res://addons/quentincaffeino-console/src/Console.tscn"
 IntegerResolutionHandler="*res://addons/integer_resolution_handler/integer_resolution_handler.gd"

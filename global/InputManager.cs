@@ -3,7 +3,7 @@ using System;
 using System.Reactive.Subjects;
 
 public class InputManager : Node {
-	public BehaviorSubject<GameWorld.Tile> SelectedTile = new BehaviorSubject<GameWorld.Tile>(null);
+	public BehaviorSubject<Nullable<Hex.OffsetCoord>> SelectedTile = new BehaviorSubject<Nullable<Hex.OffsetCoord>>(null);
     public BehaviorSubject<MapModes.MapMode> ActiveMapMode = new BehaviorSubject<MapModes.MapMode>(MapModes.MapMode.Terrain);
 
 	public float zoom;

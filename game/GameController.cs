@@ -24,14 +24,12 @@ public class AttachViewSystemAttribute : Attribute {}
 - Handles game speed
 */
 public class GameController : Node {
-	public GameWorld.World world;
 	public readonly int TICKS_PER_DAY = 4;
 
 	public BehaviorSubject<GameDate> date = new BehaviorSubject<GameDate>(new GameDate(0));
 	public BehaviorSubject<bool> playState = new BehaviorSubject<bool>(false);
 	public BehaviorSubject<GameSpeed> speed = new BehaviorSubject<GameSpeed>(GameSpeed.Normal);
 
-	private WorldRenderer worldRenderer;
 	private GameLoader gameLoader;
 	private int ticksInDay = 0;
 	public GameManager gameManager;
@@ -40,11 +38,16 @@ public class GameController : Node {
 
 	public event EventHandler GameInit;
 	public bool IsInit = false;
+	private WorldInfo worldInfo;
+	public GameWorld.World world;
+
+	public GameController() {
+		this.gameManager = new GameManager(this);
+	}
 
 	public override void _Ready() {
 		GD.PrintS("GameController ready");
 		this.ticksInDay = 0;
-		this.worldRenderer = (WorldRenderer) GetNode("MapViewport/Viewport/WorldRenderer");
 		this.gameLoader = (GameLoader) GetNode("/root/GameLoader");
 	}
 
@@ -113,10 +116,6 @@ public class GameController : Node {
 	}
 
 	public void TogglePlay() {
-		// if (date.Value.DayTicks == 0) {
-		// 	var gamePanel = (GamePanel) FindNode("GamePanel");
-		// 	gamePanel.GetParent().RemoveChild(gamePanel);
-		// }
 		if (this.Playing) {
 			this.Pause();
 		} else {
@@ -132,14 +131,18 @@ public class GameController : Node {
 		this.playState.OnNext(false);
 	}
 
-	public void Init(GameWorld.World world) {
-		this.world = world;
+	public void Init(WorldInfo worldInfo) {
+		this.worldInfo = worldInfo;
 		this.date.OnNext(new GameDate(0));
-		this.gameManager = new GameManager(this, world);
+		
+		this.world = new GameWorld.World(this.gameManager);
+		WorldData worldData = GetNode<WorldData>("/root/WorldData");
+		worldData.AttachWorld(this.world);
+
 		IsInit = true;
 		GameInit?.Invoke(this, EventArgs.Empty);
-		this.Render();
 	}
+
 
 	public void OnInit(Action callback) {
 		if (IsInit) {
@@ -147,12 +150,6 @@ public class GameController : Node {
 		} else {
 			GameInit += (object sender, EventArgs e) => callback();
 		}
-	}
-
-	public void Render() {
-		WorldData worldData = GetNode<WorldData>("/root/WorldData");
-		worldData.AttachWorld(this.world);
-		this.worldRenderer.RenderWorld(this.world);
 	}
 
 	private int SpeedTicks {
