@@ -13,5 +13,6 @@ class PopGrowthSystem : AEntitySetSystem<GameDate> {
 		ref PopData popData = ref entity.Get<PopData>();
 
 		popData.size += (int) Math.Ceiling(popData.size * (popData.growthRate));
+		entity.NotifyChanged<PopData>();
 	}
 }

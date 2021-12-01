@@ -21,26 +21,26 @@ public class GameManager {
 		for (int i = 0; i < 2; i++) {
 			var popEntity = entityManager.CreateEntity();
 			popEntity.Set<TilePosition>(new TilePosition(new Hex.OffsetCoord(rand.RandiRange(0, 100), rand.RandiRange(0, 100))));
-			popEntity.Set<PopData>(new PopData(1000, 0.01f));
+			popEntity.Set<PopData>(new PopData(1000, 0.1f));
 		}
 
-		for (int i = 0; i < 10; i++) {
-			var unitEntity = entityManager.CreateEntity();
-			unitEntity.Set<TilePosition>(new TilePosition(new Hex.OffsetCoord(rand.RandiRange(0, 100), rand.RandiRange(0, 100))));
+		// for (int i = 0; i < 10; i++) {
+		// 	var unitEntity = entityManager.CreateEntity();
+		// 	unitEntity.Set<TilePosition>(new TilePosition(new Hex.OffsetCoord(rand.RandiRange(0, 100), rand.RandiRange(0, 100))));
 
-			List<Entity> pops = new List<Entity>();
-			for (int u = 0; u < 5; u++) {
-				var popEntity = entityManager.CreateEntity();
-				popEntity.Set<TilePosition>(new TilePosition(new Hex.OffsetCoord(rand.RandiRange(0, 100), rand.RandiRange(0, 100))));
-				popEntity.Set<PopData>(new PopData(1000, 0.01f));
-				pops.Add(popEntity);
-			}
-			var unitData = new UnitData(pops.ToArray(), GameData.UnitType.Warrior);
-			unitEntity.Set<UnitData>(unitData);
-			var movement = new Movement();
-			movement.destination = new Hex.OffsetCoord(rand.RandiRange(0, 100), rand.RandiRange(0, 100));
-			unitEntity.Set<Movement>(movement);
-		}
+		// 	List<Entity> pops = new List<Entity>();
+		// 	for (int u = 0; u < 5; u++) {
+		// 		var popEntity = entityManager.CreateEntity();
+		// 		popEntity.Set<TilePosition>(new TilePosition(new Hex.OffsetCoord(rand.RandiRange(0, 100), rand.RandiRange(0, 100))));
+		// 		popEntity.Set<PopData>(new PopData(1000, 0.01f));
+		// 		pops.Add(popEntity);
+		// 	}
+		// 	var unitData = new UnitData(pops.ToArray(), GameData.UnitType.Warrior);
+		// 	unitEntity.Set<UnitData>(unitData);
+		// 	var movement = new Movement();
+		// 	movement.destination = new Hex.OffsetCoord(rand.RandiRange(0, 100), rand.RandiRange(0, 100));
+		// 	unitEntity.Set<Movement>(movement);
+		// }
 
 		daySystems = new SequentialSystem<GameDate>(
 			new MovementSystem(this.entityManager)

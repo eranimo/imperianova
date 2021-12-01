@@ -179,7 +179,6 @@ theme = ExtResource( 13 )
 text = "Menu"
 
 [node name="GamePanel" parent="UI" instance=ExtResource( 11 )]
-visible = false
 margin_top = 44.0
 margin_right = 400.0
 margin_bottom = 175.0
