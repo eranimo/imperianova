@@ -43,127 +43,6 @@ public class HexColorMap {
 	}
 }
 
-namespace MapModeSystems {
-	public abstract class MapModeSystem : AEntitySetSystem<GameDate> {
-		public abstract MapModes.MapMode mapMode { get; }
-		public WorldGrid Grid { get; }
-
-        protected HexColorMap hexColorMap;
-
-        public MapModeSystem(WorldGrid grid, DefaultEcs.World world) : base(world) {
-			Grid = grid;
-			this.hexColorMap = Grid.mapModeColors[mapMode];
-		}
-
-		protected override void Update(GameDate date, ReadOnlySpan<Entity> entities) {
-			PreProcess();
-			hexColorMap.PreUpdate();
-			foreach (Entity entity in entities) {
-				ProcessEntity(entity);
-			}
-			PostProcess();
-			hexColorMap.PostUpdate();
-			Grid.UpdateHexColors(mapMode);
-		}
-
-		protected virtual void ProcessEntity(Entity entity) {}
-		protected virtual void PostProcess() {}
-		protected virtual void PreProcess() {}
-	}
-
-	[With(typeof(TileData))]
-	[With(typeof(TilePosition))]
-	public class TerrainMapModeStartupSystem : MapModeSystem {
-		public override MapModes.MapMode mapMode { get { return MapModes.MapMode.Terrain; } }
-		public TerrainMapModeStartupSystem(WorldGrid grid, DefaultEcs.World world) : base(grid, world) {}
-
-		protected override void ProcessEntity(Entity entity) {
-			var tileData = entity.Get<TileData>();
-			var tilePos = entity.Get<TilePosition>();
-			Color color = TileConstants.TerrainColors[tileData.terrainType];
-			hexColorMap.UpdateHex(tilePos.position, color);
-		}
-	}
-
-	[With(typeof(TileData))]
-	[With(typeof(TilePosition))]
-	public class TemperatureMapModeStartupSystem : MapModeSystem {
-		public override MapModes.MapMode mapMode { get { return MapModes.MapMode.Temperature; } }
-		private Gradient _gradient;
-		public TemperatureMapModeStartupSystem(WorldGrid grid, DefaultEcs.World world) : base(grid, world) {
-			_gradient = ResourceLoader.Load("res://resources/colormaps/mapmode-temperature.tres") as Gradient;
-		}
-
-		protected override void ProcessEntity(Entity entity) {
-			var tileData = entity.Get<TileData>();
-			var tilePos = entity.Get<TilePosition>();
-			Color color = _gradient.Interpolate((float) decimal.Round((decimal) tileData.temperature, 2));
-			hexColorMap.UpdateHex(tilePos.position, color);
-		}
-	}
-
-	[With(typeof(TileData))]
-	[With(typeof(TilePosition))]
-	public class RainfallMapModeStartupSystem : MapModeSystem {
-		public override MapModes.MapMode mapMode { get { return MapModes.MapMode.Rainfall; } }
-		private Gradient _gradient;
-		public RainfallMapModeStartupSystem(WorldGrid grid, DefaultEcs.World world) : base(grid, world) {
-			_gradient = ResourceLoader.Load("res://resources/colormaps/mapmode-rainfall.tres") as Gradient;
-		}
-
-		protected override void ProcessEntity(Entity entity) {
-			var tileData = entity.Get<TileData>();
-			var tilePos = entity.Get<TilePosition>();
-			Color color = _gradient.Interpolate((float) decimal.Round((decimal) tileData.temperature, 2));
-			hexColorMap.UpdateHex(tilePos.position, color);
-		}
-	}
-
-	public class PopulationMapModeSystem : MapModeSystem {
-		public override MapModes.MapMode mapMode { get { return MapModes.MapMode.Population; } }
-		private Gradient _gradient;
-		private Dictionary<TilePosition, int> _hexSizes = new Dictionary<TilePosition, int>();
-
-		public PopulationMapModeSystem(WorldGrid grid, DefaultEcs.World world) : base(grid, world) {
-			_gradient = ResourceLoader.Load("res://resources/colormaps/mapmode-population.tres") as Gradient;
-		}
-
-		protected override void ProcessEntity(Entity entity) {
-			var popData = entity.Get<PopData>();
-			var tilePos = entity.Get<TilePosition>();
-			if (!_hexSizes.ContainsKey(tilePos)) {
-				_hexSizes[tilePos] = 0;
-			}
-			_hexSizes[tilePos] += popData.size;
-		}
-
-		protected override void PostProcess() {
-			GD.PrintS(GetType().Name, "PostProcess");
-			foreach (TilePosition tilePos in _hexSizes.Keys) {
-				var tilePopulation = _hexSizes[tilePos];
-				Color color = _gradient.Interpolate(tilePopulation / 5_000f);
-				hexColorMap.UpdateHex(tilePos.position, color);
-			}
-		}
-
-		protected override void PreProcess() {
-			_hexSizes.Clear();
-			hexColorMap.Fill(_gradient.Interpolate(0));
-		}
-	}
-
-    [With(typeof(PopData))]
-    [With(typeof(TilePosition))]
-    public class PopulationMapModeStartupSystem : PopulationMapModeSystem {
-        public PopulationMapModeStartupSystem(WorldGrid grid, DefaultEcs.World world) : base(grid, world) {}
-    }
-
-    [WhenChanged(typeof(PopData))]
-    public class PopulationMapModeViewSystem : PopulationMapModeStartupSystem {
-        public PopulationMapModeViewSystem(WorldGrid grid, DefaultEcs.World world) : base(grid, world) {}
-    }
-}
-
 public class WorldGrid : Polygon2D {
 	private Polygon2D Grid;
 	public int gridColumns;
@@ -206,19 +85,19 @@ public class WorldGrid : Polygon2D {
 
 		var entityManager = game.gameManager.entityManager;
 		var worldInfo = entityManager.Get<WorldInfo>();
-		this.mapModeColors = new Dictionary<MapModes.MapMode, HexColorMap>() {
-			{ MapModes.MapMode.Terrain, new HexColorMap(worldInfo.size) },
-			{ MapModes.MapMode.Temperature, new HexColorMap(worldInfo.size) },
-			{ MapModes.MapMode.Rainfall, new HexColorMap(worldInfo.size) },
-			{ MapModes.MapMode.Population, new HexColorMap(worldInfo.size) }
-		};
+		this.mapModeColors = new Dictionary<MapModes.MapMode, HexColorMap>();
+		foreach (int i in Enum.GetValues(typeof(MapModes.MapMode))) {
+			this.mapModeColors[(MapModes.MapMode) i] = new HexColorMap(worldInfo.size);
+		}
 
 		initSystems.Add(new MapModeSystems.TerrainMapModeStartupSystem(this, entityManager));
 		initSystems.Add(new MapModeSystems.TemperatureMapModeStartupSystem(this, entityManager));
 		initSystems.Add(new MapModeSystems.RainfallMapModeStartupSystem(this, entityManager));
 		initSystems.Add(new MapModeSystems.PopulationMapModeStartupSystem(this, entityManager));
+		initSystems.Add(new MapModeSystems.InsolationMapModeStartupSystem(this, entityManager));
 
 		viewSystems.Add(new MapModeSystems.PopulationMapModeViewSystem(this, entityManager));
+		viewSystems.Add(new MapModeSystems.InsolationMapModeViewSystem(this, entityManager));
 
 		foreach (ISystem<GameDate> system in initSystems) {
 			game.gameManager.CallInitSystem(system);
@@ -249,6 +128,7 @@ public class WorldGrid : Polygon2D {
 		
 		this.shader.SetShaderParam("hexSize", HexConstants.HEX_SIZE);
 		this.shader.SetShaderParam("gridSize", new Vector2(this.gridColumns, this.gridRows));
+		this.shader.SetShaderParam("showHexArrows", false);
 		this.shader.SetShaderParam("containerSize", containerSize);
 		this.Polygon = new Vector2[] {
 			new Vector2(0, 0),

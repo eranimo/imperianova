@@ -16,6 +16,12 @@ public struct GameDate {
 	public bool isFirstOfMonth { get { return _dateTime.Day == 1; } }
 	public bool isFirstOfWeek { get { return _dateTime.DayOfWeek == DayOfWeek.Monday; } }
 
+	public int DayOfYear {
+		get {
+			return _dateTime.DayOfYear;
+		}
+	}
+
 	public override string ToString() {
 		return $"{_dateTime.ToString("dddd")}, {_dateTime.ToString("MMMM d")}, year {_dateTime.Year}";
 	}

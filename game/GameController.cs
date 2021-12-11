@@ -133,7 +133,8 @@ public class GameController : Node {
 
 	public void Init(WorldInfo worldInfo) {
 		this.worldInfo = worldInfo;
-		this.date.OnNext(new GameDate(0));
+		var gameDate = new GameDate(0);
+		this.date.OnNext(gameDate);
 		
 		this.world = new GameWorld.World(this.gameManager);
 		WorldData worldData = GetNode<WorldData>("/root/WorldData");

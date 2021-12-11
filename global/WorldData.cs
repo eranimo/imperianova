@@ -34,6 +34,7 @@ public class WorldData : Node {
         data.Add("height", tile.height);
         data.Add("temperature", tile.temperature);
         data.Add("rainfall", tile.rainfall);
+        data.Add("insolation", tile.insolation);
         return data;
     }
 }

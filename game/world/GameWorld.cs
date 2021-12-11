@@ -25,6 +25,7 @@ namespace GameWorld {
 		public WorldSize Size = WorldSize.Small;
 		public int Seed = 12345;
 		public int Sealevel = 140;
+		public double AxialTilt = 23.45;
 	}
 
 	public enum WorldSize {
@@ -74,23 +75,41 @@ namespace GameWorld {
 		}
 	}
 
+	static class Climate {
+		private static double DegToRad(double deg) {
+			return deg * (Math.PI / 180);
+		}
+		public static double CalculateSolarInsolation(WorldInfo worldInfo, TileData tileData, int dayOfYear) {
+			var tilt = worldInfo.options.AxialTilt;
+			var lat = DegToRad(tileData.latitude);
+			var rot = (360f) / 24f;
+			var solarConstant = 1362;
+			double declination = DegToRad(tilt * Math.Sin((360d/365d) * (284d + (double) (dayOfYear + 1))));
+			double insolation = 0;
+			for (int h = 1; h <= 24; h++) {
+				var H = rot * (h - 12);
+				var Z = Math.Acos((Math.Sin(lat) * Math.Sin(declination)) + (Math.Cos(lat) * Math.Cos(declination) * Math.Cos(H)));
+				insolation += Math.Max(0, (solarConstant * Math.Cos(Z)));
+			}
+			return insolation / 24f;
+		}
+	}
+
 	/*
 	Generates a World
 	*/
 	public class WorldGenerator {
 		public WorldOptions options;
 		private GameManager gm;
-        private int TileWidth;
-        private int TileHeight;
-        private WorldInfo worldInfo;
+		private int TileWidth;
+		private int TileHeight;
+		private WorldInfo worldInfo;
+		private GameDate gameDate;
 
-        public WorldGenerator(GameManager gm) {
+		public WorldGenerator(GameManager gm, GameDate gameDate) {
 			this.gm = gm;
-			this.options = new WorldOptions {
-				Size = WorldSize.Small,
-				Seed = 12345,
-				Sealevel = 140,
-			};
+			this.gameDate = gameDate;
+			this.options = new WorldOptions();
 		}
 
 		public WorldInfo Generate() {
@@ -131,11 +150,16 @@ namespace GameWorld {
 					var temperature = temperatureNoise.Get(x, y) / 255;
 					var rainfall = rainfallNoise.Get(x, y) / 255;
 					var tilePosition = new TilePosition(new Hex.OffsetCoord(x, y));
+					var coordLong = ((x / (double) this.TileWidth) * 360) - 180;
+					var coordLat = ((-y / (double) this.TileHeight) * 180) + 90;
 					var tileData = new TileData {
+						longitude = coordLong,
+						latitude = coordLat,
 						height = height,
 						temperature = temperature,
 						rainfall = rainfall,
 					};
+					tileData.insolation = Climate.CalculateSolarInsolation(worldInfo, tileData, 0);
 					var entity = this.gm.entityManager.CreateEntity();
 					entity.Set<TilePosition>(tilePosition);
 					entity.Set<TileData>(tileData);
@@ -167,17 +191,17 @@ namespace GameWorld {
 	Container for Tiles
 	*/
 	public class World {
-        private WorldInfo worldInfo;
-        private Dictionary<TilePosition, TileData> tilePositionMap;
+		private WorldInfo worldInfo;
+		private Dictionary<TilePosition, TileData> tilePositionMap;
 		private Dictionary<Hex.OffsetCoord, TilePosition> tileCoordMap;
 
-        public IEnumerable<Entity> tiles { get; private set; }
+		public IEnumerable<Entity> tiles { get; private set; }
 
-        public int TileWidth { get { return this.worldInfo.size.Col; } }
+		public int TileWidth { get { return this.worldInfo.size.Col; } }
 		public int TileHeight { get { return this.worldInfo.size.Row; } }
 		public WorldOptions options { get { return this.worldInfo.options; } }
 
-        public World(GameManager gameManager) {
+		public World(GameManager gameManager) {
 			this.worldInfo = gameManager.entityManager.Get<WorldInfo>();
 			this.tilePositionMap = new Dictionary<TilePosition, TileData>();
 			this.tileCoordMap = new Dictionary<Hex.OffsetCoord, TilePosition>();

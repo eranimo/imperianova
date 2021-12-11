@@ -9,6 +9,7 @@ public static class MapModes {
 		Temperature = 1,
 		Rainfall = 2,
 		Population = 3,
+		Insolation = 4,
 	}
 
 	public static Dictionary<MapMode, string> mapModeTitles = new Dictionary<MapMode, string> () {
@@ -16,5 +17,6 @@ public static class MapModes {
 		{ MapMode.Temperature, "Temperature" },
 		{ MapMode.Rainfall, "Rainfall" },
 		{ MapMode.Population, "Population" },
+		{ MapMode.Insolation, "Insolation" },
 	};
 }

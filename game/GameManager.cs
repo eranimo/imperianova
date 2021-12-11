@@ -24,6 +24,8 @@ public class GameManager {
 			popEntity.Set<PopData>(new PopData(1000, 0.1f));
 		}
 
+		var climateSystems = new ClimateSystems(this);
+
 		// for (int i = 0; i < 10; i++) {
 		// 	var unitEntity = entityManager.CreateEntity();
 		// 	unitEntity.Set<TilePosition>(new TilePosition(new Hex.OffsetCoord(rand.RandiRange(0, 100), rand.RandiRange(0, 100))));
@@ -44,9 +46,11 @@ public class GameManager {
 
 		daySystems = new SequentialSystem<GameDate>(
 			new MovementSystem(this.entityManager)
+			
 		);
 		monthSystems = new SequentialSystem<GameDate>(
-			new PopGrowthSystem(this.entityManager)
+			new PopGrowthSystem(this.entityManager),
+			climateSystems.climateTick
 		);
 
 		GD.PrintS($"GameLoop init: {watch.ElapsedMilliseconds}ms");
@@ -70,6 +74,14 @@ public class GameManager {
 
 	public void UnregisterViewSystem(ISystem<GameDate> system) {
 		uiSystems.Remove(system);
+	}
+
+	public void RegisterInitSystem(ISystem<GameDate> system) {
+		initSystems.Add(system);
+	}
+
+	public void UnregisterInitSystem(ISystem<GameDate> system) {
+		initSystems.Remove(system);
 	}
 
 	public void CallInitSystem(ISystem<GameDate> system) {

@@ -14,3 +14,4 @@ func _on_tile_hovered(tile):
 		$Height.value = tile_data.height
 		$Temperature.value = tile_data.temperature
 		$Rainfall.value = tile_data.rainfall
+		$Insolation.value = tile_data.insolation
