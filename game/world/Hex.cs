@@ -13,6 +13,15 @@ namespace Hex {
 		S = 5,
 	}
 
+	public enum HexCorner: int {
+		E = 0,
+		NE = 1,
+		NW = 2,
+		W = 3,
+		SW = 4,
+		SE = 5,
+	}
+
 	/// <summary>Offset coordinates in odd-q style</summary>
 	public struct OffsetCoord {
 		public int Col;
@@ -187,6 +196,8 @@ namespace Hex {
 			}
 		}
 
+		public static Vector2 HexCenter = new Vector2(HexUtils.HexWidth / 2, HexUtils.HexHeight / 2);
+
 		public static Vector2 GetGridDimensions(int cols, int rows) {
 			var lastHexPoint = Hex.HexUtils.HexToPixel(new OffsetCoord(cols - 1, rows - 1));
 			var gridWidth = lastHexPoint.x + (HexUtils.HexWidth);
@@ -234,6 +245,12 @@ namespace Hex {
 
 		public static Vector2 HexToPixelCenter(AxialCoord hex) {
 			return HexToPixel(hex) + new Vector2(HexWidth / 2, HexHeight / 2);
+		}
+
+		public static Vector2 GetHexCorner(Vector2 center, int size, HexCorner corner) {
+			double deg = 60 * (int) corner;
+			double rad = (Math.PI / 180f) * deg;
+			return center + new Vector2((float) (size * Math.Cos(rad)), (float) (size * Math.Sin(rad)));
 		}
 	}
 }
