@@ -196,7 +196,7 @@ namespace Hex {
 			}
 		}
 
-		public static Vector2 HexCenter = new Vector2(HexUtils.HexWidth / 2, HexUtils.HexHeight / 2);
+		public static Vector2 HexCenter = new Vector2(HexUtils.HexWidth / 2f, HexUtils.HexHeight / 2f);
 
 		public static Vector2 GetGridDimensions(int cols, int rows) {
 			var lastHexPoint = Hex.HexUtils.HexToPixel(new OffsetCoord(cols - 1, rows - 1));
@@ -230,27 +230,27 @@ namespace Hex {
 		public static Vector2 HexToPixel(OffsetCoord hex) {
 			var x = HexConstants.HEX_SIZE * 3/2 * hex.Col;
 			var y = HexConstants.HEX_SIZE * Math.Sqrt(3) * (hex.Row + 0.5 * (hex.Col&1));
-			return new Vector2((int) x, (int) y);
+			return new Vector2((float) x, (float) y);
 		}
 
 		public static Vector2 HexToPixel(AxialCoord hex) {
-			var x = HexConstants.HEX_SIZE * (3.0/2 * hex.q);
-			var y = HexConstants.HEX_SIZE * (Math.Sqrt(3) / 2 * hex.q + Math.Sqrt(3) * hex.r);
-			return new Vector2((int) x, (int) y);
+			var x = HexConstants.HEX_SIZE * (3.0 / 2f * hex.q);
+			var y = HexConstants.HEX_SIZE * (Math.Sqrt(3) / 2f * hex.q + Math.Sqrt(3) * hex.r);
+			return new Vector2((float) x, (float) y);
 		}
 
 		public static Vector2 HexToPixelCenter(OffsetCoord hex) {
-			return HexToPixel(hex) + new Vector2(HexWidth / 2, HexHeight / 2);
+			return HexToPixel(hex) + HexUtils.HexCenter;
 		}
 
 		public static Vector2 HexToPixelCenter(AxialCoord hex) {
-			return HexToPixel(hex) + new Vector2(HexWidth / 2, HexHeight / 2);
+			return HexToPixel(hex) + HexUtils.HexCenter;
 		}
 
-		public static Vector2 GetHexCorner(Vector2 center, int size, HexCorner corner) {
-			double deg = 60 * (int) corner;
+		public static Vector2 GetHexCorner(int size, HexCorner corner) {
+			double deg = 60f * (int) corner;
 			double rad = (Math.PI / 180f) * deg;
-			return center + new Vector2((float) (size * Math.Cos(rad)), (float) (size * Math.Sin(rad)));
+			return new Vector2((float) (size * Math.Cos(rad)), (float) (size * Math.Sin(rad)));
 		}
 	}
 }

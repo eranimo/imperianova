@@ -2,7 +2,7 @@ extends Camera
 
 var panning_speed = 0.1
 var panning = false
-var zoom_speed = 5
+var zoom_speed = 2
 
 func _input(event):
 	if event.is_action_pressed("view_pan_mouse"):
@@ -19,4 +19,4 @@ func _input(event):
 		translation.y -= zoom_speed
 	if event.is_action_released('view_zoom_out'):
 		translation.y += zoom_speed
-	translation.y = clamp(translation.y, 1, 150)
+	translation.y = clamp(translation.y, 1, 500)
