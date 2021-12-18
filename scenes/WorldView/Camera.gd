@@ -1,8 +1,8 @@
 extends Camera
 
-var panning_speed = 0.1
+var panning_speed = 1
 var panning = false
-var zoom_speed = 2
+var zoom_speed = 25
 
 func _input(event):
 	if event.is_action_pressed("view_pan_mouse"):
