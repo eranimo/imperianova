@@ -15,11 +15,11 @@ namespace Hex {
 
 	public enum HexCorner: int {
 		E = 0,
-		NE = 1,
-		NW = 2,
+		SE = 1,
+		SW = 2,
 		W = 3,
-		SW = 4,
-		SE = 5,
+		NW = 4,
+		NE = 5,
 	}
 
 	/// <summary>Offset coordinates in odd-q style</summary>
@@ -60,6 +60,10 @@ namespace Hex {
 
 		public override int GetHashCode() {
 			return (Col, Row).GetHashCode();
+		}
+
+		public static OffsetCoord operator +(OffsetCoord a, OffsetCoord b){
+			return new OffsetCoord(a.Col + b.Col, a.Row + b.Row);
 		}
 	}
 
@@ -181,6 +185,15 @@ namespace Hex {
 				new OffsetCoord(-1, 0), new OffsetCoord(-1, 1), new OffsetCoord(0, 1),
 			}
 		};
+
+		public static Dictionary<Direction, HexCorner[]> directionCorners = new Dictionary<Direction, HexCorner[]> {
+			{ Direction.SE, new HexCorner[] { HexCorner.SE, HexCorner.E } },
+			{ Direction.NE, new HexCorner[] { HexCorner.E, HexCorner.NE } },
+			{ Direction.N, new HexCorner[] { HexCorner.NE, HexCorner.NW } },
+			{ Direction.NW, new HexCorner[] { HexCorner.NW, HexCorner.W } },
+			{ Direction.SW, new HexCorner[] { HexCorner.W, HexCorner.SW } },
+			{ Direction.S, new HexCorner[] { HexCorner.SW, HexCorner.SE } },
+		};
 	}
 
 	public class HexUtils {
@@ -210,7 +223,7 @@ namespace Hex {
 			return new Vector2(gridWidth, gridHeight);
 		}
 
-		public static OffsetCoord oddq_offset_neighbor(OffsetCoord hex, Direction direction) {
+		public static OffsetCoord GetNeighbor(OffsetCoord hex, Direction direction) {
 			var parity = hex.Col & 1;
 			var dir = HexConstants.oddq_directions[parity, (int) direction];
 			return new OffsetCoord(hex.Col + dir.Col, hex.Row + dir.Row);
@@ -247,7 +260,7 @@ namespace Hex {
 			return HexToPixel(hex) + HexUtils.HexCenter;
 		}
 
-		public static Vector2 GetHexCorner(int size, HexCorner corner) {
+		public static Vector2 GetHexCorner(double size, HexCorner corner) {
 			double deg = 60f * (int) corner;
 			double rad = (Math.PI / 180f) * deg;
 			return new Vector2((float) (size * Math.Cos(rad)), (float) (size * Math.Sin(rad)));

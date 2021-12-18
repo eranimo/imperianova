@@ -235,7 +235,7 @@ namespace GameWorld {
 		}
 
 		public Hex.OffsetCoord GetNeighborCoord(Hex.OffsetCoord position, Hex.Direction direction) {
-			return Hex.HexUtils.oddq_offset_neighbor(position, direction);
+			return Hex.HexUtils.GetNeighbor(position, direction);
 		}
 	}
 }
