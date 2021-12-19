@@ -130,7 +130,11 @@ public class WorldView : Spatial {
 					cell.Height = 90;
 					cellChunks[cell].Generate();
 					foreach(OffsetCoord c in HexUtils.GetRing(cell.Position)) {
-						cellChunks[grid.GetCell(c)].Generate();
+						MapChunk cellChunk;
+						var ring_cell = grid.GetCell(c);
+						if (ring_cell != null && cellChunks.TryGetValue(ring_cell, out cellChunk)) {
+							cellChunk.Generate();
+						}
 					}
 				}
 			}
