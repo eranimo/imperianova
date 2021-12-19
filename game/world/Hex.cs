@@ -112,6 +112,10 @@ namespace Hex {
 		public override int GetHashCode() {
 			return (q, r).GetHashCode();
 		}
+
+		public static AxialCoord operator +(AxialCoord a, AxialCoord b){
+			return new AxialCoord(a.q + b.q, a.r + b.r);
+		}
 	}
 
 	public struct CubeCoord {
@@ -170,6 +174,14 @@ namespace Hex {
 		public override int GetHashCode() {
 			return (q, r, s).GetHashCode();
 		}
+
+		public static CubeCoord operator +(CubeCoord a, CubeCoord b){
+			return new CubeCoord(a.q + b.q, a.r + b.r, a.s + b.s);
+		}
+
+		public CubeCoord Scale(double factor) {
+			return new CubeCoord(this.q * factor, this.r * factor, this.s * factor);
+		}
 	}
 
 	public static class HexConstants {
@@ -184,6 +196,11 @@ namespace Hex {
 				new OffsetCoord(1, 1), new OffsetCoord(1, 0), new OffsetCoord( 0, -1),
 				new OffsetCoord(-1, 0), new OffsetCoord(-1, 1), new OffsetCoord(0, 1),
 			}
+		};
+
+		public static CubeCoord[] cube_directions = new CubeCoord[6] {
+			new CubeCoord(1, 0, -1), new CubeCoord(1, -1, 0), new CubeCoord(0, -1, 1), 
+			new CubeCoord(-1, 0, 1), new CubeCoord(-1, 1, 0), new CubeCoord(0, 1, -1), 
 		};
 
 		public static Dictionary<Direction, HexCorner[]> directionCorners = new Dictionary<Direction, HexCorner[]> {
@@ -229,6 +246,10 @@ namespace Hex {
 			return new OffsetCoord(hex.Col + dir.Col, hex.Row + dir.Row);
 		}
 
+		public static CubeCoord GetNeighbor(CubeCoord hex, Direction direction) {
+			return hex + HexConstants.cube_directions[(int) direction];
+		}
+
 		///<summary>Converts between pixels to offset coordinates</summary>
 		public static OffsetCoord PixelToHexOffset(Vector2 point) {
 			return HexUtils.PixelToHexAxial(point).ToOffset();
@@ -264,6 +285,22 @@ namespace Hex {
 			double deg = 60f * (int) corner;
 			double rad = (Math.PI / 180f) * deg;
 			return new Vector2((float) (size * Math.Cos(rad)), (float) (size * Math.Sin(rad)));
+		}
+
+		public static List<OffsetCoord> GetRing(CubeCoord center, int radius = 1) {
+			var results = new List<OffsetCoord>();
+			var hex = center + new CubeCoord(-radius, radius, 0);
+			for (int i = 0; i < 6; i++) {
+				for (int j = 0; j < radius; j++) {
+					results.Add(hex.ToOffset());
+					hex = GetNeighbor(hex, (Direction) i);
+				}
+			}
+			return results;
+		}
+
+		public static List<OffsetCoord> GetRing(OffsetCoord center, int radius = 1) {
+			return GetRing(center.ToCube());
 		}
 	}
 }

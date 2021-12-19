@@ -46,8 +46,12 @@ public class MapChunk : StaticBody {
 	public override void _Ready() {
 		var watch = System.Diagnostics.Stopwatch.StartNew();
 		rng = new Random();
-		generateMesh();
+		Generate();
 		// GD.PrintS($"Chunk generate: {watch.ElapsedMilliseconds}ms");
+	}
+
+	public void Generate() {
+		generateMesh();
 	}
 
 	private void generateMesh() {

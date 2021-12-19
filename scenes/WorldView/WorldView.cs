@@ -44,6 +44,7 @@ public class HexGrid {
 
 public class WorldView : Spatial {
     private HexGrid grid;
+	Dictionary<HexCell, MapChunk> cellChunks = new Dictionary<HexCell, MapChunk>();
 
     public override void _Ready() {
 		var chunks = GetNode("Chunks");
@@ -80,11 +81,17 @@ public class WorldView : Spatial {
 		var chunkSize = new OffsetCoord(10, 10);
 		for (var x = 0; x < grid.Size.Col; x += chunkSize.Col) {
 			for (var y = 0; y < grid.Size.Row; y += chunkSize.Row) {
+				var cell = this.grid.GetCell(new OffsetCoord(x, y));
 				MapChunk chunk = new MapChunk(
 					grid,
 					new OffsetCoord(x, y),
 					chunkSize
 				);
+				for (var cx = x; cx < x + chunkSize.Col; cx++) {
+					for (var cy = y; cy < y + chunkSize.Row; cy++) {
+						cellChunks[this.grid.GetCell(new OffsetCoord(cx, cy))] = chunk;
+					}
+				}
 				chunks.AddChild(chunk);
 			}
 		}
@@ -119,6 +126,11 @@ public class WorldView : Spatial {
 							$"SW: {cell.GetNeighbor(Hex.Direction.SW)?.Height}",
 							$"S: {cell.GetNeighbor(Hex.Direction.S)?.Height}",
 						});
+					}
+					cell.Height = 90;
+					cellChunks[cell].Generate();
+					foreach(OffsetCoord c in HexUtils.GetRing(cell.Position)) {
+						cellChunks[grid.GetCell(c)].Generate();
 					}
 				}
 			}
