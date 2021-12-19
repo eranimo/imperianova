@@ -13,6 +13,16 @@ namespace Hex {
 		S = 5,
 	}
 
+	public static class DirectionExtensions {
+		public static Direction Next(this Direction dir) {
+			return (Direction) ((((int) dir) + 1) % 6);
+		}
+
+		public static Direction Prev(this Direction dir) {
+			return ((int) dir) == 0 ? Direction.S : (Direction) ((int) dir - 1);
+		}
+	}
+
 	public enum HexCorner: int {
 		E = 0,
 		SE = 1,
@@ -210,6 +220,15 @@ namespace Hex {
 			{ Direction.NW, new HexCorner[] { HexCorner.NW, HexCorner.W } },
 			{ Direction.SW, new HexCorner[] { HexCorner.W, HexCorner.SW } },
 			{ Direction.S, new HexCorner[] { HexCorner.SW, HexCorner.SE } },
+		};
+
+		public static Dictionary<Direction, Direction> oppositeDirections = new Dictionary<Direction, Direction> {
+			{ Direction.SE, Direction.NW },
+			{ Direction.NE, Direction.SW },
+			{ Direction.N, Direction.S },
+			{ Direction.NW, Direction.SE },
+			{ Direction.SW, Direction.NE },
+			{ Direction.S, Direction.N },
 		};
 	}
 
