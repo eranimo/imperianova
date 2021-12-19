@@ -21,6 +21,10 @@ namespace Hex {
 		public static Direction Prev(this Direction dir) {
 			return ((int) dir) == 0 ? Direction.S : (Direction) ((int) dir - 1);
 		}
+
+		public static Direction Opposite(this Direction dir) {
+			return HexConstants.oppositeDirections[dir];
+		}
 	}
 
 	public enum HexCorner: int {

@@ -110,8 +110,7 @@ public class MapChunk : StaticBody {
 
 	private void generateHex(Hex.OffsetCoord hex, int index) {
 		var cell = hexGrid.GetCell(hex);
-		var origin = HexUtils.HexToPixel(hex);
-		var center = origin + HexUtils.HexCenter;
+		var center = HexUtils.HexToPixelCenter(hex);
 		var color = cell.color;
 
 		for (int d = 0; d < 6; d++) {
@@ -123,51 +122,52 @@ public class MapChunk : StaticBody {
 			var edge_center = (v3 + v4) / 2f;
 			var v1 = center + hexInnerCorners[c1];
 			var v2 = center + hexInnerCorners[c2];
-			var v5 = edge_center.LinearInterpolate(v3, (float) innerPercent);
-			var v6 = edge_center.LinearInterpolate(v4, (float) innerPercent);
 			int i = index + (d * 3 * 5);
-			var neighbor = cell.GetNeighbor(dir);
-			var prev_neighbor = cell.GetNeighbor((dir == 0 ? (Direction) 5 : (Direction) dir - 1));
-			var next_neighbor = cell.GetNeighbor((Direction) (((int) dir + 1) % 6));
-			var neighbor_color = neighbor != null ? neighbor.color : color;
-			var prev_neighbor_color = prev_neighbor != null ? prev_neighbor.color : color;
-			var next_neighbor_color = next_neighbor != null ? next_neighbor.color : color;
-			prev_neighbor_color = (prev_neighbor_color + color + neighbor_color) / 3f;
-			next_neighbor_color = (next_neighbor_color + color + neighbor_color) / 3f;
-			neighbor_color = (neighbor_color + color) / 2f;
-
-			var d1 = cell.Height;
-			var neighbor_height = neighbor != null ? neighbor.Height : d1;
-			var prev_neighbor_height = prev_neighbor != null ? prev_neighbor.Height : d1;
-			var next_neighbor_height = next_neighbor != null ? next_neighbor.Height : d1;
-			var d2 = (cell.Height + neighbor_height) / 2d;
-			var d3 = (cell.Height + prev_neighbor_height + neighbor_height) / 3d;
-			var d4 = (cell.Height + next_neighbor_height + neighbor_height) / 3d;
+			var cell_height = cell.Height;
 			
 			// center triangle
-			AddVertex(i, center, d1, color);
-			AddVertex(i + 1, v1, d1, color);
-			AddVertex(i + 2, v2, d1, color);
-			
-			// edge center 1
-			AddVertex(i + 3, v1, d1, color);
-			AddVertex(i + 4, v5, d2, neighbor_color);
-			AddVertex(i + 5, v2, d1, color);
+			AddVertex(i, center, cell_height, color);
+			AddVertex(i + 1, v1, cell_height, color);
+			AddVertex(i + 2, v2, cell_height, color);
 
-			// edge center 2
-			AddVertex(i + 6, v2, d1, color);
-			AddVertex(i + 7, v5, d2, neighbor_color);
-			AddVertex(i + 8, v6, d2, neighbor_color);
+			if (d <= 2) {
+				var neighbor = cell.GetNeighbor(dir);
+				if (neighbor == null) {
+					continue;
+				}
+				var avg_height = (cell_height + neighbor.Height) / 2f;
+				var prev_neighbor = cell.GetNeighbor(dir.Prev());
+				var next_neighbor = cell.GetNeighbor(dir.Next());
+				var neighbor_dir = dir.Opposite();
+				var neighbor_center = HexUtils.HexToPixelCenter(neighbor.Position);
+				int c1_n = (int) HexConstants.directionCorners[neighbor_dir][1];
+				int c2_n = (int) HexConstants.directionCorners[neighbor_dir][0];
+				var v1_n = neighbor_center + hexInnerCorners[c1_n];
+				var v2_n = neighbor_center + hexInnerCorners[c2_n];
+				var neighbor_color = neighbor.color;
 
-			// corner 1
-			AddVertex(i + 9, v1, d1, color);
-			AddVertex(i + 10, v3, d4, next_neighbor_color);
-			AddVertex(i + 11, v5, d2, neighbor_color);
+				// edge center 1
+				AddVertex(i + 3, v1, cell_height, color);
+				AddVertex(i + 4, v2_n, neighbor.Height, neighbor_color);
+				AddVertex(i + 5, v2, cell_height, color);
 
-			// corner 2
-			AddVertex(i + 12, v2, d1, color);
-			AddVertex(i + 13, v6, d2, neighbor_color);
-			AddVertex(i + 14, v4, d3, prev_neighbor_color);
+				// edge center 2
+				AddVertex(i + 6, v2, cell_height, color);
+				AddVertex(i + 7, v2_n, neighbor.Height, neighbor_color);
+				AddVertex(i + 8, v1_n, neighbor.Height, neighbor_color);
+
+				if (dir > 0 && prev_neighbor != null) {
+					var c2_prev_opp = (int) HexConstants.directionCorners[dir.Prev().Opposite()][0];
+					var prev_opp_center = HexUtils.HexToPixelCenter(prev_neighbor.Position);
+					var v2_prev_neighbor = prev_opp_center + hexInnerCorners[c2_prev_opp];
+					var prev_opp = HexUtils.GetNeighbor(prev_neighbor.Position, dir.Prev().Opposite());
+					var pre_opp_height = prev_neighbor.Height;
+					var prev_opp_color = prev_neighbor.color;
+					AddVertex(i + 9, v2, cell_height, color);
+					AddVertex(i + 10, v1_n, neighbor.Height, neighbor_color);
+					AddVertex(i + 11, v2_prev_neighbor, pre_opp_height, prev_opp_color);
+				}
+			}
 		}
 	}
 

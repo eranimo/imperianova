@@ -43,10 +43,10 @@ public class HexGrid {
 }
 
 public class WorldView : Spatial {
-    private HexGrid grid;
+	private HexGrid grid;
 	Dictionary<HexCell, MapChunk> cellChunks = new Dictionary<HexCell, MapChunk>();
 
-    public override void _Ready() {
+	public override void _Ready() {
 		var chunks = GetNode("Chunks");
 		var watch = System.Diagnostics.Stopwatch.StartNew();
 
