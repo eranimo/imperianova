@@ -2,6 +2,7 @@ using Godot;
 using Godot.Collections;
 using System;
 using Hex;
+using System.Collections.Generic;
 
 public class MapChunk : StaticBody {
     private readonly HexGrid hexGrid;
@@ -32,6 +33,10 @@ public class MapChunk : StaticBody {
     private Vector3[] vertexArray;
     private Color[] colorArray;
     private Vector3[] normalArray;
+	private List<Vector3> vertices;
+	private List<Vector2> uvs;
+	private List<Vector3> normals;
+	private List<Color> colors;
 
     public MapChunk(
 		HexGrid hexGrid,
@@ -56,35 +61,42 @@ public class MapChunk : StaticBody {
 
 	private void generateMesh() {
 		var mesh = new ArrayMesh();
+		vertices = new List<Vector3>();
+		uvs = new List<Vector2>();
+		normals = new List<Vector3>();
+		colors = new List<Color>();
 
-		int verticesPerHex = 6 * 3 * 5;
-		int arraySize = chunkSize.Col * chunkSize.Row * verticesPerHex;
-		this.uvArray = new Vector2[arraySize];
-		this.vertexArray = new Vector3[arraySize];
-		this.colorArray = new Color[arraySize];
-		this.normalArray = new Vector3[arraySize];
-
-		int i = 0;
+		// int i = 0;
 		for (int col = 0; col < chunkSize.Col; col++) {
 			for (int row = 0; row < chunkSize.Row; row++) {
 				var hex = firstHex + new Hex.OffsetCoord(col, row);
-				generateHex(hex, i);
-				i += verticesPerHex;
+				generateHex(hex);
 			}
 		}
+		// GD.PrintS($"Generated {vertices.Count} vertices");
+
+		foreach (Vector3 vertex in vertices) {
+			uvs.Add(new Vector2(vertex.x, vertex.z));
+		}
+
+		this.uvArray = uvs.ToArray();
+		this.vertexArray = vertices.ToArray();
+		this.colorArray = colors.ToArray();
 
 		// calculate normals
-		for (int v = 0; v < arraySize; v += 3) {
+		for (int v = 0; v < vertices.Count; v += 3) {
 			var p1 = vertexArray[v];
 			var p2 = vertexArray[v + 1];
 			var p3 = vertexArray[v + 2];
 			var U = p2 - p1;
 			var V = p3 - p1;
 			var normal = U.Cross(V);
-			normalArray[v] = normal;
-			normalArray[v + 1] = normal;
-			normalArray[v + 2] = normal;
+			normals.Add(normal);
+			normals.Add(normal);
+			normals.Add(normal);
 		}
+
+		this.normalArray = normals.ToArray();
 
 		var arrays = new Godot.Collections.Array();
 		arrays.Resize((int) ArrayMesh.ArrayType.Max);
@@ -108,7 +120,7 @@ public class MapChunk : StaticBody {
 		AddChild(collision);
 	}
 
-	private void generateHex(Hex.OffsetCoord hex, int index) {
+	private void generateHex(Hex.OffsetCoord hex) {
 		var cell = hexGrid.GetCell(hex);
 		var center = HexUtils.HexToPixelCenter(hex);
 		var color = cell.color;
@@ -122,20 +134,18 @@ public class MapChunk : StaticBody {
 			var edge_center = (v3 + v4) / 2f;
 			var v1 = center + hexInnerCorners[c1];
 			var v2 = center + hexInnerCorners[c2];
-			int i = index + (d * 3 * 5);
-			var cell_height = cell.Height;
+			var h = cell.Height;
 			
 			// center triangle
-			AddVertex(i, center, cell_height, color);
-			AddVertex(i + 1, v1, cell_height, color);
-			AddVertex(i + 2, v2, cell_height, color);
+			AddTriangle(WithHeight(center, h), WithHeight(v1, h), WithHeight(v2, h));
+			AddTriangleColor(color, color, color);
 
 			if (d <= 2) {
 				var neighbor = cell.GetNeighbor(dir);
 				if (neighbor == null) {
 					continue;
 				}
-				var avg_height = (cell_height + neighbor.Height) / 2f;
+				var avg_height = (h + neighbor.Height) / 2f;
 				var prev_neighbor = cell.GetNeighbor(dir.Prev());
 				var next_neighbor = cell.GetNeighbor(dir.Next());
 				var neighbor_dir = dir.Opposite();
@@ -145,35 +155,46 @@ public class MapChunk : StaticBody {
 				var v1_n = neighbor_center + hexInnerCorners[c1_n];
 				var v2_n = neighbor_center + hexInnerCorners[c2_n];
 				var neighbor_color = neighbor.color;
+				var h_n = neighbor.Height;
 
-				// edge center 1
-				AddVertex(i + 3, v1, cell_height, color);
-				AddVertex(i + 4, v2_n, neighbor.Height, neighbor_color);
-				AddVertex(i + 5, v2, cell_height, color);
+				// edge 1
+				AddTriangle(WithHeight(v1, h), WithHeight(v2_n, h_n), WithHeight(v2, h));
+				AddTriangleColor(color, neighbor_color, color);
 
-				// edge center 2
-				AddVertex(i + 6, v2, cell_height, color);
-				AddVertex(i + 7, v2_n, neighbor.Height, neighbor_color);
-				AddVertex(i + 8, v1_n, neighbor.Height, neighbor_color);
+				// edge 2
+				AddTriangle(WithHeight(v2, h), WithHeight(v2_n, h_n), WithHeight(v1_n, h_n));
+				AddTriangleColor(color, neighbor_color, neighbor_color);
 
+				// corner
 				if (dir > 0 && prev_neighbor != null) {
 					var c2_prev_opp = (int) HexConstants.directionCorners[dir.Prev().Opposite()][0];
 					var prev_opp_center = HexUtils.HexToPixelCenter(prev_neighbor.Position);
 					var v2_prev_neighbor = prev_opp_center + hexInnerCorners[c2_prev_opp];
 					var prev_opp = HexUtils.GetNeighbor(prev_neighbor.Position, dir.Prev().Opposite());
-					var pre_opp_height = prev_neighbor.Height;
+					var prev_opp_height = prev_neighbor.Height;
 					var prev_opp_color = prev_neighbor.color;
-					AddVertex(i + 9, v2, cell_height, color);
-					AddVertex(i + 10, v1_n, neighbor.Height, neighbor_color);
-					AddVertex(i + 11, v2_prev_neighbor, pre_opp_height, prev_opp_color);
+
+					AddTriangle(WithHeight(v2, h), WithHeight(v1_n, h_n), WithHeight(v2_prev_neighbor, prev_opp_height));
+					AddTriangleColor(color, neighbor_color, prev_opp_color);
 				}
 			}
 		}
 	}
 
-	private void AddVertex(int index, Vector2 pos, double depth, Color color) {
-		vertexArray[index] = new Vector3(pos.x, (float) depth, pos.y);
-		uvArray[index] = new Vector2(pos.x, pos.y);
-		colorArray[index] = color;
+	Vector3 WithHeight(Vector2 vector, double height) {
+		return new Vector3(vector.x, (float) height, vector.y);
+	}
+
+	void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v3) {
+		int vertexIndex = vertices.Count;
+		vertices.Add(v1);
+		vertices.Add(v2);
+		vertices.Add(v3);
+	}
+
+	void AddTriangleColor(Color c1, Color c2, Color c3) {
+		colors.Add(c1);
+		colors.Add(c2);
+		colors.Add(c3);
 	}
 }
