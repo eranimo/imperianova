@@ -47,18 +47,31 @@ public class WorldView : Spatial {
 
     public override void _Ready() {
 		var chunks = GetNode("Chunks");
+		var watch = System.Diagnostics.Stopwatch.StartNew();
 
 		this.grid = new HexGrid(new OffsetCoord(100, 100));
+
 		var heightNoise = new GameWorld.WorldNoise(grid.Size.Col, grid.Size.Row, 123);
 		for (var x = 0; x < grid.Size.Col; x++) {
 			for (var y = 0; y < grid.Size.Row; y++) {
 				var pos = new OffsetCoord(x, y);
 				var cell = new HexCell(pos);
-				cell.Height = (heightNoise.Get(x, y) / 255f) * 50;
-				if (cell.Height < 25) {
+				cell.Height = (heightNoise.Get(x, y) / 255f) * 100;
+				if (cell.Height > 75) {
+					cell.Height = 60;
+					cell.color = new Color("#619960");
+				} else if (cell.Height > 50) {
+					cell.Height = 20 + (Math.Round((cell.Height - 50) / 5) * 5);
+					cell.color = new Color("#208a0e");
+				} else if (cell.Height > 48) {
+					cell.Height = 15;
+					cell.color = new Color("#ebe571");
+				} else if (cell.Height > 15) {
+					cell.Height = 10;
 					cell.color = new Color("#0356fc");
 				} else {
-					cell.color = new Color("#208a0e");
+					cell.Height = 5;
+					cell.color = new Color("#003bb0");
 				}
 				grid.AddCell(cell);
 			}
@@ -75,6 +88,7 @@ public class WorldView : Spatial {
 				chunks.AddChild(chunk);
 			}
 		}
+		GD.PrintS($"WorldView init: {watch.ElapsedMilliseconds}ms");
 	}
 
 	public override void _Input(InputEvent @event) {

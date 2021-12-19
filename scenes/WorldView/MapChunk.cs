@@ -31,6 +31,7 @@ public class MapChunk : StaticBody {
     private Vector2[] uvArray;
     private Vector3[] vertexArray;
     private Color[] colorArray;
+    private Vector3[] normalArray;
 
     public MapChunk(
 		HexGrid hexGrid,
@@ -43,8 +44,10 @@ public class MapChunk : StaticBody {
     }
 
 	public override void _Ready() {
+		var watch = System.Diagnostics.Stopwatch.StartNew();
 		rng = new Random();
 		generateMesh();
+		// GD.PrintS($"Chunk generate: {watch.ElapsedMilliseconds}ms");
 	}
 
 	private void generateMesh() {
@@ -55,6 +58,7 @@ public class MapChunk : StaticBody {
 		this.uvArray = new Vector2[arraySize];
 		this.vertexArray = new Vector3[arraySize];
 		this.colorArray = new Color[arraySize];
+		this.normalArray = new Vector3[arraySize];
 
 		int i = 0;
 		for (int col = 0; col < chunkSize.Col; col++) {
@@ -65,13 +69,28 @@ public class MapChunk : StaticBody {
 			}
 		}
 
+		// calculate normals
+		for (int v = 0; v < arraySize; v += 3) {
+			var p1 = vertexArray[v];
+			var p2 = vertexArray[v + 1];
+			var p3 = vertexArray[v + 2];
+			var U = p2 - p1;
+			var V = p3 - p1;
+			var normal = U.Cross(V);
+			normalArray[v] = normal;
+			normalArray[v + 1] = normal;
+			normalArray[v + 2] = normal;
+		}
+
 		var arrays = new Godot.Collections.Array();
 		arrays.Resize((int) ArrayMesh.ArrayType.Max);
 		arrays[(int) ArrayMesh.ArrayType.Vertex] = vertexArray;
 		arrays[(int) ArrayMesh.ArrayType.TexUv] = uvArray;
 		arrays[(int) ArrayMesh.ArrayType.Color] = colorArray;
+		arrays[(int) ArrayMesh.ArrayType.Normal] = normalArray;
 
 		mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
+
 		// GD.PrintS("Total surfaces:", mesh.GetSurfaceCount());
 		mesh.SurfaceSetMaterial(0, (Material) ResourceLoader.Load("res://scenes/WorldView/GridShader.tres"));
 
@@ -112,36 +131,44 @@ public class MapChunk : StaticBody {
 			prev_neighbor_color = (prev_neighbor_color + color + neighbor_color) / 3f;
 			next_neighbor_color = (next_neighbor_color + color + neighbor_color) / 3f;
 			neighbor_color = (neighbor_color + color) / 2f;
+
+			var d1 = cell.Height;
+			var neighbor_height = neighbor != null ? neighbor.Height : d1;
+			var prev_neighbor_height = prev_neighbor != null ? prev_neighbor.Height : d1;
+			var next_neighbor_height = next_neighbor != null ? next_neighbor.Height : d1;
+			var d2 = (cell.Height + neighbor_height) / 2d;
+			var d3 = (cell.Height + prev_neighbor_height + neighbor_height) / 3d;
+			var d4 = (cell.Height + next_neighbor_height + neighbor_height) / 3d;
 			
 			// center triangle
-			AddVertex(i, center, 0, color);
-			AddVertex(i + 1, v1, 0, color);
-			AddVertex(i + 2, v2, 0, color);
+			AddVertex(i, center, d1, color);
+			AddVertex(i + 1, v1, d1, color);
+			AddVertex(i + 2, v2, d1, color);
 			
 			// edge center 1
-			AddVertex(i + 3, v1, 0, color);
-			AddVertex(i + 4, v5, 0, neighbor_color);
-			AddVertex(i + 5, v2, 0, color);
+			AddVertex(i + 3, v1, d1, color);
+			AddVertex(i + 4, v5, d2, neighbor_color);
+			AddVertex(i + 5, v2, d1, color);
 
 			// edge center 2
-			AddVertex(i + 6, v2, 0, color);
-			AddVertex(i + 7, v5, 0, neighbor_color);
-			AddVertex(i + 8, v6, 0, neighbor_color);
+			AddVertex(i + 6, v2, d1, color);
+			AddVertex(i + 7, v5, d2, neighbor_color);
+			AddVertex(i + 8, v6, d2, neighbor_color);
 
-			// // corner 1
-			AddVertex(i + 9, v1, 0, color);
-			AddVertex(i + 10, v3, 0, next_neighbor_color);
-			AddVertex(i + 11, v5, 0, neighbor_color);
+			// corner 1
+			AddVertex(i + 9, v1, d1, color);
+			AddVertex(i + 10, v3, d4, next_neighbor_color);
+			AddVertex(i + 11, v5, d2, neighbor_color);
 
 			// corner 2
-			AddVertex(i + 12, v2, 0, color);
-			AddVertex(i + 13, v6, 0, neighbor_color);
-			AddVertex(i + 14, v4, 0, prev_neighbor_color);
+			AddVertex(i + 12, v2, d1, color);
+			AddVertex(i + 13, v6, d2, neighbor_color);
+			AddVertex(i + 14, v4, d3, prev_neighbor_color);
 		}
 	}
 
-	private void AddVertex(int index, Vector2 pos, float depth, Color color) {
-		vertexArray[index] = new Vector3(pos.x, depth, pos.y);
+	private void AddVertex(int index, Vector2 pos, double depth, Color color) {
+		vertexArray[index] = new Vector3(pos.x, (float) depth, pos.y);
 		uvArray[index] = new Vector2(pos.x, pos.y);
 		colorArray[index] = color;
 	}
