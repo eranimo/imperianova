@@ -3,6 +3,8 @@ using Godot.Collections;
 using System;
 using Hex;
 using System.Collections.Generic;
+using LibNoise;
+using LibNoise.Primitive;
 
 public class MapChunk : StaticBody {
     private readonly HexGrid hexGrid;
@@ -37,6 +39,7 @@ public class MapChunk : StaticBody {
 	private List<Vector2> uvs;
 	private List<Vector3> normals;
 	private List<Color> colors;
+    private SimplexPerlin noise;
 
     public MapChunk(
 		HexGrid hexGrid,
@@ -50,6 +53,7 @@ public class MapChunk : StaticBody {
 
 	public override void _Ready() {
 		var watch = System.Diagnostics.Stopwatch.StartNew();
+		this.noise = new SimplexPerlin(123, NoiseQuality.Best);
 		rng = new Random();
 		Generate();
 		// GD.PrintS($"Chunk generate: {watch.ElapsedMilliseconds}ms");
@@ -129,15 +133,15 @@ public class MapChunk : StaticBody {
 			var dir = (Direction) d;
 			int c1 = (int) HexConstants.directionCorners[dir][1];
 			int c2 = (int) HexConstants.directionCorners[dir][0];
-			var v3 = center + hexCorners[c1];
-			var v4 = center + hexCorners[c2];
+			var v3 = Perturb(center + hexCorners[c1]);
+			var v4 = Perturb(center + hexCorners[c2]);
 			var edge_center = (v3 + v4) / 2f;
-			var v1 = center + hexInnerCorners[c1];
-			var v2 = center + hexInnerCorners[c2];
+			var v1 = Perturb(center + hexInnerCorners[c1]);
+			var v2 = Perturb(center + hexInnerCorners[c2]);
 			var h = cell.Height;
 			
 			// center triangle
-			AddTriangle(WithHeight(center, h), WithHeight(v1, h), WithHeight(v2, h));
+			AddTriangle(WithHeight(Perturb(center), h), WithHeight(v1, h), WithHeight(v2, h));
 			AddTriangleColor(color, color, color);
 
 			if (d <= 2) {
@@ -152,8 +156,8 @@ public class MapChunk : StaticBody {
 				var neighbor_center = HexUtils.HexToPixelCenter(neighbor.Position);
 				int c1_n = (int) HexConstants.directionCorners[neighbor_dir][1];
 				int c2_n = (int) HexConstants.directionCorners[neighbor_dir][0];
-				var v1_n = neighbor_center + hexInnerCorners[c1_n];
-				var v2_n = neighbor_center + hexInnerCorners[c2_n];
+				var v1_n = Perturb(neighbor_center + hexInnerCorners[c1_n]);
+				var v2_n = Perturb(neighbor_center + hexInnerCorners[c2_n]);
 				var neighbor_color = neighbor.color;
 				var h_n = neighbor.Height;
 
@@ -169,7 +173,7 @@ public class MapChunk : StaticBody {
 				if (dir > 0 && prev_neighbor != null) {
 					var c2_prev_opp = (int) HexConstants.directionCorners[dir.Prev().Opposite()][0];
 					var prev_opp_center = HexUtils.HexToPixelCenter(prev_neighbor.Position);
-					var v2_prev_neighbor = prev_opp_center + hexInnerCorners[c2_prev_opp];
+					var v2_prev_neighbor = Perturb(prev_opp_center + hexInnerCorners[c2_prev_opp]);
 					var prev_opp = HexUtils.GetNeighbor(prev_neighbor.Position, dir.Prev().Opposite());
 					var prev_opp_height = prev_neighbor.Height;
 					var prev_opp_color = prev_neighbor.color;
@@ -196,5 +200,13 @@ public class MapChunk : StaticBody {
 		colors.Add(c1);
 		colors.Add(c2);
 		colors.Add(c3);
+	}
+
+	Vector2 Perturb(Vector2 position) {
+		var x = noise.GetValue(position.x, position.y, position.y);
+		var y = noise.GetValue(position.x, position.y, position.y);
+		position.x += (x * 2f - 1f) * 1.5f;
+		position.y += (y * 2f - 1f) * 1.5f;
+		return position;
 	}
 }
