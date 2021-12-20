@@ -8,6 +8,7 @@ public class HexCell {
 	public HexGrid Grid;
 
 	public double Height;
+	public double WaterLevel;
 	public Color color;
 
 	public HexCell(OffsetCoord position) {
@@ -17,6 +18,12 @@ public class HexCell {
 	public HexCell GetNeighbor(Direction dir) {
 		var pos = HexUtils.GetNeighbor(this.Position, dir);
 		return Grid.GetCell(pos);
+	}
+
+	public bool IsUnderwater {
+		get {
+			return WaterLevel > Height;
+		}
 	}
 }
 
@@ -67,13 +74,14 @@ public class WorldView : Spatial {
 				} else if (cell.Height > 48) {
 					cell.Height = 15;
 					cell.color = new Color("#ebe571");
-				} else if (cell.Height > 15) {
+				} else if (cell.Height > 25) {
 					cell.Height = 10;
 					cell.color = new Color("#0356fc");
 				} else {
 					cell.Height = 5;
 					cell.color = new Color("#003bb0");
 				}
+				cell.WaterLevel = 12.5;
 				grid.AddCell(cell);
 			}
 		}

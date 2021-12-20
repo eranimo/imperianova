@@ -54,7 +54,9 @@ public class HexMesh {
 		arrays.Resize((int) ArrayMesh.ArrayType.Max);
 		arrays[(int) ArrayMesh.ArrayType.Vertex] = vertexArray;
 		arrays[(int) ArrayMesh.ArrayType.TexUv] = uvArray;
-		arrays[(int) ArrayMesh.ArrayType.Color] = colorArray;
+		if (colors.Count > 0) {
+			arrays[(int) ArrayMesh.ArrayType.Color] = colorArray;
+		}
 		arrays[(int) ArrayMesh.ArrayType.Normal] = normalArray;
 
 		var mesh = new ArrayMesh();
@@ -77,34 +79,12 @@ public class HexMesh {
 	}
 
 	Vector3 Perturb(Vector3 position) {
-		var x = noise.GetValue(position.x, position.y, position.z);
-		var z = noise.GetValue(position.x, position.y, position.z);
+		var x = noise.GetValue(position.x, 0, position.z);
+		var z = noise.GetValue(position.x, 0, position.z);
 		position.x += (x * 2f - 1f) * 1.5f;
 		position.z += (z * 2f - 1f) * 1.5f;
 		return position;
 	}
-}
-
-public static class HexMeshConstants {
-	public static Vector2[] hexCorners = new Vector2[] {
-		HexUtils.GetHexCorner(HexConstants.HEX_SIZE, HexCorner.E),
-		HexUtils.GetHexCorner(HexConstants.HEX_SIZE, HexCorner.SE),
-		HexUtils.GetHexCorner(HexConstants.HEX_SIZE, HexCorner.SW),
-		HexUtils.GetHexCorner(HexConstants.HEX_SIZE, HexCorner.W),
-		HexUtils.GetHexCorner(HexConstants.HEX_SIZE, HexCorner.NW),
-		HexUtils.GetHexCorner(HexConstants.HEX_SIZE, HexCorner.NE),
-	};
-	public static double innerPercent = 0.75;
-	public static double edgePercent = 1 - innerPercent;
-
-	public static Vector2[] hexInnerCorners = new Vector2[] {
-		HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.E),
-		HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.SE),
-		HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.SW),
-		HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.W),
-		HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.NW),
-		HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.NE),
-	};
 }
 
 public class MapChunk : StaticBody {
@@ -115,6 +95,7 @@ public class MapChunk : StaticBody {
 
     private SimplexPerlin noise;
     private HexMesh terrain;
+    private HexMesh water;
 
     public MapChunk(
 		HexGrid hexGrid,
@@ -129,17 +110,24 @@ public class MapChunk : StaticBody {
 	public override void _Ready() {
 		var watch = System.Diagnostics.Stopwatch.StartNew();
 		rng = new Random();
+		this.terrain = new HexMesh();
+		this.water = new HexMesh();
 		Generate();
+		var origin = HexUtils.HexToPixel(firstHex);
+		Transform.Translated(new Vector3(origin.x, 0, origin.y));
 		// GD.PrintS($"Chunk generate: {watch.ElapsedMilliseconds}ms");
 	}
 
 	public void Generate() {
+		foreach (Node n in GetChildren()) {
+			RemoveChild(n);
+		}
+		terrain.Clear();
+		water.Clear();
 		generateMesh();
 	}
 
 	private void generateMesh() {
-		this.terrain = new HexMesh();
-
 		for (int col = 0; col < chunkSize.Col; col++) {
 			for (int row = 0; row < chunkSize.Row; row++) {
 				var hex = firstHex + new Hex.OffsetCoord(col, row);
@@ -147,38 +135,79 @@ public class MapChunk : StaticBody {
 				for (int d = 0; d < 6; d++) {
 					var dir = (Direction) d;
 					triangulateHex(cell, dir);
+
+					if (cell.IsUnderwater) {
+						triangulateWater(cell, dir);
+					}
 				}
 			}
 		}
 		var terrainMesh = terrain.GenerateMesh();
+		terrainMesh.SurfaceSetMaterial(0, (Material) ResourceLoader.Load("res://scenes/WorldView/materials/GridShader.tres"));
 
-		terrainMesh.SurfaceSetMaterial(0, (Material) ResourceLoader.Load("res://scenes/WorldView/GridShader.tres"));
+		var terrainMeshInstance = new MeshInstance();
+		terrainMeshInstance.Name = "Terrain";
+		terrainMeshInstance.Mesh = terrainMesh;
+		AddChild(terrainMeshInstance);
 
-		var origin = HexUtils.HexToPixel(firstHex);
-		Transform.Translated(new Vector3(origin.x, 0, origin.y));
-		var meshInstance = new MeshInstance();
-		meshInstance.Mesh = terrainMesh;
-		AddChild(meshInstance);
 		var collision = new CollisionShape();
+		collision.Name = "TerrainCollision";
 		collision.Shape = terrainMesh.CreateTrimeshShape();
 		AddChild(collision);
+
+		var waterMesh = water.GenerateMesh();
+		waterMesh.SurfaceSetMaterial(0, (Material) ResourceLoader.Load("res://scenes/WorldView/materials/Water.tres"));
+
+		var waterMeshInstance = new MeshInstance();
+		waterMeshInstance.Name = "Water";
+		waterMeshInstance.Mesh = waterMesh;
+		AddChild(waterMeshInstance);
+	}
+
+	private void triangulateWater(HexCell cell, Direction dir) {
+		var center = WithHeight(HexUtils.HexToPixelCenter(cell.Position), cell.WaterLevel);
+		var v1 = center + dir.CornerLeft().InnerPosition();
+		var v2 = center + dir.CornerRight().InnerPosition();
+		water.AddTriangle(center, v1, v2);
+
+		var d = (int) dir;
+		if (d <= 2) {
+			var neighbor = cell.GetNeighbor(dir);
+			if (neighbor == null || !neighbor.IsUnderwater) {
+				return;
+			}
+			var neighbor_dir = dir.Opposite();
+			var neighbor_center = WithHeight(HexUtils.HexToPixelCenter(neighbor.Position), neighbor.WaterLevel);
+			var v1_n = neighbor_center + neighbor_dir.CornerLeft().InnerPosition();
+			var v2_n = neighbor_center + neighbor_dir.CornerRight().InnerPosition();
+			var neighbor_color = neighbor.color;
+
+			// edge 1
+			water.AddTriangle(v1, v2_n, v2);
+
+			// edge 2
+			water.AddTriangle(v2, v2_n, v1_n);
+
+			var prev_neighbor = cell.GetNeighbor(dir.Prev());
+			if (dir > 0 && prev_neighbor != null && prev_neighbor.IsUnderwater) {
+				var prev_opp_dir = dir.Prev().Opposite();
+				var prev_opp_center = WithHeight(HexUtils.HexToPixelCenter(prev_neighbor.Position), prev_neighbor.WaterLevel);
+				var v2_prev_neighbor = prev_opp_center + prev_opp_dir.CornerRight().InnerPosition();
+
+				water.AddTriangle(v2, v1_n, v2_prev_neighbor);
+			}
+		}
 	}
 
 	private void triangulateHex(HexCell cell, Direction dir) {
 		var d = (int) dir;
-		var center = HexUtils.HexToPixelCenter(cell.Position);
+		var center = WithHeight(HexUtils.HexToPixelCenter(cell.Position), cell.Height);
 		var color = cell.color;
-		int c1 = (int) HexConstants.directionCorners[dir][1];
-		int c2 = (int) HexConstants.directionCorners[dir][0];
-		var v3 = center + HexMeshConstants.hexCorners[c1];
-		var v4 = center + HexMeshConstants.hexCorners[c2];
-		var edge_center = (v3 + v4) / 2f;
-		var v1 = center + HexMeshConstants.hexInnerCorners[c1];
-		var v2 = center + HexMeshConstants.hexInnerCorners[c2];
-		var h = cell.Height;
+		var v1 = center + dir.CornerLeft().InnerPosition();
+		var v2 = center + dir.CornerRight().InnerPosition();
 		
 		// center triangle
-		terrain.AddTriangle(WithHeight(center, h), WithHeight(v1, h), WithHeight(v2, h));
+		terrain.AddTriangle(center, v1, v2);
 		terrain.AddTriangleColor(color, color, color);
 
 		if (d <= 2) {
@@ -186,37 +215,29 @@ public class MapChunk : StaticBody {
 			if (neighbor == null) {
 				return;
 			}
-			var avg_height = (h + neighbor.Height) / 2f;
-			var prev_neighbor = cell.GetNeighbor(dir.Prev());
-			var next_neighbor = cell.GetNeighbor(dir.Next());
 			var neighbor_dir = dir.Opposite();
-			var neighbor_center = HexUtils.HexToPixelCenter(neighbor.Position);
-			int c1_n = (int) HexConstants.directionCorners[neighbor_dir][1];
-			int c2_n = (int) HexConstants.directionCorners[neighbor_dir][0];
-			var v1_n = neighbor_center + HexMeshConstants.hexInnerCorners[c1_n];
-			var v2_n = neighbor_center + HexMeshConstants.hexInnerCorners[c2_n];
+			var neighbor_center = WithHeight(HexUtils.HexToPixelCenter(neighbor.Position), neighbor.Height);
+			var v1_n = neighbor_center + neighbor_dir.CornerLeft().InnerPosition();
+			var v2_n = neighbor_center + neighbor_dir.CornerRight().InnerPosition();
 			var neighbor_color = neighbor.color;
-			var h_n = neighbor.Height;
 
 			// edge 1
-			terrain.AddTriangle(WithHeight(v1, h), WithHeight(v2_n, h_n), WithHeight(v2, h));
+			terrain.AddTriangle(v1, v2_n, v2);
 			terrain.AddTriangleColor(color, neighbor_color, color);
 
 			// edge 2
-			terrain.AddTriangle(WithHeight(v2, h), WithHeight(v2_n, h_n), WithHeight(v1_n, h_n));
+			terrain.AddTriangle(v2, v2_n, v1_n);
 			terrain.AddTriangleColor(color, neighbor_color, neighbor_color);
 
 			// corner
+			var prev_neighbor = cell.GetNeighbor(dir.Prev());
 			if (dir > 0 && prev_neighbor != null) {
-				var c2_prev_opp = (int) HexConstants.directionCorners[dir.Prev().Opposite()][0];
-				var prev_opp_center = HexUtils.HexToPixelCenter(prev_neighbor.Position);
-				var v2_prev_neighbor = prev_opp_center + HexMeshConstants.hexInnerCorners[c2_prev_opp];
-				var prev_opp = HexUtils.GetNeighbor(prev_neighbor.Position, dir.Prev().Opposite());
-				var prev_opp_height = prev_neighbor.Height;
-				var prev_opp_color = prev_neighbor.color;
+				var prev_opp_dir = dir.Prev().Opposite();
+				var prev_opp_center = WithHeight(HexUtils.HexToPixelCenter(prev_neighbor.Position), prev_neighbor.Height);
+				var v2_prev_neighbor = prev_opp_center + prev_opp_dir.CornerRight().InnerPosition();
 
-				terrain.AddTriangle(WithHeight(v2, h), WithHeight(v1_n, h_n), WithHeight(v2_prev_neighbor, prev_opp_height));
-				terrain.AddTriangleColor(color, neighbor_color, prev_opp_color);
+				terrain.AddTriangle(v2, v1_n, v2_prev_neighbor);
+				terrain.AddTriangleColor(color, neighbor_color, prev_neighbor.color);
 			}
 		}
 	}

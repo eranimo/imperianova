@@ -25,6 +25,14 @@ namespace Hex {
 		public static Direction Opposite(this Direction dir) {
 			return HexConstants.oppositeDirections[dir];
 		}
+
+		public static HexCorner CornerLeft(this Direction dir) {
+			return HexConstants.directionCorners[dir][0];
+		}
+
+		public static HexCorner CornerRight(this Direction dir) {
+			return HexConstants.directionCorners[dir][1];
+		}
 	}
 
 	public enum HexCorner: int {
@@ -34,6 +42,16 @@ namespace Hex {
 		W = 3,
 		NW = 4,
 		NE = 5,
+	}
+
+	public static class HexCornerExtensions {
+		public static Vector3 OuterPosition(this HexCorner corner) {
+			return HexConstants.hexCorners[(int) corner];
+		}
+
+		public static Vector3 InnerPosition(this HexCorner corner) {
+			return HexConstants.hexInnerCorners[(int) corner];
+		}
 	}
 
 	/// <summary>Offset coordinates in odd-q style</summary>
@@ -218,12 +236,12 @@ namespace Hex {
 		};
 
 		public static Dictionary<Direction, HexCorner[]> directionCorners = new Dictionary<Direction, HexCorner[]> {
-			{ Direction.SE, new HexCorner[] { HexCorner.SE, HexCorner.E } },
-			{ Direction.NE, new HexCorner[] { HexCorner.E, HexCorner.NE } },
-			{ Direction.N, new HexCorner[] { HexCorner.NE, HexCorner.NW } },
-			{ Direction.NW, new HexCorner[] { HexCorner.NW, HexCorner.W } },
-			{ Direction.SW, new HexCorner[] { HexCorner.W, HexCorner.SW } },
-			{ Direction.S, new HexCorner[] { HexCorner.SW, HexCorner.SE } },
+			{ Direction.SE, new HexCorner[] { HexCorner.E, HexCorner.SE } },
+			{ Direction.NE, new HexCorner[] { HexCorner.NE, HexCorner.E } },
+			{ Direction.N, new HexCorner[] { HexCorner.NW, HexCorner.NE } },
+			{ Direction.NW, new HexCorner[] { HexCorner.W, HexCorner.NW } },
+			{ Direction.SW, new HexCorner[] { HexCorner.SW, HexCorner.W } },
+			{ Direction.S, new HexCorner[] { HexCorner.SE, HexCorner.SW } },
 		};
 
 		public static Dictionary<Direction, Direction> oppositeDirections = new Dictionary<Direction, Direction> {
@@ -233,6 +251,28 @@ namespace Hex {
 			{ Direction.NW, Direction.SE },
 			{ Direction.SW, Direction.NE },
 			{ Direction.S, Direction.N },
+		};
+
+		public static double innerPercent = 0.75;
+		public static double edgePercent = 1 - innerPercent;
+
+		public static Vector3[] hexCorners = new Vector3[] {
+			HexUtils.GetHexCorner(HexConstants.HEX_SIZE, HexCorner.E),
+			HexUtils.GetHexCorner(HexConstants.HEX_SIZE, HexCorner.SE),
+			HexUtils.GetHexCorner(HexConstants.HEX_SIZE, HexCorner.SW),
+			HexUtils.GetHexCorner(HexConstants.HEX_SIZE, HexCorner.W),
+			HexUtils.GetHexCorner(HexConstants.HEX_SIZE, HexCorner.NW),
+			HexUtils.GetHexCorner(HexConstants.HEX_SIZE, HexCorner.NE),
+		};
+		
+
+		public static Vector3[] hexInnerCorners = new Vector3[] {
+			HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.E),
+			HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.SE),
+			HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.SW),
+			HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.W),
+			HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.NW),
+			HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.NE),
 		};
 	}
 
@@ -304,10 +344,10 @@ namespace Hex {
 			return HexToPixel(hex) + HexUtils.HexCenter;
 		}
 
-		public static Vector2 GetHexCorner(double size, HexCorner corner) {
+		public static Vector3 GetHexCorner(double size, HexCorner corner) {
 			double deg = 60f * (int) corner;
 			double rad = (Math.PI / 180f) * deg;
-			return new Vector2((float) (size * Math.Cos(rad)), (float) (size * Math.Sin(rad)));
+			return new Vector3((float) (size * Math.Cos(rad)), 0, (float) (size * Math.Sin(rad)));
 		}
 
 		public static List<OffsetCoord> GetRing(CubeCoord center, int radius = 1) {
