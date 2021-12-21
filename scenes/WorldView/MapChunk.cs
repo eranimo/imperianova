@@ -6,6 +6,18 @@ using System.Collections.Generic;
 using LibNoise;
 using LibNoise.Primitive;
 
+
+public struct EdgeVertices {
+	public Vector3 v1, v2, v3, v4;
+
+	public EdgeVertices(Vector3 corner1, Vector3 corner2) {
+		v1 = corner1;
+		v2 = corner1.LinearInterpolate(corner2, 1f / 3f);
+		v3 = corner1.LinearInterpolate(corner2, 2f / 3f);
+		v4 = corner2;
+	}
+}
+
 public class HexMesh {
     private SimplexPerlin noise;
 
@@ -13,8 +25,9 @@ public class HexMesh {
 	private List<Vector2> uvs;
 	private List<Vector3> normals;
 	private List<Color> colors;
+    private List<int> triangles;
 
-	public HexMesh() {
+    public HexMesh() {
 		this.noise = new SimplexPerlin(123, NoiseQuality.Best);
 		Clear();
 	}
@@ -24,6 +37,7 @@ public class HexMesh {
 		uvs = new List<Vector2>();
 		normals = new List<Vector3>();
 		colors = new List<Color>();
+		triangles = new List<int>();
 	}
 
 	public ArrayMesh GenerateMesh() {
@@ -31,27 +45,31 @@ public class HexMesh {
 			uvs.Add(new Vector2(vertex.x, vertex.z));
 		}
 
+		var indexArray = triangles.ToArray();
 		var uvArray = uvs.ToArray();
-		var vertexArray = vertices.ToArray();
 		var colorArray = colors.ToArray();
+		var vertexArray = vertices.ToArray();
 
 		// calculate normals
-		for (int v = 0; v < vertices.Count; v += 3) {
-			var p1 = vertexArray[v];
-			var p2 = vertexArray[v + 1];
-			var p3 = vertexArray[v + 2];
-			var U = p2 - p1;
-			var V = p3 - p1;
+		var normalArray = new Vector3[vertices.Count];
+		for (int i = 0; i < triangles.Count; i += 3) {
+			var i1 = triangles[i];
+			var i2 = triangles[i + 1];
+			var i3 = triangles[i + 2];
+			var v1 = vertices[i1];
+			var v2 = vertices[i2];
+			var v3 = vertices[i3];
+			var U = v2 - v1;
+			var V = v3 - v1;
 			var normal = U.Cross(V);
-			normals.Add(normal);
-			normals.Add(normal);
-			normals.Add(normal);
+			normalArray[i1] = normal;
+			normalArray[i2] = normal;
+			normalArray[i3] = normal;
 		}
-
-		var normalArray = normals.ToArray();
 
 		var arrays = new Godot.Collections.Array();
 		arrays.Resize((int) ArrayMesh.ArrayType.Max);
+		arrays[(int) ArrayMesh.ArrayType.Index] = indexArray;
 		arrays[(int) ArrayMesh.ArrayType.Vertex] = vertexArray;
 		arrays[(int) ArrayMesh.ArrayType.TexUv] = uvArray;
 		if (colors.Count > 0) {
@@ -61,7 +79,7 @@ public class HexMesh {
 
 		var mesh = new ArrayMesh();
 		mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
-		// GD.PrintS($"Generated {vertices.Count} vertices");
+		// GD.PrintT(indexArray.Length, uvArray.Length, colorArray.Length, vertexArray.Length, normalArray.Length);
 		return mesh;
 	}
 
@@ -70,6 +88,9 @@ public class HexMesh {
 		vertices.Add(Perturb(v1));
 		vertices.Add(Perturb(v2));
 		vertices.Add(Perturb(v3));
+		triangles.Add(vertexIndex);
+		triangles.Add(vertexIndex + 1);
+		triangles.Add(vertexIndex + 2);
 	}
 
 	public void AddTriangleColor(Color c1, Color c2, Color c3) {
@@ -78,11 +99,62 @@ public class HexMesh {
 		colors.Add(c3);
 	}
 
+	public void AddTriangleColor(Color color) {
+		colors.Add(color);
+		colors.Add(color);
+		colors.Add(color);
+	}
+
+	public void AddQuad(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4) {
+		int vertexIndex = vertices.Count;
+		vertices.Add(Perturb(v1));
+		vertices.Add(Perturb(v2));
+		vertices.Add(Perturb(v3));
+		vertices.Add(Perturb(v4));
+		triangles.Add(vertexIndex);
+		triangles.Add(vertexIndex + 2);
+		triangles.Add(vertexIndex + 1);
+		triangles.Add(vertexIndex + 1);
+		triangles.Add(vertexIndex + 2);
+		triangles.Add(vertexIndex + 3);
+	}
+
+	public void AddQuadColor(Color c1, Color c2) {
+		colors.Add(c1);
+		colors.Add(c1);
+		colors.Add(c2);
+		colors.Add(c2);
+	}
+
+	public void TriangulateEdgeFan(Vector3 center, EdgeVertices edge, Color color) {
+		AddTriangle(center, edge.v1, edge.v2);
+		AddTriangleColor(color);
+		AddTriangle(center, edge.v2, edge.v3);
+		AddTriangleColor(color);
+		AddTriangle(center, edge.v3, edge.v4);
+		AddTriangleColor(color);
+	}
+
+	public void TriangulateEdgeStrip(
+		EdgeVertices e1, Color c1,
+		EdgeVertices e2, Color c2
+	) {
+		AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
+		AddQuadColor(c1, c2);
+	}
+
+	const float perturbStrength = 1.0f;
+	const float noiseScale = 0.3f;
+
 	Vector3 Perturb(Vector3 position) {
-		var x = noise.GetValue(position.x, 0, position.z);
-		var z = noise.GetValue(position.x, 0, position.z);
-		position.x += (x * 2f - 1f) * 1.5f;
-		position.z += (z * 2f - 1f) * 1.5f;
+		var x = noise.GetValue(position.x * noiseScale, 0, position.z * noiseScale);
+		var z = noise.GetValue(position.x * noiseScale, 0, position.z * noiseScale);
+		position.x += (x * 2f - 1f) * perturbStrength;
+		position.z += (z * 2f - 1f) * perturbStrength;
 		return position;
 	}
 }
@@ -134,10 +206,10 @@ public class MapChunk : StaticBody {
 				var cell = hexGrid.GetCell(hex);
 				for (int d = 0; d < 6; d++) {
 					var dir = (Direction) d;
-					triangulateHex(cell, dir);
+					Triangulate(cell, dir);
 
 					if (cell.IsUnderwater) {
-						triangulateWater(cell, dir);
+						// TriangulateWater(cell, dir);
 					}
 				}
 			}
@@ -164,7 +236,7 @@ public class MapChunk : StaticBody {
 		AddChild(waterMeshInstance);
 	}
 
-	private void triangulateWater(HexCell cell, Direction dir) {
+	private void TriangulateWater(HexCell cell, Direction dir) {
 		var center = WithHeight(HexUtils.HexToPixelCenter(cell.Position), cell.WaterLevel);
 		var v1 = center + dir.CornerLeft().InnerPosition();
 		var v2 = center + dir.CornerRight().InnerPosition();
@@ -199,46 +271,43 @@ public class MapChunk : StaticBody {
 		}
 	}
 
-	private void triangulateHex(HexCell cell, Direction dir) {
+	private void Triangulate(HexCell cell, Direction dir) {
 		var d = (int) dir;
 		var center = WithHeight(HexUtils.HexToPixelCenter(cell.Position), cell.Height);
-		var color = cell.color;
 		var v1 = center + dir.CornerLeft().InnerPosition();
 		var v2 = center + dir.CornerRight().InnerPosition();
+
+		var edge = new EdgeVertices(v1, v2);
 		
-		// center triangle
-		terrain.AddTriangle(center, v1, v2);
-		terrain.AddTriangleColor(color, color, color);
+		terrain.TriangulateEdgeFan(center, edge, cell.color);
 
 		if (d <= 2) {
-			var neighbor = cell.GetNeighbor(dir);
-			if (neighbor == null) {
-				return;
-			}
-			var neighbor_dir = dir.Opposite();
-			var neighbor_center = WithHeight(HexUtils.HexToPixelCenter(neighbor.Position), neighbor.Height);
-			var v1_n = neighbor_center + neighbor_dir.CornerLeft().InnerPosition();
-			var v2_n = neighbor_center + neighbor_dir.CornerRight().InnerPosition();
-			var neighbor_color = neighbor.color;
+			TriangulateConnection(dir, cell, edge);
+		}
+	}
 
-			// edge 1
-			terrain.AddTriangle(v1, v2_n, v2);
-			terrain.AddTriangleColor(color, neighbor_color, color);
+	private void TriangulateConnection(Direction dir, HexCell cell, EdgeVertices e1) {
+		var neighbor = cell.GetNeighbor(dir);
+		if (neighbor == null) {
+			return;
+		}
+		var neighbor_dir = dir.Opposite();
+		var neighbor_center = WithHeight(HexUtils.HexToPixelCenter(neighbor.Position), neighbor.Height);
+		var v1_n = neighbor_center + neighbor_dir.CornerRight().InnerPosition();
+		var v2_n = neighbor_center + neighbor_dir.CornerLeft().InnerPosition();
+		var e2 = new EdgeVertices(v1_n, v2_n);
 
-			// edge 2
-			terrain.AddTriangle(v2, v2_n, v1_n);
-			terrain.AddTriangleColor(color, neighbor_color, neighbor_color);
+		terrain.TriangulateEdgeStrip(e1, cell.color, e2, neighbor.color);
 
-			// corner
-			var prev_neighbor = cell.GetNeighbor(dir.Prev());
-			if (dir > 0 && prev_neighbor != null) {
-				var prev_opp_dir = dir.Prev().Opposite();
-				var prev_opp_center = WithHeight(HexUtils.HexToPixelCenter(prev_neighbor.Position), prev_neighbor.Height);
-				var v2_prev_neighbor = prev_opp_center + prev_opp_dir.CornerRight().InnerPosition();
+		// corner
+		var prev_neighbor = cell.GetNeighbor(dir.Prev());
+		if (dir > 0 && prev_neighbor != null) {
+			var prev_opp_dir = dir.Prev().Opposite();
+			var prev_opp_center = WithHeight(HexUtils.HexToPixelCenter(prev_neighbor.Position), prev_neighbor.Height);
+			var v2_prev_neighbor = prev_opp_center + prev_opp_dir.CornerRight().InnerPosition();
 
-				terrain.AddTriangle(v2, v1_n, v2_prev_neighbor);
-				terrain.AddTriangleColor(color, neighbor_color, prev_neighbor.color);
-			}
+			terrain.AddTriangle(e1.v4, e2.v4, v2_prev_neighbor);
+			terrain.AddTriangleColor(cell.color, neighbor.color, prev_neighbor.color);
 		}
 	}
 
