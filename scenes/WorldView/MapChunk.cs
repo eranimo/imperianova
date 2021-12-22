@@ -229,7 +229,7 @@ public class MapChunk : StaticBody {
 		AddChild(collision);
 
 		var waterMesh = water.GenerateMesh();
-		waterMesh.SurfaceSetMaterial(0, (Material) ResourceLoader.Load("res://scenes/WorldView/materials/Water.tres"));
+		waterMesh.SurfaceSetMaterial(0, (Material) ResourceLoader.Load("res://scenes/WorldView/materials/Water2.tres"));
 
 		var waterMeshInstance = new MeshInstance();
 		waterMeshInstance.Name = "Water";
