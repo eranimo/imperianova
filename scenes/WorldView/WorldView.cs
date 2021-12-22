@@ -15,6 +15,13 @@ public class HexCell {
 		Position = position;
 	}
 
+	public Vector3 Center {
+		get {
+			var pos = HexUtils.HexToPixelCenter(Position);
+			return new Vector3(pos.x, (float) Height, pos.y);
+		}
+	}
+
 	public HexCell GetNeighbor(Direction dir) {
 		var pos = HexUtils.GetNeighbor(this.Position, dir);
 		return Grid.GetCell(pos);

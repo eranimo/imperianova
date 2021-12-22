@@ -8,13 +8,14 @@ using LibNoise.Primitive;
 
 
 public struct EdgeVertices {
-	public Vector3 v1, v2, v3, v4;
+	public Vector3 v1, v2, v3, v4, v5;
 
 	public EdgeVertices(Vector3 corner1, Vector3 corner2) {
 		v1 = corner1;
-		v2 = corner1.LinearInterpolate(corner2, 1f / 3f);
-		v3 = corner1.LinearInterpolate(corner2, 2f / 3f);
-		v4 = corner2;
+		v2 = corner1.LinearInterpolate(corner2, 0.25f);
+		v3 = corner1.LinearInterpolate(corner2, 0.5f);
+		v4 = corner1.LinearInterpolate(corner2, 0.75f);
+		v5 = corner2;
 	}
 }
 
@@ -133,6 +134,8 @@ public class HexMesh {
 		AddTriangleColor(color);
 		AddTriangle(center, edge.v3, edge.v4);
 		AddTriangleColor(color);
+		AddTriangle(center, edge.v4, edge.v5);
+		AddTriangleColor(color);
 	}
 
 	public void TriangulateEdgeStrip(
@@ -145,10 +148,12 @@ public class HexMesh {
 		AddQuadColor(c1, c2);
 		AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
 		AddQuadColor(c1, c2);
+		AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
+		AddQuadColor(c1, c2);
 	}
 
-	const float perturbStrength = 1.0f;
-	const float noiseScale = 0.3f;
+	const float perturbStrength = 0.85f;
+	const float noiseScale = 0.1f;
 
 	Vector3 Perturb(Vector3 position) {
 		var x = noise.GetValue(position.x * noiseScale, 0, position.z * noiseScale);
@@ -207,10 +212,6 @@ public class MapChunk : StaticBody {
 				for (int d = 0; d < 6; d++) {
 					var dir = (Direction) d;
 					Triangulate(cell, dir);
-
-					if (cell.IsUnderwater) {
-						// TriangulateWater(cell, dir);
-					}
 				}
 			}
 		}
@@ -237,29 +238,65 @@ public class MapChunk : StaticBody {
 	}
 
 	private void TriangulateWater(HexCell cell, Direction dir) {
+		var neighbor = cell.GetNeighbor(dir);
 		var center = WithHeight(HexUtils.HexToPixelCenter(cell.Position), cell.WaterLevel);
+		if (neighbor != null && !neighbor.IsUnderwater) {
+			TriangulateWaterShore(dir, cell, neighbor, center);
+		} else {
+			TriangulateOpenWater(dir, cell, neighbor, center);
+		}
+	}
+
+	private void TriangulateWaterShore(Direction dir, HexCell cell, HexCell neighbor, Vector3 center) {
+		var v1 = center + dir.CornerLeft().InnerPosition();
+		var v2 = center + dir.CornerRight().InnerPosition();
+		EdgeVertices e1 = new EdgeVertices(v1, v2);
+		water.AddTriangle(center, e1.v1, e1.v2);
+		water.AddTriangle(center, e1.v2, e1.v3);
+		water.AddTriangle(center, e1.v3, e1.v4);
+		water.AddTriangle(center, e1.v4, e1.v5);
+
+		var neighbor_center = WithHeight(HexUtils.HexToPixelCenter(neighbor.Position), neighbor.WaterLevel);
+		var v2_n = neighbor_center + dir.Opposite().CornerRight().InnerPosition();
+		var v1_n = neighbor_center + dir.Opposite().CornerLeft().InnerPosition();
+		EdgeVertices e2 = new EdgeVertices(v2_n, v1_n);
+		water.AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
+		water.AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
+		water.AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
+		water.AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
+
+		var prev_neighbor = cell.GetNeighbor(dir.Prev());
+		if (prev_neighbor != null) {
+			var prev_opp_dir = dir.Prev().Opposite();
+			var prev_opp_center = WithHeight(HexUtils.HexToPixelCenter(prev_neighbor.Position), prev_neighbor.WaterLevel);
+			var v2_prev_neighbor = prev_opp_center + prev_opp_dir.CornerRight().InnerPosition();
+
+			water.AddTriangle(e1.v5, e2.v5, v2_prev_neighbor);
+		}
+	}
+
+	private void TriangulateOpenWater(Direction dir, HexCell cell, HexCell neighbor, Vector3 center) {
+		// add center triangle
 		var v1 = center + dir.CornerLeft().InnerPosition();
 		var v2 = center + dir.CornerRight().InnerPosition();
 		water.AddTriangle(center, v1, v2);
 
 		var d = (int) dir;
 		if (d <= 2) {
-			var neighbor = cell.GetNeighbor(dir);
 			if (neighbor == null || !neighbor.IsUnderwater) {
 				return;
 			}
+
+			// add edge strip
 			var neighbor_dir = dir.Opposite();
 			var neighbor_center = WithHeight(HexUtils.HexToPixelCenter(neighbor.Position), neighbor.WaterLevel);
-			var v1_n = neighbor_center + neighbor_dir.CornerLeft().InnerPosition();
 			var v2_n = neighbor_center + neighbor_dir.CornerRight().InnerPosition();
+			var v1_n = neighbor_center + neighbor_dir.CornerLeft().InnerPosition();
 			var neighbor_color = neighbor.color;
 
-			// edge 1
-			water.AddTriangle(v1, v2_n, v2);
+			water.AddQuad(v1, v2, v2_n, v1_n);
 
-			// edge 2
-			water.AddTriangle(v2, v2_n, v1_n);
-
+			// add corner
 			var prev_neighbor = cell.GetNeighbor(dir.Prev());
 			if (dir > 0 && prev_neighbor != null && prev_neighbor.IsUnderwater) {
 				var prev_opp_dir = dir.Prev().Opposite();
@@ -276,13 +313,16 @@ public class MapChunk : StaticBody {
 		var center = WithHeight(HexUtils.HexToPixelCenter(cell.Position), cell.Height);
 		var v1 = center + dir.CornerLeft().InnerPosition();
 		var v2 = center + dir.CornerRight().InnerPosition();
-
 		var edge = new EdgeVertices(v1, v2);
 		
 		terrain.TriangulateEdgeFan(center, edge, cell.color);
 
 		if (d <= 2) {
 			TriangulateConnection(dir, cell, edge);
+		}
+
+		if (cell.IsUnderwater) {
+			TriangulateWater(cell, dir);
 		}
 	}
 
@@ -293,9 +333,9 @@ public class MapChunk : StaticBody {
 		}
 		var neighbor_dir = dir.Opposite();
 		var neighbor_center = WithHeight(HexUtils.HexToPixelCenter(neighbor.Position), neighbor.Height);
-		var v1_n = neighbor_center + neighbor_dir.CornerRight().InnerPosition();
-		var v2_n = neighbor_center + neighbor_dir.CornerLeft().InnerPosition();
-		var e2 = new EdgeVertices(v1_n, v2_n);
+		var v2_n = neighbor_center + neighbor_dir.CornerRight().InnerPosition();
+		var v1_n = neighbor_center + neighbor_dir.CornerLeft().InnerPosition();
+		var e2 = new EdgeVertices(v2_n, v1_n);
 
 		terrain.TriangulateEdgeStrip(e1, cell.color, e2, neighbor.color);
 
@@ -306,7 +346,7 @@ public class MapChunk : StaticBody {
 			var prev_opp_center = WithHeight(HexUtils.HexToPixelCenter(prev_neighbor.Position), prev_neighbor.Height);
 			var v2_prev_neighbor = prev_opp_center + prev_opp_dir.CornerRight().InnerPosition();
 
-			terrain.AddTriangle(e1.v4, e2.v4, v2_prev_neighbor);
+			terrain.AddTriangle(e1.v5, e2.v5, v2_prev_neighbor);
 			terrain.AddTriangleColor(cell.color, neighbor.color, prev_neighbor.color);
 		}
 	}
