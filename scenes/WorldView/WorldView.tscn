@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://scenes/WorldView/Camera.gd" type="Script" id=1]
+[ext_resource path="res://scenes/WorldView/Camera.cs" type="Script" id=1]
 [ext_resource path="res://scenes/WorldView/WorldView.cs" type="Script" id=2]
 
 [sub_resource type="Environment" id=1]
