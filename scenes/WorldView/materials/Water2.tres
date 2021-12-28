@@ -84,8 +84,8 @@ void fragment(){
 
 [resource]
 shader = SubResource( 1 )
-shader_param/speed = 0.0
-shader_param/color = Color( 0.0823529, 0.419608, 0.894118, 0.458824 )
+shader_param/speed = 1.0
+shader_param/color = Color( 0.0823529, 0.419608, 0.894118, 0.533333 )
 shader_param/edge_color = Color( 0.231373, 0.262745, 0.615686, 0.45098 )
 shader_param/edge_scale = 0.25
 shader_param/near = 0.1

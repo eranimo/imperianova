@@ -54,6 +54,24 @@ namespace Hex {
 		}
 	}
 
+	public enum CornerPoint {
+		A,
+		B,
+		C,
+
+		E,
+		F,
+		G,
+	}
+
+	public enum SidePoint {
+		D1,
+		D2,
+		C1,
+		C2,
+		C3,
+	}
+
 	/// <summary>Offset coordinates in odd-q style</summary>
 	public struct OffsetCoord {
 		public int Col;
@@ -274,6 +292,10 @@ namespace Hex {
 			HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.NW),
 			HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.NE),
 		};
+
+		public static Vector3[] hexCornerPoints_A = new Vector3[] {
+
+		};
 	}
 
 	public class HexUtils {
@@ -348,6 +370,40 @@ namespace Hex {
 			double deg = 60f * (int) corner;
 			double rad = (Math.PI / 180f) * deg;
 			return new Vector3((float) (size * Math.Cos(rad)), 0, (float) (size * Math.Sin(rad)));
+		}
+
+		public static Dictionary<CornerPoint, Vector3> GetHexCornerPoints(HexCorner corner) {
+			var results = new Dictionary<CornerPoint, Vector3>();
+			var edge = HexConstants.hexInnerCorners[(int) corner];
+			var center = new Vector3(HexUtils.HexCenter.x, 0, HexUtils.HexCenter.y);
+			var B = edge.LinearInterpolate(center, 0.5f);
+			var A = edge.LinearInterpolate(B, 0.5f);
+			var C = B.LinearInterpolate(center, 0.5f);
+			var E = A.LinearInterpolate(B, 0.5f);
+			var F = C.LinearInterpolate(center, 0.5f);
+			var G = F.LinearInterpolate(center, 0.5f);
+			results.Add(CornerPoint.B, B);
+			results.Add(CornerPoint.A, A);
+			results.Add(CornerPoint.C, C);
+			results.Add(CornerPoint.E, E);
+			results.Add(CornerPoint.F, F);
+			results.Add(CornerPoint.G, G);
+			return results;
+		}
+
+		public static Dictionary<SidePoint, Vector3> GetHexSidePoints(Direction dir) {
+			var results = new Dictionary<SidePoint, Vector3>();
+			var c1 = HexConstants.hexInnerCorners[(int) dir.CornerLeft()];
+			var c2 = HexConstants.hexInnerCorners[(int) dir.CornerLeft()];
+			var center = new Vector3(HexUtils.HexCenter.x, 0, HexUtils.HexCenter.y);
+			var edge_center = c1.LinearInterpolate(c2, 0.5f);
+			var C2 = edge_center.LinearInterpolate(center, 0.5f);
+			var C1 = C2.LinearInterpolate(edge_center, 0.5f);
+			var C3 = C2.LinearInterpolate(center, 0.5f);
+			results.Add(SidePoint.C1, C1);
+			results.Add(SidePoint.C2, C2);
+			results.Add(SidePoint.C3, C3);
+			return results;
 		}
 
 		public static List<OffsetCoord> GetRing(CubeCoord center, int radius = 1) {

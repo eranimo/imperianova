@@ -9,7 +9,9 @@ public class HexCell {
 
 	public double Height;
 	public double WaterLevel;
-	public Color color;
+	public Color Color;
+	public Direction? IncomingRiver = null;
+	public Direction? OutgoingRiver = null;
 
 	public HexCell(OffsetCoord position) {
 		Position = position;
@@ -22,6 +24,13 @@ public class HexCell {
 		}
 	}
 
+	public Vector3 WaterCenter {
+		get {
+			var pos = HexUtils.HexToPixelCenter(Position);
+			return new Vector3(pos.x, (float) WaterLevel, pos.y);
+		}
+	}
+
 	public HexCell GetNeighbor(Direction dir) {
 		var pos = HexUtils.GetNeighbor(this.Position, dir);
 		return Grid.GetCell(pos);
@@ -30,6 +39,12 @@ public class HexCell {
 	public bool IsUnderwater {
 		get {
 			return WaterLevel > Height;
+		}
+	}
+
+	public bool HasRiver {
+		get {
+			return IncomingRiver != null || OutgoingRiver != null;
 		}
 	}
 }
@@ -74,19 +89,19 @@ public class WorldView : Spatial {
 				cell.Height = (heightNoise.Get(x, y) / 255f) * 100;
 				if (cell.Height > 75) {
 					cell.Height = 60;
-					cell.color = new Color("#619960");
+					cell.Color = new Color("#619960");
 				} else if (cell.Height > 50) {
 					cell.Height = 20 + (Math.Round((cell.Height - 50) / 5) * 5);
-					cell.color = new Color("#208a0e");
+					cell.Color = new Color("#208a0e");
 				} else if (cell.Height > 48) {
 					cell.Height = 15;
-					cell.color = new Color("#ebe571");
+					cell.Color = new Color("#ebe571");
 				} else if (cell.Height > 25) {
 					cell.Height = 10;
-					cell.color = new Color("#0356fc");
+					cell.Color = new Color("#0356fc");
 				} else {
 					cell.Height = 5;
-					cell.color = new Color("#003bb0");
+					cell.Color = new Color("#003bb0");
 				}
 				cell.WaterLevel = 12.5;
 				grid.AddCell(cell);
