@@ -2,8 +2,6 @@ using Godot;
 using Godot.Collections;
 using System;
 using Hex;
-using System.Collections.Generic;
-using LibNoise;
 using LibNoise.Primitive;
 
 
@@ -19,152 +17,8 @@ public struct EdgeVertices {
 	}
 }
 
-public class HexMesh {
-    private SimplexPerlin noise;
-
-    private List<Vector3> vertices;
-	private List<Vector2> uvs;
-	private List<Vector3> normals;
-	private List<Color> colors;
-    private List<int> triangles;
-
-    public HexMesh() {
-		this.noise = new SimplexPerlin(123, NoiseQuality.Best);
-		Clear();
-	}
-
-	public void Clear() {
-		vertices = new List<Vector3>();
-		uvs = new List<Vector2>();
-		normals = new List<Vector3>();
-		colors = new List<Color>();
-		triangles = new List<int>();
-	}
-
-	public ArrayMesh GenerateMesh() {
-		foreach (Vector3 vertex in vertices) {
-			uvs.Add(new Vector2(vertex.x, vertex.z));
-		}
-
-		var indexArray = triangles.ToArray();
-		var uvArray = uvs.ToArray();
-		var colorArray = colors.ToArray();
-		var vertexArray = vertices.ToArray();
-
-		// calculate normals
-		var normalArray = new Vector3[vertices.Count];
-		for (int i = 0; i < triangles.Count; i += 3) {
-			var i1 = triangles[i];
-			var i2 = triangles[i + 1];
-			var i3 = triangles[i + 2];
-			var v1 = vertices[i1];
-			var v2 = vertices[i2];
-			var v3 = vertices[i3];
-			var U = v2 - v1;
-			var V = v3 - v1;
-			var normal = U.Cross(V);
-			normalArray[i1] = normal;
-			normalArray[i2] = normal;
-			normalArray[i3] = normal;
-		}
-
-		var arrays = new Godot.Collections.Array();
-		arrays.Resize((int) ArrayMesh.ArrayType.Max);
-		arrays[(int) ArrayMesh.ArrayType.Index] = indexArray;
-		arrays[(int) ArrayMesh.ArrayType.Vertex] = vertexArray;
-		arrays[(int) ArrayMesh.ArrayType.TexUv] = uvArray;
-		if (colors.Count > 0) {
-			arrays[(int) ArrayMesh.ArrayType.Color] = colorArray;
-		}
-		arrays[(int) ArrayMesh.ArrayType.Normal] = normalArray;
-
-		var mesh = new ArrayMesh();
-		mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
-		// GD.PrintT(indexArray.Length, uvArray.Length, colorArray.Length, vertexArray.Length, normalArray.Length);
-		return mesh;
-	}
-
-	public void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v3) {
-		int vertexIndex = vertices.Count;
-		vertices.Add(Perturb(v1));
-		vertices.Add(Perturb(v2));
-		vertices.Add(Perturb(v3));
-		triangles.Add(vertexIndex);
-		triangles.Add(vertexIndex + 1);
-		triangles.Add(vertexIndex + 2);
-	}
-
-	public void AddTriangleColor(Color c1, Color c2, Color c3) {
-		colors.Add(c1);
-		colors.Add(c2);
-		colors.Add(c3);
-	}
-
-	public void AddTriangleColor(Color color) {
-		colors.Add(color);
-		colors.Add(color);
-		colors.Add(color);
-	}
-
-	public void AddQuad(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4) {
-		int vertexIndex = vertices.Count;
-		vertices.Add(Perturb(v1));
-		vertices.Add(Perturb(v2));
-		vertices.Add(Perturb(v3));
-		vertices.Add(Perturb(v4));
-		triangles.Add(vertexIndex);
-		triangles.Add(vertexIndex + 2);
-		triangles.Add(vertexIndex + 1);
-		triangles.Add(vertexIndex + 1);
-		triangles.Add(vertexIndex + 2);
-		triangles.Add(vertexIndex + 3);
-	}
-
-	public void AddQuadColor(Color c1, Color c2) {
-		colors.Add(c1);
-		colors.Add(c1);
-		colors.Add(c2);
-		colors.Add(c2);
-	}
-
-	public void TriangulateEdgeFan(Vector3 center, EdgeVertices edge, Color color) {
-		AddTriangle(center, edge.v1, edge.v2);
-		AddTriangleColor(color);
-		AddTriangle(center, edge.v2, edge.v3);
-		AddTriangleColor(color);
-		AddTriangle(center, edge.v3, edge.v4);
-		AddTriangleColor(color);
-		AddTriangle(center, edge.v4, edge.v5);
-		AddTriangleColor(color);
-	}
-
-	public void TriangulateEdgeStrip(
-		EdgeVertices e1, Color c1,
-		EdgeVertices e2, Color c2
-	) {
-		AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
-		AddQuadColor(c1, c2);
-		AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
-		AddQuadColor(c1, c2);
-		AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
-		AddQuadColor(c1, c2);
-		AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
-		AddQuadColor(c1, c2);
-	}
-
-	const float perturbStrength = 0.85f;
-	const float noiseScale = 0.1f;
-
-	Vector3 Perturb(Vector3 position) {
-		var x = noise.GetValue(position.x * noiseScale, 0, position.z * noiseScale);
-		var z = noise.GetValue(position.x * noiseScale, 0, position.z * noiseScale);
-		position.x += (x * 2f - 1f) * perturbStrength;
-		position.z += (z * 2f - 1f) * perturbStrength;
-		return position;
-	}
-}
-
 public class MapChunk : StaticBody {
+    private readonly ChunksContainer chunks;
     private readonly HexGrid hexGrid;
     private readonly OffsetCoord firstHex;
     private readonly OffsetCoord chunkSize;
@@ -175,10 +29,12 @@ public class MapChunk : StaticBody {
     private HexMesh water;
 
     public MapChunk(
+		ChunksContainer chunks,
 		HexGrid hexGrid,
 		OffsetCoord firstHex,
 		OffsetCoord chunkSize
 	) {
+        this.chunks = chunks;
         this.hexGrid = hexGrid;
         this.firstHex = firstHex;
         this.chunkSize = chunkSize;
@@ -223,10 +79,13 @@ public class MapChunk : StaticBody {
 		terrainMeshInstance.Mesh = terrainMesh;
 		AddChild(terrainMeshInstance);
 
+		var staticBody = new StaticBody();
 		var collision = new CollisionShape();
 		collision.Name = "TerrainCollision";
 		collision.Shape = terrainMesh.CreateTrimeshShape();
-		AddChild(collision);
+		staticBody.AddChild(collision);
+		staticBody.Connect("input_event", this, nameof(_handle_input));
+		AddChild(staticBody);
 
 		var waterMesh = water.GenerateMesh();
 		waterMesh.SurfaceSetMaterial(0, (Material) ResourceLoader.Load("res://scenes/WorldView/materials/Water.tres"));
@@ -235,6 +94,21 @@ public class MapChunk : StaticBody {
 		waterMeshInstance.Name = "Water";
 		waterMeshInstance.Mesh = waterMesh;
 		AddChild(waterMeshInstance);
+	}
+
+	private void _handle_input(Camera camera, InputEvent @event, Vector3 position, Vector3 normal, int shape_idx) {
+		var o = this.GlobalTransform.origin;
+		var hexPosition = new Vector2(o.x, o.z) + new Vector2(position.x, position.z);
+		var hex = Hex.HexUtils.PixelToHexOffset(hexPosition - Hex.HexUtils.HexCenter);
+		var cell = hexGrid.GetCell(hex);
+
+		if (@event.IsActionPressed("ui_select")) {
+			// GD.PrintS("MapChunk click", cell.Position);
+			chunks.pressedCell.OnNext(cell);
+		} else {
+			// GD.PrintS("MapChunk hover", cell.Position);
+			chunks.hoveredCell.OnNext(cell);
+		}
 	}
 
 	private void TriangulateWater(HexCell cell, Direction dir) {

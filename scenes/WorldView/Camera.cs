@@ -21,7 +21,7 @@ public class Camera : Godot.Camera {
 
 		if (@event is InputEventMouseMotion && panning) {
 			var mouseMotion = (InputEventMouseMotion) @event;
-			Translation += new Vector3(mouseMotion.Relative.x, 0, mouseMotion.Relative.y);
+			Translation -= new Vector3(mouseMotion.Relative.x, 0, mouseMotion.Relative.y);
 		}
 
 		if (@event.IsAction("ui_left")) {

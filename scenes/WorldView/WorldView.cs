@@ -10,8 +10,8 @@ public class HexCell {
 	public double Height;
 	public double WaterLevel;
 	public Color Color;
-	public Direction? IncomingRiver = null;
-	public Direction? OutgoingRiver = null;
+	public HashSet<Direction> IncomingRivers = new HashSet<Direction>();
+	public HashSet<Direction> OutgoingRivers = new HashSet<Direction>();
 
 	public HexCell(OffsetCoord position) {
 		Position = position;
@@ -44,7 +44,7 @@ public class HexCell {
 
 	public bool HasRiver {
 		get {
-			return IncomingRiver != null || OutgoingRiver != null;
+			return IncomingRivers.Count > 0 || OutgoingRivers.Count > 0;
 		}
 	}
 }
@@ -73,14 +73,14 @@ public class HexGrid {
 
 public class WorldView : Spatial {
 	private HexGrid grid;
-	Dictionary<HexCell, MapChunk> cellChunks = new Dictionary<HexCell, MapChunk>();
+	private ChunksContainer chunksContainer;
 
 	public override void _Ready() {
-		var chunks = GetNode("Chunks");
+		this.chunksContainer = (ChunksContainer) GetNode("ChunksContainer");
 		var watch = System.Diagnostics.Stopwatch.StartNew();
 
+		// create HexGrid
 		this.grid = new HexGrid(new OffsetCoord(100, 100));
-
 		var heightNoise = new GameWorld.WorldNoise(grid.Size.Col, grid.Size.Row, 123);
 		for (var x = 0; x < grid.Size.Col; x++) {
 			for (var y = 0; y < grid.Size.Row; y++) {
@@ -108,66 +108,24 @@ public class WorldView : Spatial {
 			}
 		}
 
-		var chunkSize = new OffsetCoord(10, 10);
-		for (var x = 0; x < grid.Size.Col; x += chunkSize.Col) {
-			for (var y = 0; y < grid.Size.Row; y += chunkSize.Row) {
-				var cell = this.grid.GetCell(new OffsetCoord(x, y));
-				MapChunk chunk = new MapChunk(
-					grid,
-					new OffsetCoord(x, y),
-					chunkSize
-				);
-				for (var cx = x; cx < x + chunkSize.Col; cx++) {
-					for (var cy = y; cy < y + chunkSize.Row; cy++) {
-						cellChunks[this.grid.GetCell(new OffsetCoord(cx, cy))] = chunk;
-					}
-				}
-				chunks.AddChild(chunk);
-			}
-		}
+		chunksContainer.SetupChunks(grid);
 		GD.PrintS($"WorldView init: {watch.ElapsedMilliseconds}ms");
-	}
 
-	public override void _Input(InputEvent @event) {
-		if (@event.IsActionPressed("ui_select") && @event is InputEventMouseButton eventMouseButton) {
-			var spaceState = GetWorld().DirectSpaceState;
-			var camera = GetViewport().GetCamera();
-			var from = camera.ProjectRayOrigin(eventMouseButton.Position);
-			var to = from + camera.ProjectRayNormal(eventMouseButton.Position) * 1000;
-			var result = spaceState.IntersectRay(from, to);
-			if (result.Contains("collider")) {
-				var collider = result["collider"];
-				var position = (Vector3) result["position"];
-				if (collider is MapChunk) {
-					var chunk = (MapChunk) collider;
-					var o = chunk.GlobalTransform.origin;
-					var hexPosition = new Vector2(o.x, o.z) + new Vector2(position.x, position.z);
-					var hex = Hex.HexUtils.PixelToHexOffset(hexPosition - Hex.HexUtils.HexCenter);
-					var cell = grid.GetCell(hex);
-					GD.Print("\n");
-					GD.PrintS(hex, cell);
-					if (cell != null) {
-						GD.PrintS("Height:", cell.Height);
-						GD.PrintT(new string[] {
-							$"SE: {cell.GetNeighbor(Hex.Direction.SE)?.Height}",
-							$"NE: {cell.GetNeighbor(Hex.Direction.NE)?.Height}",
-							$"N: {cell.GetNeighbor(Hex.Direction.N)?.Height}",
-							$"NW: {cell.GetNeighbor(Hex.Direction.NW)?.Height}",
-							$"SW: {cell.GetNeighbor(Hex.Direction.SW)?.Height}",
-							$"S: {cell.GetNeighbor(Hex.Direction.S)?.Height}",
-						});
-					}
-					cell.Height = 90;
-					cellChunks[cell].Generate();
-					foreach(OffsetCoord c in HexUtils.GetRing(cell.Position)) {
-						MapChunk cellChunk;
-						var ring_cell = grid.GetCell(c);
-						if (ring_cell != null && cellChunks.TryGetValue(ring_cell, out cellChunk)) {
-							cellChunk.Generate();
-						}
-					}
-				}
+		chunksContainer.pressedCell.Subscribe((HexCell cell) => {
+			if (cell == null) {
+				return;
 			}
-		}
+			GD.PrintS("Pressed on cell:", cell.Position);
+			// GD.PrintT(new string[] {
+			// 	$"SE: {cell.GetNeighbor(Hex.Direction.SE)?.Height}",
+			// 	$"NE: {cell.GetNeighbor(Hex.Direction.NE)?.Height}",
+			// 	$"N: {cell.GetNeighbor(Hex.Direction.N)?.Height}",
+			// 	$"NW: {cell.GetNeighbor(Hex.Direction.NW)?.Height}",
+			// 	$"SW: {cell.GetNeighbor(Hex.Direction.SW)?.Height}",
+			// 	$"S: {cell.GetNeighbor(Hex.Direction.S)?.Height}",
+			// });
+			cell.Height = 90;
+			chunksContainer.RegenerateCell(cell);
+		});
 	}
 }
