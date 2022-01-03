@@ -4,6 +4,8 @@ using LibNoise;
 using LibNoise.Primitive;
 
 public class HexMesh {
+	public ArrayMesh mesh;
+
     private SimplexPerlin noise;
 
     private List<Vector3> vertices;
@@ -25,7 +27,7 @@ public class HexMesh {
 		triangles = new List<int>();
 	}
 
-	public ArrayMesh GenerateMesh() {
+	public void GenerateMesh() {
 		foreach (Vector3 vertex in vertices) {
 			uvs.Add(new Vector2(vertex.x, vertex.z));
 		}
@@ -62,10 +64,9 @@ public class HexMesh {
 		}
 		arrays[(int) ArrayMesh.ArrayType.Normal] = normalArray;
 
-		var mesh = new ArrayMesh();
+		mesh = new ArrayMesh();
 		mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
 		// GD.PrintT(indexArray.Length, uvArray.Length, colorArray.Length, vertexArray.Length, normalArray.Length);
-		return mesh;
 	}
 
 	public void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v3) {
@@ -111,6 +112,13 @@ public class HexMesh {
 		colors.Add(c2);
 	}
 
+	public void AddQuadColor(Color color) {
+		colors.Add(color);
+		colors.Add(color);
+		colors.Add(color);
+		colors.Add(color);
+	}
+
 	public void TriangulateEdgeFan(Vector3 center, EdgeVertices edge, Color color) {
 		AddTriangle(center, edge.v1, edge.v2);
 		AddTriangleColor(color);
@@ -119,6 +127,23 @@ public class HexMesh {
 		AddTriangle(center, edge.v3, edge.v4);
 		AddTriangleColor(color);
 		AddTriangle(center, edge.v4, edge.v5);
+		AddTriangleColor(color);
+	}
+
+	// Used in rivers to create the outer half of the cell center
+	public void TriangulateInnerEdgeFan(EdgeVertices edge, Vector3 b1, Vector3 b2, Color color) {
+		var center = b1.LinearInterpolate(b2, 0.5f);
+		AddTriangle(edge.v1, edge.v2, b1);
+		AddTriangleColor(color);
+		AddTriangle(edge.v2, edge.v3, b1);
+		AddTriangleColor(color);
+		AddTriangle(edge.v3, center, b1);
+		AddTriangleColor(color);
+		AddTriangle(b2, center, edge.v3);
+		AddTriangleColor(color);
+		AddTriangle(edge.v3, edge.v4, b2);
+		AddTriangleColor(color);
+		AddTriangle(edge.v4, edge.v5, b2);
 		AddTriangleColor(color);
 	}
 
@@ -136,14 +161,14 @@ public class HexMesh {
 		AddQuadColor(c1, c2);
 	}
 
-	const float perturbStrength = 0.85f;
+	const float perturbStrength = 0.55f;
 	const float noiseScale = 0.1f;
 
 	Vector3 Perturb(Vector3 position) {
-		var x = noise.GetValue(position.x * noiseScale, 0, position.z * noiseScale);
-		var z = noise.GetValue(position.x * noiseScale, 0, position.z * noiseScale);
-		position.x += (x * 2f - 1f) * perturbStrength;
-		position.z += (z * 2f - 1f) * perturbStrength;
+		// var x = noise.GetValue(Mathf.Round(position.x * noiseScale), 0, Mathf.Round(position.z * noiseScale));
+		// var z = noise.GetValue(Mathf.Round(position.x * noiseScale), 0, Mathf.Round(position.z * noiseScale));
+		// position.x += (x * 2f - 1f) * perturbStrength;
+		// position.z += (z * 2f - 1f) * perturbStrength;
 		return position;
 	}
 }

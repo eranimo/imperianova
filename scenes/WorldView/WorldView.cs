@@ -1,10 +1,26 @@
 using Godot;
 using System;
 using Hex;
+using System.Reactive.Subjects;
+
+public enum MapEditorTool {
+	Terrain,
+	Rivers,
+}
+
+public class WorldViewSettings {
+	public BehaviorSubject<bool> showGrid = new BehaviorSubject<bool>(false);
+}
 
 public class WorldView : Spatial {
 	private HexGrid grid;
 	private ChunksContainer chunksContainer;
+	private bool isDragging;
+
+	// map editor
+	MapEditorTool Tool = MapEditorTool.Terrain;
+	int TerrainToolHeight = 10;
+	HexCell riverToolLastCell = null;
 
 	public override void _Ready() {
 		this.chunksContainer = (ChunksContainer) GetNode("ChunksContainer");
@@ -17,24 +33,9 @@ public class WorldView : Spatial {
 			for (var y = 0; y < grid.Size.Row; y++) {
 				var pos = new OffsetCoord(x, y);
 				var cell = new HexCell(pos);
-				cell.Height = (heightNoise.Get(x, y) / 255f) * 100;
-				if (cell.Height > 75) {
-					cell.Height = 60;
-					cell.Color = new Color("#619960");
-				} else if (cell.Height > 50) {
-					cell.Height = 20 + (Math.Round((cell.Height - 50) / 5) * 5);
-					cell.Color = new Color("#208a0e");
-				} else if (cell.Height > 48) {
-					cell.Height = 15;
-					cell.Color = new Color("#ebe571");
-				} else if (cell.Height > 25) {
-					cell.Height = 10;
-					cell.Color = new Color("#0356fc");
-				} else {
-					cell.Height = 5;
-					cell.Color = new Color("#003bb0");
-				}
-				cell.WaterLevel = 12.5;
+				cell.Height = Math.Round((heightNoise.Get(x, y) / 255f) * 20) * 5;
+				cell.WaterLevel = 48 - 2.5;
+				decideCellTerrainType(cell);
 				grid.AddCell(cell);
 			}
 		}
@@ -55,8 +56,80 @@ public class WorldView : Spatial {
 			// 	$"SW: {cell.GetNeighbor(Hex.Direction.SW)?.Height}",
 			// 	$"S: {cell.GetNeighbor(Hex.Direction.S)?.Height}",
 			// });
-			cell.Height = 90;
-			chunksContainer.RegenerateCell(cell);
+			if (Tool == MapEditorTool.Terrain) {
+				cell.Height = TerrainToolHeight;
+				decideCellTerrainType(cell);
+				chunksContainer.RegenerateCell(cell);
+			} else if (Tool == MapEditorTool.Rivers) {
+
+			}
 		});
+
+		chunksContainer.hoveredCell.Subscribe((HexCell cell) => {
+			if (cell == null) {
+				return;
+			}
+			if (Tool == MapEditorTool.Rivers && isDragging) {
+				if (riverToolLastCell != null && riverToolLastCell != cell) {
+					Direction? dir = riverToolLastCell.GetDirectionOfNeighbor(cell);
+					if (!(dir is null)) {
+						GD.PrintS($"Adding river from {riverToolLastCell.Position} to {cell.Position}");
+						riverToolLastCell.OutgoingRivers.Add((Direction) dir);
+						cell.IncomingRivers.Add(HexConstants.oppositeDirections[(Direction) dir]);
+						chunksContainer.RegenerateCell(cell);
+					}
+				}
+				riverToolLastCell = cell;
+			}
+		});
+
+		(FindNode("TerrainHeight") as SpinBox).Value = TerrainToolHeight;
+	}
+
+	public override void _Input(InputEvent @event) {
+		if (@event.IsActionPressed("ui_select")) {
+			isDragging = true;
+		} else if (@event.IsActionReleased("ui_select")) {
+			isDragging = false;
+		}
+	}
+
+	private void decideCellTerrainType(HexCell cell) {
+		if (cell.Height > 75) {
+			cell.Color = new Color("#619960");
+		} else if (cell.Height > 50) {
+			cell.Color = new Color("#208a0e");
+		} else if (cell.Height > 48) {
+			cell.Color = new Color("#ebe571");
+		} else if (cell.Height > 15) {
+			cell.Color = new Color("#0356fc");
+		} else {
+			cell.Color = new Color("#003bb0");
+		}
+	}
+
+	private void _on_GridToggle_toggled(bool button_pressed) {
+		grid.viewSettings.showGrid.OnNext(button_pressed);
+	}
+
+	private void _on_TerrainHeight_value_changed(float value) {
+		TerrainToolHeight = (int) value;
+	}
+
+	private void _on_EditorSettingsToggle_toggled(bool button_pressed) {
+		var container = (FindNode("SettingsContainer") as Control);
+		container.Visible = !container.Visible;
+	}
+
+	private void _on_TerrainToolCheckbox_toggled(bool button_pressed) {
+		if (button_pressed) {
+			Tool = MapEditorTool.Terrain;
+		}
+	}
+
+	private void _on_RiverToolCheckbox_toggled(bool button_pressed) {
+		if (button_pressed) {
+			Tool = MapEditorTool.Rivers;
+		}
 	}
 }

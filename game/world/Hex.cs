@@ -33,6 +33,10 @@ namespace Hex {
 		public static HexCorner CornerRight(this Direction dir) {
 			return HexConstants.directionCorners[dir][1];
 		}
+
+		public static Dictionary<SidePoint, Vector3> Points(this Direction dir) {
+			return HexConstants.hexSidePoints[dir];
+		}
 	}
 
 	public enum HexCorner: int {
@@ -52,6 +56,10 @@ namespace Hex {
 		public static Vector3 InnerPosition(this HexCorner corner) {
 			return HexConstants.hexInnerCorners[(int) corner];
 		}
+
+		public static Dictionary<CornerPoint, Vector3> Points(this HexCorner corner) {
+			return HexConstants.hexCornerPoints[corner];
+		}
 	}
 
 	public enum CornerPoint {
@@ -65,11 +73,10 @@ namespace Hex {
 	}
 
 	public enum SidePoint {
-		D1,
-		D2,
-		C1,
-		C2,
-		C3,
+		C1, C2, C3,
+		D1, D2,
+		L1, R1,
+		E1, E2, E3, E4, E5
 	}
 
 	/// <summary>Offset coordinates in odd-q style</summary>
@@ -293,8 +300,22 @@ namespace Hex {
 			HexUtils.GetHexCorner(HexConstants.HEX_SIZE * innerPercent, HexCorner.NE),
 		};
 
-		public static Vector3[] hexCornerPoints_A = new Vector3[] {
+		public static Dictionary<HexCorner, Dictionary<CornerPoint, Vector3>> hexCornerPoints = new Dictionary<HexCorner, Dictionary<CornerPoint, Vector3>> {
+			{ HexCorner.E, HexUtils.GetHexCornerPoints(HexCorner.E) },
+			{ HexCorner.NE, HexUtils.GetHexCornerPoints(HexCorner.NE) },
+			{ HexCorner.NW, HexUtils.GetHexCornerPoints(HexCorner.NW) },
+			{ HexCorner.W, HexUtils.GetHexCornerPoints(HexCorner.W) },
+			{ HexCorner.SW, HexUtils.GetHexCornerPoints(HexCorner.SW) },
+			{ HexCorner.SE, HexUtils.GetHexCornerPoints(HexCorner.SE) },
+		};
 
+		public static Dictionary<Direction, Dictionary<SidePoint, Vector3>> hexSidePoints = new Dictionary<Direction, Dictionary<SidePoint, Vector3>> {
+			{ Direction.SE, HexUtils.GetHexSidePoints(Direction.SE) },
+			{ Direction.NE, HexUtils.GetHexSidePoints(Direction.NE) },
+			{ Direction.N, HexUtils.GetHexSidePoints(Direction.N) },
+			{ Direction.NW, HexUtils.GetHexSidePoints(Direction.NW) },
+			{ Direction.SW, HexUtils.GetHexSidePoints(Direction.SW) },
+			{ Direction.S, HexUtils.GetHexSidePoints(Direction.S) },
 		};
 	}
 
@@ -375,7 +396,7 @@ namespace Hex {
 		public static Dictionary<CornerPoint, Vector3> GetHexCornerPoints(HexCorner corner) {
 			var results = new Dictionary<CornerPoint, Vector3>();
 			var edge = HexConstants.hexInnerCorners[(int) corner];
-			var center = new Vector3(HexUtils.HexCenter.x, 0, HexUtils.HexCenter.y);
+			var center = new Vector3(0, 0, 0);
 			var B = edge.LinearInterpolate(center, 0.5f);
 			var A = edge.LinearInterpolate(B, 0.5f);
 			var C = B.LinearInterpolate(center, 0.5f);
@@ -393,16 +414,38 @@ namespace Hex {
 
 		public static Dictionary<SidePoint, Vector3> GetHexSidePoints(Direction dir) {
 			var results = new Dictionary<SidePoint, Vector3>();
-			var c1 = HexConstants.hexInnerCorners[(int) dir.CornerLeft()];
-			var c2 = HexConstants.hexInnerCorners[(int) dir.CornerLeft()];
-			var center = new Vector3(HexUtils.HexCenter.x, 0, HexUtils.HexCenter.y);
-			var edge_center = c1.LinearInterpolate(c2, 0.5f);
-			var C2 = edge_center.LinearInterpolate(center, 0.5f);
-			var C1 = C2.LinearInterpolate(edge_center, 0.5f);
+			var c1 = dir.CornerLeft();
+			var c2 = dir.CornerRight();
+			var c1_point = HexConstants.hexInnerCorners[(int) c1];
+			var c2_point = HexConstants.hexInnerCorners[(int) c2];
+			var c1_points = GetHexCornerPoints(c1);
+			var c2_points = GetHexCornerPoints(c2);
+			var center = new Vector3(0, 0, 0);
+			var E1 = c1_point.LinearInterpolate(c2_point, 0.5f);
+			var C2 = E1.LinearInterpolate(center, 0.5f);
+			var C1 = C2.LinearInterpolate(E1, 0.5f);
 			var C3 = C2.LinearInterpolate(center, 0.5f);
+			var L1 = c1_points[CornerPoint.C].LinearInterpolate(C2, 0.5f);
+			var R1 = c2_points[CornerPoint.C].LinearInterpolate(C2, 0.5f);
+			var E2 = c1_point.LinearInterpolate(E1, 0.5f);
+			var E3 = c2_point.LinearInterpolate(E1, 0.5f);
+			var E4 = E1.LinearInterpolate(E2, 0.5f);
+			var E5 = E1.LinearInterpolate(E3, 0.5f);
+			var D1 = E2.LinearInterpolate(c1_points[CornerPoint.B], 0.5f);
+			var D2 = E3.LinearInterpolate(c2_points[CornerPoint.B], 0.5f);
 			results.Add(SidePoint.C1, C1);
 			results.Add(SidePoint.C2, C2);
 			results.Add(SidePoint.C3, C3);
+			results.Add(SidePoint.L1, L1);
+			results.Add(SidePoint.R1, R1);
+			results.Add(SidePoint.E1, E1);
+			results.Add(SidePoint.E2, E2);
+			results.Add(SidePoint.E3, E3);
+			results.Add(SidePoint.E4, E4);
+			results.Add(SidePoint.E5, E5);
+			results.Add(SidePoint.D1, D1);
+			results.Add(SidePoint.D2, D2);
+
 			return results;
 		}
 

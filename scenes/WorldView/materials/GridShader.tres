@@ -6,4 +6,5 @@
 [resource]
 resource_local_to_scene = true
 shader = ExtResource( 1 )
+shader_param/showGrid = true
 shader_param/gridTexture = ExtResource( 2 )

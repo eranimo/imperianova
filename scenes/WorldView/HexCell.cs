@@ -35,15 +35,26 @@ public class HexCell {
 		return Grid.GetCell(pos);
 	}
 
+	public Direction? GetDirectionOfNeighbor(HexCell cell) {
+		for(int dir = 0; dir < 6; dir++) {
+			if (GetNeighbor((Direction) dir) == cell) {
+				return (Direction) dir;
+			}
+		}
+		return null;
+	}
+
 	public bool IsUnderwater {
 		get {
 			return WaterLevel > Height;
 		}
 	}
 
-	public bool HasRiver {
-		get {
-			return IncomingRivers.Count > 0 || OutgoingRivers.Count > 0;
-		}
+	public bool HasRiver() {
+		return IncomingRivers.Count > 0 || OutgoingRivers.Count > 0;
+	}
+
+	public bool HasRiver(Direction dir) {
+		return IncomingRivers.Contains(dir) || OutgoingRivers.Contains(dir);
 	}
 }

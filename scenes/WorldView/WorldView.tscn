@@ -53,24 +53,26 @@ material/0 = SubResource( 3 )
 shape = SubResource( 4 )
 
 [node name="MapEditorSettings" type="VBoxContainer" parent="."]
-anchor_bottom = 1.0
-margin_left = 5.0
-margin_top = 5.0
-margin_right = 295.0
-margin_bottom = 295.0
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -291.0
+margin_right = -1.0
+margin_bottom = 890.0
 mouse_filter = 0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="PanelContainer" type="PanelContainer" parent="MapEditorSettings"]
+margin_left = 73.0
 margin_right = 290.0
 margin_bottom = 26.0
+size_flags_horizontal = 8
 theme = ExtResource( 3 )
 
 [node name="Panel" type="Panel" parent="MapEditorSettings/PanelContainer"]
 modulate = Color( 1, 1, 1, 0.784314 )
-margin_right = 290.0
+margin_right = 217.0
 margin_bottom = 26.0
 theme = ExtResource( 3 )
 __meta__ = {
@@ -78,22 +80,34 @@ __meta__ = {
 }
 
 [node name="MarginContainer" type="MarginContainer" parent="MapEditorSettings/PanelContainer"]
-margin_right = 290.0
+margin_right = 217.0
 margin_bottom = 26.0
 custom_constants/margin_right = 5
 custom_constants/margin_top = 5
 custom_constants/margin_left = 5
 custom_constants/margin_bottom = 5
 
-[node name="SettingsToggle" type="CheckButton" parent="MapEditorSettings/PanelContainer/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MapEditorSettings/PanelContainer/MarginContainer"]
 margin_left = 5.0
 margin_top = 5.0
-margin_right = 285.0
+margin_right = 212.0
 margin_bottom = 21.0
-text = "Show Settings"
+
+[node name="GridToggle" type="CheckButton" parent="MapEditorSettings/PanelContainer/MarginContainer/HBoxContainer"]
+margin_right = 68.0
+margin_bottom = 16.0
+theme = ExtResource( 3 )
+pressed = true
+text = "Grid"
+
+[node name="EditorSettingsToggle" type="CheckButton" parent="MapEditorSettings/PanelContainer/MarginContainer/HBoxContainer"]
+margin_left = 72.0
+margin_right = 207.0
+margin_bottom = 16.0
+theme = ExtResource( 3 )
+text = "Editor Settings"
 
 [node name="SettingsContainer" type="VBoxContainer" parent="MapEditorSettings"]
-visible = false
 margin_top = 30.0
 margin_right = 290.0
 margin_bottom = 140.0
@@ -127,7 +141,7 @@ margin_top = 5.0
 margin_right = 285.0
 margin_bottom = 67.0
 
-[node name="CheckBox" type="CheckBox" parent="MapEditorSettings/SettingsContainer/TerrainEdit/MarginContainer/VBoxContainer"]
+[node name="TerrainToolCheckbox" type="CheckBox" parent="MapEditorSettings/SettingsContainer/TerrainEdit/MarginContainer/VBoxContainer"]
 margin_right = 280.0
 margin_bottom = 24.0
 pressed = true
@@ -158,15 +172,11 @@ margin_right = 48.0
 margin_bottom = 24.0
 text = "Height"
 
-[node name="HSlider" type="HSlider" parent="MapEditorSettings/SettingsContainer/TerrainEdit/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="TerrainHeight" type="SpinBox" parent="MapEditorSettings/SettingsContainer/TerrainEdit/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
 margin_left = 52.0
 margin_right = 255.0
-margin_bottom = 16.0
+margin_bottom = 24.0
 size_flags_horizontal = 3
-max_value = 10.0
-rounded = true
-tick_count = 10
-ticks_on_borders = true
 
 [node name="RiversEdit" type="PanelContainer" parent="MapEditorSettings/SettingsContainer"]
 margin_top = 76.0
@@ -198,8 +208,14 @@ margin_top = 5.0
 margin_right = 285.0
 margin_bottom = 29.0
 
-[node name="CheckBox" type="CheckBox" parent="MapEditorSettings/SettingsContainer/RiversEdit/MarginContainer/VBoxContainer"]
+[node name="RiverToolCheckbox" type="CheckBox" parent="MapEditorSettings/SettingsContainer/RiversEdit/MarginContainer/VBoxContainer"]
 margin_right = 280.0
 margin_bottom = 24.0
 group = ExtResource( 4 )
 text = "Place Rivers"
+
+[connection signal="toggled" from="MapEditorSettings/PanelContainer/MarginContainer/HBoxContainer/GridToggle" to="." method="_on_GridToggle_toggled"]
+[connection signal="toggled" from="MapEditorSettings/PanelContainer/MarginContainer/HBoxContainer/EditorSettingsToggle" to="." method="_on_EditorSettingsToggle_toggled"]
+[connection signal="toggled" from="MapEditorSettings/SettingsContainer/TerrainEdit/MarginContainer/VBoxContainer/TerrainToolCheckbox" to="." method="_on_TerrainToolCheckbox_toggled"]
+[connection signal="value_changed" from="MapEditorSettings/SettingsContainer/TerrainEdit/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/TerrainHeight" to="." method="_on_TerrainHeight_value_changed"]
+[connection signal="toggled" from="MapEditorSettings/SettingsContainer/RiversEdit/MarginContainer/VBoxContainer/RiverToolCheckbox" to="." method="_on_RiverToolCheckbox_toggled"]
