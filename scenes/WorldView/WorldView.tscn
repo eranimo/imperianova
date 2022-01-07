@@ -25,7 +25,7 @@ albedo_color = Color( 0.439216, 0.0745098, 0.0745098, 1 )
 script = ExtResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.258819, 0.965926, 0, -0.965926, 0.258819, 0, 75, 0 )
+transform = Transform( 1, 0, 0, 0, 0.258819, 0.965926, 0, -0.965926, 0.258819, 0, 150, 0 )
 current = true
 far = 8192.0
 script = ExtResource( 1 )
@@ -34,7 +34,6 @@ script = ExtResource( 1 )
 transform = Transform( 1, 0, 0, 0, 0.173648, -0.984808, 0, 0.984808, 0.173648, 0, 1000, 0 )
 light_specular = 0.0
 shadow_enabled = true
-directional_shadow_mode = 1
 
 [node name="ChunksContainer" type="Spatial" parent="."]
 script = ExtResource( 5 )

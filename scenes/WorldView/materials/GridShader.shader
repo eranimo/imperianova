@@ -1,4 +1,6 @@
 shader_type spatial;
+render_mode diffuse_oren_nayar;
+
 uniform sampler2D gridTexture;
 uniform bool showGrid;
 

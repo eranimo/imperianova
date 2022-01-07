@@ -165,10 +165,10 @@ public class HexMesh {
 	const float noiseScale = 0.1f;
 
 	Vector3 Perturb(Vector3 position) {
-		// var x = noise.GetValue(Mathf.Round(position.x * noiseScale), 0, Mathf.Round(position.z * noiseScale));
-		// var z = noise.GetValue(Mathf.Round(position.x * noiseScale), 0, Mathf.Round(position.z * noiseScale));
-		// position.x += (x * 2f - 1f) * perturbStrength;
-		// position.z += (z * 2f - 1f) * perturbStrength;
+		var x = noise.GetValue(Mathf.Round(position.x) * noiseScale, 0, Mathf.Round(position.z) * noiseScale);
+		var z = noise.GetValue(Mathf.Round(position.x) * noiseScale, 0, Mathf.Round(position.z) * noiseScale);
+		position.x += (x * 2f - 1f) * perturbStrength;
+		position.z += (z * 2f - 1f) * perturbStrength;
 		return position;
 	}
 }

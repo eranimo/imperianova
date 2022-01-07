@@ -73,7 +73,7 @@ namespace Hex {
 	}
 
 	public enum SidePoint {
-		C1, C2, C3,
+		C1, C2, C3, C4, C5,
 		D1, D2,
 		L1, R1,
 		E1, E2, E3, E4, E5
@@ -425,6 +425,8 @@ namespace Hex {
 			var C2 = E1.LinearInterpolate(center, 0.5f);
 			var C1 = C2.LinearInterpolate(E1, 0.5f);
 			var C3 = C2.LinearInterpolate(center, 0.5f);
+			var C4 = c1_points[CornerPoint.B].LinearInterpolate(C2, 0.5f);
+			var C5 = c2_points[CornerPoint.B].LinearInterpolate(C2, 0.5f);
 			var L1 = c1_points[CornerPoint.C].LinearInterpolate(C2, 0.5f);
 			var R1 = c2_points[CornerPoint.C].LinearInterpolate(C2, 0.5f);
 			var E2 = c1_point.LinearInterpolate(E1, 0.5f);
@@ -436,6 +438,8 @@ namespace Hex {
 			results.Add(SidePoint.C1, C1);
 			results.Add(SidePoint.C2, C2);
 			results.Add(SidePoint.C3, C3);
+			results.Add(SidePoint.C4, C4);
+			results.Add(SidePoint.C5, C5);
 			results.Add(SidePoint.L1, L1);
 			results.Add(SidePoint.R1, R1);
 			results.Add(SidePoint.E1, E1);
