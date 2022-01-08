@@ -161,8 +161,8 @@ public class HexMesh {
 		AddQuadColor(c1, c2);
 	}
 
-	const float perturbStrength = 0.55f;
-	const float noiseScale = 0.1f;
+	const float perturbStrength = 1.0f;
+	const float noiseScale = 0.05f;
 
 	Vector3 Perturb(Vector3 position) {
 		var x = noise.GetValue(Mathf.Round(position.x) * noiseScale, 0, Mathf.Round(position.z) * noiseScale);
