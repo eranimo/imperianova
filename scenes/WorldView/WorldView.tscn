@@ -104,6 +104,7 @@ margin_left = 72.0
 margin_right = 207.0
 margin_bottom = 16.0
 theme = ExtResource( 3 )
+pressed = true
 text = "Editor Settings"
 
 [node name="SettingsContainer" type="VBoxContainer" parent="MapEditorSettings"]

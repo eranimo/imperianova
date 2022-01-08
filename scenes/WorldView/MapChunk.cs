@@ -233,13 +233,16 @@ public class MapChunk : StaticBody {
 		var C2 = cell.Center + dir.Points()[SidePoint.C2];
 		var C3 = cell.Center + dir.Points()[SidePoint.C3];
 		var C4 = cell.Center + dir.Points()[SidePoint.C4];
-		var C5 = cell.Center + dir.Points()[SidePoint.C5];
+		var S1 = cell.Center + dir.Points()[SidePoint.S1];
+		var S2 = cell.Center + dir.Points()[SidePoint.S2];
 		var L1 = cell.Center + dir.Points()[SidePoint.L1];
 		var R1 = cell.Center + dir.Points()[SidePoint.R1];
 		var b1_river = b1 - new Vector3(0, RIVER_DEPTH, 0);
 		var b2_river = b2 - new Vector3(0, RIVER_DEPTH, 0);
 		var c1_river = c1 - new Vector3(0, RIVER_DEPTH, 0);
 		var c2_river = c2 - new Vector3(0, RIVER_DEPTH, 0);
+		var f1_river = cell.Center + dir.CornerLeft().Points()[CornerPoint.F] - new Vector3(0, RIVER_DEPTH, 0);
+		var f2_river = cell.Center + dir.CornerRight().Points()[CornerPoint.F] - new Vector3(0, RIVER_DEPTH, 0);
 		var center_river = cell.Center - new Vector3(0, RIVER_DEPTH, 0);
 		var center_river_bank = cell.Center - new Vector3(0, RIVER_BANK_DEPTH, 0);
 
@@ -250,8 +253,8 @@ public class MapChunk : StaticBody {
 			var e5_river = cell.Center + dir.Points()[SidePoint.E5] - new Vector3(0, RIVER_DEPTH, 0);
 			var C2_river_bank = C2 - new Vector3(0, RIVER_BANK_DEPTH, 0);
 			var C3_river_bank = C3 - new Vector3(0, RIVER_BANK_DEPTH, 0);
-			var C4_river = C4 - new Vector3(0, RIVER_DEPTH, 0);
-			var C5_river = C5 - new Vector3(0, RIVER_DEPTH, 0);
+			var S1_river = S1 - new Vector3(0, RIVER_DEPTH, 0);
+			var S2_river = S2 - new Vector3(0, RIVER_DEPTH, 0);
 			// INNER EDGE
 			// river bank
 			terrain.AddTriangle(edge.v1, edge.v2, b1);
@@ -260,27 +263,27 @@ public class MapChunk : StaticBody {
 			terrain.AddTriangleColor(cell.Color);
 
 			// river channel
-			terrain.AddQuad(edge.v2, b1, e4_river, C4_river); // 1
+			terrain.AddQuad(edge.v2, b1, e4_river, S1_river); // 1
 			terrain.AddQuadColor(cell.Color);
-			terrain.AddQuad(e4_river, C4_river, e1_river_bank, C2_river_bank); // 2
+			terrain.AddQuad(e4_river, S1_river, e1_river_bank, C2_river_bank); // 2
 			terrain.AddQuadColor(cell.Color);
-			terrain.AddQuad(e1_river_bank, C2_river_bank, e5_river, C5_river); // 3
+			terrain.AddQuad(e1_river_bank, C2_river_bank, e5_river, S2_river); // 3
 			terrain.AddQuadColor(cell.Color);
-			terrain.AddQuad(e5_river, C5_river, edge.v4, b2);
+			terrain.AddQuad(e5_river, S2_river, edge.v4, b2);
 			terrain.AddQuadColor(cell.Color);
 
 			// CENTER SECTION
-			terrain.AddTriangle(b1, C4_river, c1_river); // 1
+			terrain.AddTriangle(b1, S1_river, c1_river); // 1
 			terrain.AddTriangleColor(cell.Color);
-			terrain.AddTriangle(C2_river_bank, c1_river, C4_river); // 2
+			terrain.AddTriangle(C2_river_bank, c1_river, S1_river); // 2
 			terrain.AddTriangleColor(cell.Color);
 			terrain.AddTriangle(C2_river_bank, C3_river_bank, c1_river); // 3
 			terrain.AddTriangleColor(cell.Color);
 			terrain.AddTriangle(C2_river_bank, c2_river, C3_river_bank); // 4
 			terrain.AddTriangleColor(cell.Color);
-			terrain.AddTriangle(C2_river_bank, C5_river, c2_river); // 5
+			terrain.AddTriangle(C2_river_bank, S2_river, c2_river); // 5
 			terrain.AddTriangleColor(cell.Color);
-			terrain.AddTriangle(C5_river, b2, c2_river); // 6
+			terrain.AddTriangle(S2_river, b2, c2_river); // 6
 			terrain.AddTriangleColor(cell.Color);
 			terrain.AddTriangle(c1_river, C3_river_bank, center_river_bank); // 7
 			terrain.AddTriangleColor(cell.Color);
@@ -294,10 +297,10 @@ public class MapChunk : StaticBody {
 			var e1_river = edge.v3 - new Vector3(0, RIVER_DEPTH, 0);
 			var C2_river = C2 - new Vector3(0, RIVER_DEPTH, 0);
 			var C3_river = C3 - new Vector3(0, RIVER_DEPTH, 0);
-			rivers.AddQuad(e4_river, C4_river, e1_river, C2_river);
-			rivers.AddQuad(e1_river, C2_river, e5_river, C5_river);
-			rivers.AddQuad(C4_river, c1_river, C2_river, center_river);
-			rivers.AddQuad(C2_river, center_river, C5_river, c2_river);
+			rivers.AddQuad(e4_river, S1_river, e1_river, C2_river);
+			rivers.AddQuad(e1_river, C2_river, e5_river, S2_river);
+			rivers.AddQuad(S1_river, c1_river, C2_river, center_river);
+			rivers.AddQuad(C2_river, center_river, S2_river, c2_river);
 		} else {
 			if (cell.HasRiver(dir.Next()) && cell.HasRiver(dir.Prev())) {
 				// TYPE 2: River on both sides
@@ -327,7 +330,7 @@ public class MapChunk : StaticBody {
 
 				// river surface
 				rivers.AddTriangle(c1_river, c2_river, center_river);
-			} else if (cell.HasRiver(dir.Prev()) && !cell.HasRiver(dir.Next()) && cell.HasRiver(dir.Next().Next())) {
+			} else if (cell.HasRiver(dir.Prev())) {
 				// TYPE 3: straight connector from right
 				// river bank
 				terrain.TriangulateInnerEdgeFan(edge, b1, b2, cell.Color);
@@ -337,8 +340,6 @@ public class MapChunk : StaticBody {
 				terrain.AddTriangleColor(cell.Color);
 
 				// river channel
-				var f1_river = cell.Center + dir.CornerLeft().Points()[CornerPoint.F] - new Vector3(0, RIVER_DEPTH, 0);
-
 				terrain.AddTriangle(c1, b2, c2_river);
 				terrain.AddTriangleColor(cell.Color);
 				terrain.AddTriangle(c1, c2_river, f1_river);
@@ -348,7 +349,7 @@ public class MapChunk : StaticBody {
 
 				// river surface
 				rivers.AddTriangle(f1_river, c2_river, center_river);
-			} else if (cell.HasRiver(dir.Next()) && !cell.HasRiver(dir.Prev()) && cell.HasRiver(dir.Prev().Prev())) {
+			} else if (cell.HasRiver(dir.Next())) {
 				// TYPE 4: straight connector from left
 				// river bank
 				terrain.TriangulateInnerEdgeFan(edge, b1, b2, cell.Color);
@@ -358,7 +359,6 @@ public class MapChunk : StaticBody {
 				terrain.AddTriangleColor(cell.Color);
 
 				// river channel
-				var f2_river = cell.Center + dir.CornerRight().Points()[CornerPoint.F] - new Vector3(0, RIVER_DEPTH, 0);
 				terrain.AddTriangle(b1, c2, c1_river);
 				terrain.AddTriangleColor(cell.Color);
 				terrain.AddTriangle(c1_river, c2, f2_river);
@@ -368,6 +368,28 @@ public class MapChunk : StaticBody {
 
 				// river surface
 				rivers.AddTriangle(c1_river, f2_river, center_river);
+			} else if (
+				cell.HasRiver(dir.Prev().Prev()) && 
+				cell.HasRiver(dir.Next().Next())
+			) {
+				// TYPE 5: double connector (left and right)
+				var C4_river = C4 - new Vector3(0, RIVER_DEPTH, 0);
+
+				terrain.TriangulateInnerEdgeFan(edge, b1, b2, cell.Color);
+				terrain.AddQuad(b1, c1, C2, C3);
+				terrain.AddQuadColor(cell.Color);
+				terrain.AddQuad(C2, C3, b2, c2);
+				terrain.AddQuadColor(cell.Color);
+
+				terrain.AddQuad(c1, f1_river, C3, C4_river);
+				terrain.AddQuadColor(cell.Color);
+				terrain.AddQuad(C3, C4_river, c2, f2_river);
+				terrain.AddQuadColor(cell.Color);
+
+				terrain.AddTriangle(f1_river, f2_river, center_river_bank);
+				terrain.AddTriangleColor(cell.Color);
+
+				rivers.AddTriangle(f1_river, f2_river, center_river);
 			} else {
 				terrain.TriangulateEdgeFan(cell.Center, edge, cell.Color);
 			}

@@ -9,7 +9,7 @@ public enum MapEditorTool {
 }
 
 public class WorldViewSettings {
-	public BehaviorSubject<bool> showGrid = new BehaviorSubject<bool>(false);
+	public BehaviorSubject<bool> showGrid = new BehaviorSubject<bool>(true);
 }
 
 public class WorldView : Spatial {
