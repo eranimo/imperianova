@@ -402,8 +402,8 @@ namespace Hex {
 			var A = edge.LinearInterpolate(B, 0.5f);
 			var C = B.LinearInterpolate(center, 0.5f);
 			var E = A.LinearInterpolate(B, 0.5f);
-			var F = C.LinearInterpolate(center, 0.5f);
-			var G = F.LinearInterpolate(center, 0.5f);
+			var F = B.LinearInterpolate(C, 0.5f);
+			var G = C.LinearInterpolate(center, 0.5f);
 			results.Add(CornerPoint.B, B);
 			results.Add(CornerPoint.A, A);
 			results.Add(CornerPoint.C, C);
