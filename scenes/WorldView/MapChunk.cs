@@ -369,8 +369,19 @@ public class MapChunk : StaticBody {
 				// river surface
 				rivers.AddTriangle(c1_river, f2_river, center_river);
 			} else if (
-				cell.HasRiver(dir.Prev().Prev()) && 
-				cell.HasRiver(dir.Next().Next())
+				// handle wide turns
+				(cell.HasRiver(dir.Prev().Prev()) && 
+				cell.HasRiver(dir.Next().Next()))
+				||
+				// handle narrow turns and end cap
+				(cell.HasRiver(dir.Prev().Prev().Prev()) && 
+				cell.HasRiver(dir.Next().Next().Next()))
+				||
+				// handle sides of end cap
+				(
+					(cell.HasRiver(dir.Prev().Opposite()) && cell.HasRiver(dir.Next().Next())) ||
+					(cell.HasRiver(dir.Next().Opposite()) && cell.HasRiver(dir.Prev().Prev()))
+				)
 			) {
 				// TYPE 5: double connector (left and right)
 				var C4_river = C4 - new Vector3(0, RIVER_DEPTH, 0);
