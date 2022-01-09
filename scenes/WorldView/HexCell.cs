@@ -54,7 +54,16 @@ public class HexCell {
 		return IncomingRivers.Count > 0 || OutgoingRivers.Count > 0;
 	}
 
+	/// <summary>Does this cell have a river going in from or going out to this direction?</summary>
 	public bool HasRiver(Direction dir) {
 		return IncomingRivers.Contains(dir) || OutgoingRivers.Contains(dir);
+	}
+
+	/// <summary>Does this cell have a river flowing from dir1 to dir2?</summary>
+	public bool HasRiverFlow(Direction dir1, Direction dir2) {
+		return (
+			(IncomingRivers.Contains(dir1) && OutgoingRivers.Contains(dir2)) ||
+			(OutgoingRivers.Contains(dir1) && IncomingRivers.Contains(dir2))
+		);
 	}
 }

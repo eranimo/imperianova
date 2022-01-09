@@ -79,6 +79,22 @@ public class HexMesh {
 		triangles.Add(vertexIndex + 2);
 	}
 
+	public void AddTriangleSubdivided(Vector3 v1, Vector3 v2, Vector3 v3, int subdivisions = 1) {
+		if (subdivisions == 1) {
+			int vertexIndex = vertices.Count;
+			vertices.Add(Perturb(v1));
+			vertices.Add(Perturb(v2));
+			vertices.Add(Perturb(v3));
+			triangles.Add(vertexIndex);
+			triangles.Add(vertexIndex + 1);
+			triangles.Add(vertexIndex + 2);
+		} else {
+			var v4 = v2.LinearInterpolate(v3, 0.5f);
+			AddTriangleSubdivided(v1, v2, v4, subdivisions - 1);
+			AddTriangleSubdivided(v1, v4, v3, subdivisions - 1);
+		}
+	}
+
 	public void AddTriangleColor(Color c1, Color c2, Color c3) {
 		colors.Add(c1);
 		colors.Add(c2);
