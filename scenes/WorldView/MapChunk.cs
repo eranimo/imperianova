@@ -286,7 +286,32 @@ public class MapChunk : StaticBody {
 			rivers.AddQuad(e4_river, S1_river, e1_river, C2_river);
 			rivers.AddQuad(e1_river, C2_river, e5_river, S2_river);
 			
-			if (cell.HasRiver(dir.Prev()) && cell.HasRiverFlow(dir, dir.Prev())) {
+			if (cell.HasRiverFlowEither(dir, dir.Prev()) && cell.HasRiverFlowEither(dir, dir.Next())) {
+				// TYPE 8: river on both
+				terrain.AddTriangle(b1, S1_river, f1_river);
+				terrain.AddTriangleColor(cell.Color);
+				terrain.AddTriangle(S1_river, C2_river_bank, f1_river);
+				terrain.AddTriangleColor(cell.Color);
+				terrain.AddTriangle(f1_river, C2_river_bank, C3_river_bank);
+				terrain.AddTriangleColor(cell.Color);
+				terrain.AddTriangle(f1_river, C3_river_bank, center_river_bank);
+				terrain.AddTriangleColor(cell.Color);
+				terrain.AddTriangle(C2_river_bank, S2_river, f2_river);
+				terrain.AddTriangleColor(cell.Color);
+				terrain.AddTriangle(S2_river, b2, f2_river);
+				terrain.AddTriangleColor(cell.Color);
+				terrain.AddTriangle(C2_river_bank, f2_river, C3_river_bank);
+				terrain.AddTriangleColor(cell.Color);
+				terrain.AddTriangle(C3_river_bank, f2_river, center_river_bank);
+				terrain.AddTriangleColor(cell.Color);
+
+				rivers.AddTriangle(S1_river, C2_river, f1_river);
+				rivers.AddTriangle(f1_river, C2_river, C3_river);
+				rivers.AddTriangle(f1_river, C3_river, center_river);
+				rivers.AddTriangle(C2_river, S2_river, f2_river);
+				rivers.AddTriangle(C2_river, f2_river, C3_river);
+				rivers.AddTriangle(C3_river, f2_river, center_river);
+			} else if (cell.HasRiverFlowEither(dir, dir.Prev())) {
 				var c2_river_75 = c2 - new Vector3(0, RIVER_DEPTH_75, 0);
 				// TYPE 6: river on right, same flow direction
 				terrain.AddTriangle(b1, S1_river, c1_river); // 1
@@ -312,7 +337,7 @@ public class MapChunk : StaticBody {
 				rivers.AddTriangle(C2_river, S2_river, f2_river);
 				rivers.AddTriangle(C2_river, f2_river, C3_river);
 				rivers.AddTriangle(C3_river, f2_river, center_river);
-			} else if (cell.HasRiver(dir.Next()) && cell.HasRiverFlow(dir, dir.Next())) {
+			} else if (cell.HasRiverFlowEither(dir, dir.Next())) {
 				// TYPE 7: river on left, same flow direction
 				terrain.AddTriangle(b1, S1_river, f1_river);
 				terrain.AddTriangleColor(cell.Color);

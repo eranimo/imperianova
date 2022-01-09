@@ -74,8 +74,15 @@ public class WorldView : Spatial {
 					Direction? dir = riverToolLastCell.GetDirectionOfNeighbor(cell);
 					if (!(dir is null)) {
 						GD.PrintS($"Adding river from {riverToolLastCell.Position} to {cell.Position}");
+						var oppositeDir = HexConstants.oppositeDirections[(Direction) dir];
+						// remove old
+						// riverToolLastCell.OutgoingRivers.Remove(oppositeDir);
+						// cell.IncomingRivers.Remove((Direction) dir);
+
+						// add new
 						riverToolLastCell.OutgoingRivers.Add((Direction) dir);
-						cell.IncomingRivers.Add(HexConstants.oppositeDirections[(Direction) dir]);
+						cell.IncomingRivers.Add(oppositeDir);
+
 						chunksContainer.RegenerateCell(cell);
 					}
 				}
@@ -91,6 +98,7 @@ public class WorldView : Spatial {
 			isDragging = true;
 		} else if (@event.IsActionReleased("ui_select")) {
 			isDragging = false;
+			riverToolLastCell = null;
 		}
 	}
 

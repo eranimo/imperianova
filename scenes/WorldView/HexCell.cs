@@ -59,11 +59,21 @@ public class HexCell {
 		return IncomingRivers.Contains(dir) || OutgoingRivers.Contains(dir);
 	}
 
+	/// <summary>Does this cell have a river between dir1 to dir2 or from dir2 to dir1?</summary>
+	public bool HasRiverFlowEither(Direction dir1, Direction dir2) {
+		return HasRiverFlow(dir1, dir2) || HasRiverFlow(dir2, dir1);
+	}
+
 	/// <summary>Does this cell have a river flowing from dir1 to dir2?</summary>
 	public bool HasRiverFlow(Direction dir1, Direction dir2) {
+		return IncomingRivers.Contains(dir1) && OutgoingRivers.Contains(dir2);
+	}
+
+	/// <summary>Does this cell have rivers flowing in from these two directions?</summary>
+	public bool HasRiverCounterFlow(Direction dir1, Direction dir2) {
 		return (
-			(IncomingRivers.Contains(dir1) && OutgoingRivers.Contains(dir2)) ||
-			(OutgoingRivers.Contains(dir1) && IncomingRivers.Contains(dir2))
+			(IncomingRivers.Contains(dir1) && IncomingRivers.Contains(dir2)) ||
+			(OutgoingRivers.Contains(dir1) && OutgoingRivers.Contains(dir2))
 		);
 	}
 }
