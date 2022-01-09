@@ -28,10 +28,8 @@ public class MapChunk : StaticBody {
     private HexMesh terrain;
     private HexMesh water;
     private HexMesh rivers;
-    private const float RIVER_BANK_DEPTH = 2.5f;
+    private const float RIVER_BANK_DEPTH = 1.5f;
 	private const float RIVER_DEPTH = RIVER_BANK_DEPTH * 0.5f;
-	private const float RIVER_DEPTH_75 = RIVER_BANK_DEPTH * 0.25f;
-	private const float RIVER_DEPTH_25 = RIVER_BANK_DEPTH * 0.75f;
 
     public MapChunk(
 		ChunksContainer chunks,
@@ -312,7 +310,6 @@ public class MapChunk : StaticBody {
 				rivers.AddTriangle(C2_river, f2_river, C3_river);
 				rivers.AddTriangle(C3_river, f2_river, center_river);
 			} else if (cell.HasRiverFlowEither(dir, dir.Prev())) {
-				var c2_river_75 = c2 - new Vector3(0, RIVER_DEPTH_75, 0);
 				// TYPE 6: river on right, same flow direction
 				terrain.AddTriangle(b1, S1_river, c1_river); // 1
 				terrain.AddTriangleColor(cell.Color);
