@@ -153,9 +153,14 @@ public class MapChunk : StaticBody {
 		water.AddTriangle(center, e1.v3, e1.v4);
 		water.AddTriangle(center, e1.v4, e1.v5);
 
-		var v2_n = neighbor.WaterCenter + dir.Opposite().CornerRight().InnerPosition();
-		var v1_n = neighbor.WaterCenter + dir.Opposite().CornerLeft().InnerPosition();
-		EdgeVertices e2 = new EdgeVertices(v2_n, v1_n);
+		var v1_n = neighbor.WaterCenter + dir.Opposite().CornerRight().InnerPosition();
+		var v2_n = neighbor.WaterCenter + dir.Opposite().CornerLeft().InnerPosition();
+		var v3 = v1.LinearInterpolate(v1_n, 0.5f);
+		var v4 = v2.LinearInterpolate(v2_n, 0.5f);
+		v3.y = (float) (cell.Height + neighbor.Height) / 2f;
+		v4.y = (float) (cell.Height + neighbor.Height) / 2f;
+		EdgeVertices e2 = new EdgeVertices(v3, v4);
+
 		water.AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
 		water.AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
 		water.AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
@@ -164,11 +169,19 @@ public class MapChunk : StaticBody {
 		var prev_neighbor = cell.GetNeighbor(dir.Prev());
 		if (prev_neighbor != null) {
 			var prev_opp_dir = dir.Prev().Opposite();
-			var prev_opp_center = prev_neighbor.Center;
-			prev_opp_center.y = (float) prev_neighbor.WaterLevel;
-			var v2_prev_neighbor = prev_opp_center + prev_opp_dir.CornerRight().InnerPosition();
-
-			water.AddTriangle(e1.v5, e2.v5, v2_prev_neighbor);
+			var prev_opp_center = prev_neighbor.WaterCenter;
+			var v1_prev_neighbor = prev_opp_center + prev_opp_dir.CornerRight().InnerPosition();
+			var v1_prev = cell.WaterCenter + dir.Prev().CornerLeft().InnerPosition();
+			var v3_corner = v1_prev_neighbor.LinearInterpolate(v1_prev, 0.5f);
+			if (prev_neighbor.IsUnderwater) {
+				var v5 = v2_n.LinearInterpolate(v1_prev_neighbor, 0.5f);
+				// add a quad to connect the edge triangle (point up)
+				water.AddQuad(e1.v5, v1_prev_neighbor, v4, v5);
+			} else {
+				// triangle to cover half of the edge triangle (point down)
+				v3_corner.y = (float) (cell.Height + prev_neighbor.Height) / 2f;
+				water.AddTriangle(e1.v5, e2.v5, v3_corner);
+			}
 		}
 	}
 
@@ -210,8 +223,10 @@ public class MapChunk : StaticBody {
 		var v2 = cell.Center + dir.CornerRight().InnerPosition();
 		var edge = new EdgeVertices(v1, v2);
 		
+		// hex centers
 		TriangulateCenter(dir, cell, edge);
 
+		// edges between hexes
 		if (d <= 2) {
 			if (cell.HasRiver(dir)) {
 				TriangulateRiverConnection(dir, cell, edge);
@@ -226,6 +241,10 @@ public class MapChunk : StaticBody {
 	}
 
 	private void TriangulateCenter(Direction dir, HexCell cell, EdgeVertices edge) {
+		if (cell.IsUnderwater) {
+			terrain.TriangulateEdgeFan(cell.Center, edge, cell.Color);
+			return;
+		}
 		var b1 = cell.Center + dir.CornerLeft().Points()[CornerPoint.B];
 		var b2 = cell.Center + dir.CornerRight().Points()[CornerPoint.B];
 		var c1 = cell.Center + dir.CornerLeft().Points()[CornerPoint.C];
@@ -506,6 +525,7 @@ public class MapChunk : StaticBody {
 		if (neighbor == null) {
 			return;
 		}
+
 		var neighbor_dir = dir.Opposite();
 		var v2_n = neighbor.Center + neighbor_dir.CornerRight().InnerPosition();
 		var v1_n = neighbor.Center + neighbor_dir.CornerLeft().InnerPosition();
@@ -539,8 +559,12 @@ public class MapChunk : StaticBody {
 
 		TriangulateCornerConnection(dir, cell, neighbor, e1, e2);
 
-		rivers.AddQuad(e1_river_a, e1_v3_river, e2_river_a, e2_v3_river);
-		rivers.AddQuad(e1_v3_river, e1_river_b, e2_v3_river, e2_river_b);
+		if (!neighbor.IsUnderwater && cell.IsUnderwater) {
+
+		} else {
+			rivers.AddQuad(e1_river_a, e1_v3_river, e2_river_a, e2_v3_river);
+			rivers.AddQuad(e1_v3_river, e1_river_b, e2_v3_river, e2_river_b);
+		}
 	}
 
 	private void TriangulateCornerConnection(Direction dir, HexCell cell, HexCell neighbor, EdgeVertices e1, EdgeVertices e2) {

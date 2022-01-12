@@ -34,7 +34,7 @@ public class WorldView : Spatial {
 				var pos = new OffsetCoord(x, y);
 				var cell = new HexCell(pos);
 				cell.Height = Math.Round((heightNoise.Get(x, y) / 255f) * 20) * 5;
-				cell.WaterLevel = 48 - 2.5;
+				cell.WaterLevel = 47.5;
 				decideCellTerrainType(cell);
 				grid.AddCell(cell);
 			}
