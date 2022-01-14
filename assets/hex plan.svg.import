@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/river plan.svg-22ba3743a0ef92033f261e3e6350d751.stex"
+path="res://.import/hex plan.svg-e12859f3c56726423b1a28658e6e3399.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/river plan.svg"
-dest_files=[ "res://.import/river plan.svg-22ba3743a0ef92033f261e3e6350d751.stex" ]
+source_file="res://assets/hex plan.svg"
+dest_files=[ "res://.import/hex plan.svg-e12859f3c56726423b1a28658e6e3399.stex" ]
 
 [params]
 

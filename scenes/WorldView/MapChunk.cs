@@ -17,7 +17,7 @@ public struct EdgeVertices {
 	}
 }
 
-public class MapChunk : StaticBody {
+public class MapChunk : Spatial {
     private readonly ChunksContainer chunks;
     private readonly HexGrid hexGrid;
     private readonly OffsetCoord firstHex;
@@ -27,6 +27,7 @@ public class MapChunk : StaticBody {
     private SimplexPerlin noise;
     private HexMesh terrain;
     private HexMesh water;
+    private HexMesh waterShore;
     private HexMesh rivers;
     private const float RIVER_BANK_DEPTH = 1.5f;
 	private const float RIVER_DEPTH = RIVER_BANK_DEPTH * 0.5f;
@@ -41,36 +42,59 @@ public class MapChunk : StaticBody {
         this.hexGrid = hexGrid;
         this.firstHex = firstHex;
         this.chunkSize = chunkSize;
+
+		rng = new Random();
+
+		var terrainShader = (ShaderMaterial) ResourceLoader.Load("res://scenes/WorldView/materials/TerrainShader.tres");
+		var waterShader = (ShaderMaterial) ResourceLoader.Load("res://scenes/WorldView/materials/WaterShader.tres");
+		var waterShoreShader = (ShaderMaterial) ResourceLoader.Load("res://scenes/WorldView/materials/WaterShoreShader.tres");
+		var riverShader = (ShaderMaterial) ResourceLoader.Load("res://scenes/WorldView/materials/RiverShader.tres");
+
+		terrain = new HexMesh("Terrain", terrainShader, true);
+		water = new HexMesh("Water", waterShader);
+		waterShore = new HexMesh("WaterShore", waterShoreShader, false, true);
+		rivers = new HexMesh("Rivers", riverShader);
+
+		AddChild(terrain);
+		AddChild(water);
+		AddChild(waterShore);
+		AddChild(rivers);
     }
 
 	public override void _Ready() {
-		var watch = System.Diagnostics.Stopwatch.StartNew();
-		rng = new Random();
-		this.terrain = new HexMesh();
-		this.water = new HexMesh();
-		this.rivers = new HexMesh();
-		Generate();
+		// move the chunk into position
 		var origin = HexUtils.HexToPixel(firstHex);
 		Transform.Translated(new Vector3(origin.x, 0, origin.y));
+
+		var watch = System.Diagnostics.Stopwatch.StartNew();
+		Generate();
 		// GD.PrintS($"Chunk generate: {watch.ElapsedMilliseconds}ms");
 
+		// handle toggling grid
 		hexGrid.viewSettings.showGrid.Subscribe((bool showGrid) => {
-			var material = (ShaderMaterial) terrain.mesh.SurfaceGetMaterial(0);
-			material.SetShaderParam("showGrid", showGrid);
+			terrain.material.SetShaderParam("showGrid", showGrid);
+		});
+
+		// handle terrain mesh input
+		terrain.MeshClickPos.Subscribe((Vector2 hexPosition) => {
+			var hex = Hex.HexUtils.PixelToHexOffset(hexPosition);
+			var cell = hexGrid.GetCell(hex);
+			chunks.pressedCell.OnNext(cell);
+		});
+
+		terrain.MeshHoverPos.Subscribe((Vector2 hexPosition) => {
+			var hex = Hex.HexUtils.PixelToHexOffset(hexPosition);
+			var cell = hexGrid.GetCell(hex);
+			chunks.hoveredCell.OnNext(cell);
 		});
 	}
 
 	public void Generate() {
-		foreach (Node n in GetChildren()) {
-			RemoveChild(n);
-		}
 		terrain.Clear();
 		water.Clear();
+		waterShore.Clear();
 		rivers.Clear();
-		generateMesh();
-	}
 
-	private void generateMesh() {
 		for (int col = 0; col < chunkSize.Col; col++) {
 			for (int row = 0; row < chunkSize.Row; row++) {
 				var hex = firstHex + new Hex.OffsetCoord(col, row);
@@ -82,56 +106,10 @@ public class MapChunk : StaticBody {
 			}
 		}
 
-		// Terrain mesh
 		terrain.GenerateMesh();
-		terrain.mesh.SurfaceSetMaterial(0, (ShaderMaterial) ResourceLoader.Load("res://scenes/WorldView/materials/GridShader.tres"));
-
-		var terrainMeshInstance = new MeshInstance();
-		terrainMeshInstance.Name = "Terrain";
-		terrainMeshInstance.Mesh = terrain.mesh;
-		AddChild(terrainMeshInstance);
-
-		// terrain collision
-		var staticBody = new StaticBody();
-		var collision = new CollisionShape();
-		collision.Name = "TerrainCollision";
-		collision.Shape = terrain.mesh.CreateTrimeshShape();
-		staticBody.AddChild(collision);
-		staticBody.Connect("input_event", this, nameof(_handle_input));
-		AddChild(staticBody);
-
-		// water mesh
 		water.GenerateMesh();
-		water.mesh.SurfaceSetMaterial(0, (Material) ResourceLoader.Load("res://scenes/WorldView/materials/Water.tres"));
-
-		var waterMeshInstance = new MeshInstance();
-		waterMeshInstance.Name = "Water";
-		waterMeshInstance.Mesh = water.mesh;
-		AddChild(waterMeshInstance);
-
-		// Rivers mesh
+		waterShore.GenerateMesh();
 		rivers.GenerateMesh();
-		rivers.mesh.SurfaceSetMaterial(0, (Material) ResourceLoader.Load("res://scenes/WorldView/materials/Water.tres"));
-
-		var riversMeshInstance = new MeshInstance();
-		riversMeshInstance.Name = "Rivers";
-		riversMeshInstance.Mesh = rivers.mesh;
-		AddChild(riversMeshInstance);
-	}
-
-	private void _handle_input(Camera camera, InputEvent @event, Vector3 position, Vector3 normal, int shape_idx) {
-		var o = this.GlobalTransform.origin;
-		var hexPosition = new Vector2(o.x, o.z) + new Vector2(position.x, position.z);
-		var hex = Hex.HexUtils.PixelToHexOffset(hexPosition - Hex.HexUtils.HexCenter);
-		var cell = hexGrid.GetCell(hex);
-
-		if (@event.IsActionPressed("ui_select")) {
-			// GD.PrintS("MapChunk click", cell.Position);
-			chunks.pressedCell.OnNext(cell);
-		} else {
-			// GD.PrintS("MapChunk hover", cell.Position);
-			chunks.hoveredCell.OnNext(cell);
-		}
 	}
 
 	private void TriangulateWater(HexCell cell, Direction dir) {
@@ -156,15 +134,19 @@ public class MapChunk : StaticBody {
 		var v1_n = neighbor.WaterCenter + dir.Opposite().CornerRight().InnerPosition();
 		var v2_n = neighbor.WaterCenter + dir.Opposite().CornerLeft().InnerPosition();
 		var v3 = v1.LinearInterpolate(v1_n, 0.5f);
+		v3.y = (float) cell.WaterLevel;
 		var v4 = v2.LinearInterpolate(v2_n, 0.5f);
-		v3.y = (float) (cell.Height + neighbor.Height) / 2f;
-		v4.y = (float) (cell.Height + neighbor.Height) / 2f;
+		v4.y = (float) cell.WaterLevel;
 		EdgeVertices e2 = new EdgeVertices(v3, v4);
 
-		water.AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
-		water.AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
-		water.AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
-		water.AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
+		waterShore.AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
+		waterShore.AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
+		waterShore.AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
+		waterShore.AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
+		waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+		waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+		waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+		waterShore.AddQuadUV(0f, 0f, 0f, 1f);
 
 		var prev_neighbor = cell.GetNeighbor(dir.Prev());
 		if (prev_neighbor != null) {
@@ -175,12 +157,19 @@ public class MapChunk : StaticBody {
 			var v3_corner = v1_prev_neighbor.LinearInterpolate(v1_prev, 0.5f);
 			if (prev_neighbor.IsUnderwater) {
 				var v5 = v2_n.LinearInterpolate(v1_prev_neighbor, 0.5f);
+				v5.y = (float) cell.WaterLevel;
 				// add a quad to connect the edge triangle (point up)
-				water.AddQuad(e1.v5, v1_prev_neighbor, v4, v5);
+				waterShore.AddQuad(e1.v5, v1_prev_neighbor, v4, v5);
+				waterShore.AddQuadUV(0f, 0f, 0f, 1f);
 			} else {
 				// triangle to cover half of the edge triangle (point down)
-				v3_corner.y = (float) (cell.Height + prev_neighbor.Height) / 2f;
-				water.AddTriangle(e1.v5, e2.v5, v3_corner);
+				v3_corner.y = (float) cell.WaterLevel;
+				waterShore.AddTriangle(e1.v5, e2.v5, v3_corner);
+				waterShore.AddTriangleUV(
+					new Vector2(0f, 0f),
+					new Vector2(0f, 1f),
+					new Vector2(0f, 1f)
+				);
 			}
 		}
 	}

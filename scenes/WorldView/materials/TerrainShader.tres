@@ -1,0 +1,32 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=2]
+
+[ext_resource path="res://assets/textures/grid.png" type="Texture" id=1]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type spatial;
+render_mode diffuse_oren_nayar;
+
+uniform sampler2D gridTexture;
+uniform bool showGrid;
+
+
+void fragment(){
+	NORMAL = normalize(cross(dFdx(VERTEX), dFdy(VERTEX)));
+	vec4 world_pos = inverse(WORLD_MATRIX) * CAMERA_MATRIX * vec4(VERTEX, 1.0);
+    vec2 gridUV = world_pos.xz - vec2(24.0, 20.78460969);
+    gridUV.x *= 1.0 / (3.0 * 24.0);
+    gridUV.y *= 1.0 / (4.0 * 20.78460969);
+    vec4 grid = texture(gridTexture, gridUV);
+
+    if (showGrid) {
+        ALBEDO = vec3(COLOR[0], COLOR[1], COLOR[2]) * grid.xyz;
+    } else {
+        ALBEDO = vec3(COLOR[0], COLOR[1], COLOR[2]);
+    }
+}"
+
+[resource]
+resource_local_to_scene = true
+shader = SubResource( 1 )
+shader_param/showGrid = true
+shader_param/gridTexture = ExtResource( 1 )

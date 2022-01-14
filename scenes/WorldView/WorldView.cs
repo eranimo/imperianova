@@ -69,6 +69,7 @@ public class WorldView : Spatial {
 			if (cell == null) {
 				return;
 			}
+			// GD.PrintS("Hovered on cell:", cell.Position, isDragging);
 			if (Tool == MapEditorTool.Rivers && isDragging) {
 				if (riverToolLastCell != null && riverToolLastCell != cell) {
 					Direction? dir = riverToolLastCell.GetDirectionOfNeighbor(cell);

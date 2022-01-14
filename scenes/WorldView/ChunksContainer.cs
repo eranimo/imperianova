@@ -23,6 +23,8 @@ public class ChunksContainer : Spatial {
 					new OffsetCoord(x, y),
 					chunkSize
 				);
+				chunk.Name = $"Chunk ({x}, {y})";
+
 				for (var cx = x; cx < x + chunkSize.Col; cx++) {
 					for (var cy = y; cy < y + chunkSize.Row; cy++) {
 						cellChunks[this.grid.GetCell(new OffsetCoord(cx, cy))] = chunk;
