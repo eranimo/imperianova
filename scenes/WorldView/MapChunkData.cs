@@ -26,9 +26,9 @@ public class MapChunkData {
         this.coord = coord;
         this.doneEvent = doneEvent;
 
-		terrain = new ChunkMeshData();
+		terrain = new ChunkMeshData(true);
 		water = new ChunkMeshData();
-		waterShore = new ChunkMeshData();
+		waterShore = new ChunkMeshData(false, true);
 		rivers = new ChunkMeshData();
     }
 
@@ -55,6 +55,10 @@ public class MapChunkData {
 				}
 			}
 		}
+		terrain.CreateSurface();
+		water.CreateSurface();
+		waterShore.CreateSurface();
+		rivers.CreateSurface();
 	}
 
 	private void TriangulateWater(HexCell cell, Direction dir) {

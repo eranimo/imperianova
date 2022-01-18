@@ -6,8 +6,6 @@ using System.Reactive.Subjects;
 using Hex;
 
 public class HexMesh : Spatial {
-	private readonly bool hasCollision;
-	private readonly bool useUVCoordinates;
     private readonly ChunkMeshData meshData;
     public ShaderMaterial material;
 	public Subject<Vector2> MeshClickPos = new Subject<Vector2>(); 
@@ -16,15 +14,11 @@ public class HexMesh : Spatial {
 	public HexMesh(
 		string name,
 		ChunkMeshData meshData,
-		ShaderMaterial material,
-		bool hasCollision = false,
-		bool useUVCoordinates = false
+		ShaderMaterial material
 	) {
 		this.Name = name;
         this.meshData = meshData;
         this.material = material;
-		this.hasCollision = hasCollision;
-		this.useUVCoordinates = useUVCoordinates;
 	}
 
 	public void Clear() {
@@ -36,24 +30,8 @@ public class HexMesh : Spatial {
 	}
 
 	public void GenerateMesh() {
-		var indexArray = meshData.triangles.ToArray();
-		var uvArray = meshData.uvs.ToArray();
-		var colorArray = meshData.colors.ToArray();
-		var vertexArray = meshData.vertices.ToArray();
-
-		var arrays = new Godot.Collections.Array();
-		arrays.Resize((int) ArrayMesh.ArrayType.Max);
-		arrays[(int) ArrayMesh.ArrayType.Index] = indexArray;
-		arrays[(int) ArrayMesh.ArrayType.Vertex] = vertexArray;
-		if (useUVCoordinates) {
-			arrays[(int) ArrayMesh.ArrayType.TexUv] = uvArray;
-		}
-		if (meshData.colors.Count > 0) {
-			arrays[(int) ArrayMesh.ArrayType.Color] = colorArray;
-		}
-
 		var mesh = new ArrayMesh();
-		mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
+		mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, meshData.surface);
 		// GD.PrintT(indexArray.Length, uvArray.Length, colorArray.Length, vertexArray.Length, normalArray.Length);
 		mesh.SurfaceSetMaterial(0, material);
 
@@ -62,7 +40,7 @@ public class HexMesh : Spatial {
 		meshInstance.Mesh = mesh;
 		AddChild(meshInstance);
 
-		if (hasCollision) {
+		if (meshData.hasCollision) {
 			var staticBody = new StaticBody();
 			staticBody.Name = $"{Name}StaticBody";
 			var collision = new CollisionShape();

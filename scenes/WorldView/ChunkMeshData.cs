@@ -13,10 +13,17 @@ public class ChunkMeshData {
 	public List<Color> colors;
     public List<int> triangles;
 
-	public ChunkMeshData() {
+	public readonly bool hasCollision;
+    public readonly bool useUVCoordinates;
+
+	public Godot.Collections.Array surface;
+
+	public ChunkMeshData(bool hasCollision = false, bool useUVCoordinates = false) {
 		this.noise = new SimplexPerlin(123, NoiseQuality.Best);
 		Clear();
-	}
+        this.hasCollision = hasCollision;
+        this.useUVCoordinates = useUVCoordinates;
+    }
 
 	public void Clear() {
 		vertices = new List<Vector3>();
@@ -24,6 +31,26 @@ public class ChunkMeshData {
 		normals = new List<Vector3>();
 		colors = new List<Color>();
 		triangles = new List<int>();
+	}
+
+	public void CreateSurface() {
+		var indexArray = triangles.ToArray();
+		var uvArray = uvs.ToArray();
+		var colorArray = colors.ToArray();
+		var vertexArray = vertices.ToArray();
+
+		var arrays = new Godot.Collections.Array();
+		arrays.Resize((int) ArrayMesh.ArrayType.Max);
+		arrays[(int) ArrayMesh.ArrayType.Index] = indexArray;
+		arrays[(int) ArrayMesh.ArrayType.Vertex] = vertexArray;
+		if (useUVCoordinates) {
+			arrays[(int) ArrayMesh.ArrayType.TexUv] = uvArray;
+		}
+		if (colors.Count > 0) {
+			arrays[(int) ArrayMesh.ArrayType.Color] = colorArray;
+		}
+		
+		surface = arrays;
 	}
 
 	public void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v3) {

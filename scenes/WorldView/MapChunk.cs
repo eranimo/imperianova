@@ -51,9 +51,9 @@ public class MapChunk : Spatial {
 		var waterShoreShader = (ShaderMaterial) ResourceLoader.Load("res://scenes/WorldView/materials/WaterShoreShader.tres");
 		var riverShader = (ShaderMaterial) ResourceLoader.Load("res://scenes/WorldView/materials/RiverShader.tres");
 
-		terrain = new HexMesh("Terrain", mapChunkData.terrain, terrainShader, true);
+		terrain = new HexMesh("Terrain", mapChunkData.terrain, terrainShader);
 		water = new HexMesh("Water", mapChunkData.water, waterShader);
-		waterShore = new HexMesh("WaterShore", mapChunkData.waterShore, waterShoreShader, false, true);
+		waterShore = new HexMesh("WaterShore", mapChunkData.waterShore, waterShoreShader);
 		rivers = new HexMesh("Rivers", mapChunkData.rivers, riverShader);
 
 		AddChild(terrain);
