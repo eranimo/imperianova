@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using LibNoise;
 using LibNoise.Primitive;
 using System.Reactive.Subjects;
+using Hex;
 
 public class HexMesh : Spatial {
     private SimplexPerlin noise;
@@ -189,23 +190,108 @@ public class HexMesh : Spatial {
 		AddTriangleColor(color);
 		AddTriangle(center, edge.v4, edge.v5);
 		AddTriangleColor(color);
+		AddTriangle(center, edge.v5, edge.v6);
+		AddTriangleColor(color);
+		AddTriangle(center, edge.v6, edge.v7);
+		AddTriangleColor(color);
+		AddTriangle(center, edge.v7, edge.v8);
+		AddTriangleColor(color);
+		AddTriangle(center, edge.v8, edge.v9);
+		AddTriangleColor(color);
 	}
 
 	// Used in rivers to create the outer half of the cell center
-	public void TriangulateInnerEdgeFan(EdgeVertices edge, Vector3 b1, Vector3 b2, Color color) {
-		var center = b1.LinearInterpolate(b2, 0.5f);
-		AddTriangle(edge.v1, edge.v2, b1);
+	public void TriangulateCenterOuter(HexCell cell, EdgeVertices edge, Direction dir, Color color) {
+		// TODO: this is broken somehow
+		var c1 = dir.CornerLeft();
+		var c2 = dir.CornerRight();
+		var c1_A = cell.GetCornerPoint(cell.Center, c1, CornerPoint.A);
+		var c2_A = cell.GetCornerPoint(cell.Center, c2, CornerPoint.A);
+		var c1_B = cell.GetCornerPoint(cell.Center, c1, CornerPoint.B);
+		var c2_B = cell.GetCornerPoint(cell.Center, c2, CornerPoint.B);
+		var c1_C = cell.GetCornerPoint(cell.Center, c1, CornerPoint.C);
+		var c2_C = cell.GetCornerPoint(cell.Center, c2, CornerPoint.C);
+
+		var S1 = cell.GetSidePoint(cell.Center, dir, SidePoint.S1);
+		var S2 = cell.GetSidePoint(cell.Center, dir, SidePoint.S2);
+		var S3 = cell.GetSidePoint(cell.Center, dir, SidePoint.S3);
+		var S4 = cell.GetSidePoint(cell.Center, dir, SidePoint.S4);
+		var S5 = cell.GetSidePoint(cell.Center, dir, SidePoint.S5);
+		var S6 = cell.GetSidePoint(cell.Center, dir, SidePoint.S6);
+		var C1 = cell.GetSidePoint(cell.Center, dir, SidePoint.C1);
+		var C2 = cell.GetSidePoint(cell.Center, dir, SidePoint.C2);
+		var C3 = cell.GetSidePoint(cell.Center, dir, SidePoint.C3);
+
+		// triangles on both sides
+		AddTriangle(edge.v1, edge.v2, c1_A);
 		AddTriangleColor(color);
-		AddTriangle(edge.v2, edge.v3, b1);
+		AddTriangle(edge.v8, edge.v9, c2_A);
 		AddTriangleColor(color);
-		AddTriangle(edge.v3, center, b1);
+		AddTriangle(c1_A, S3, c1_B);
 		AddTriangleColor(color);
-		AddTriangle(b2, center, edge.v3);
+		AddTriangle(S4, c2_A, c2_B);
 		AddTriangleColor(color);
-		AddTriangle(edge.v3, edge.v4, b2);
+
+		// quads in center
+		AddQuad(c1_A, S3, edge.v2, edge.v3);
+		AddQuadColor(color);
+		AddQuad(S3, S5, edge.v3, edge.v4);
+		AddQuadColor(color);
+		AddQuad(S5, C1, edge.v4, edge.v5);
+		AddQuadColor(color);
+		AddQuad(C1, S6, edge.v5, edge.v6);
+		AddQuadColor(color);
+		AddQuad(S6, S4, edge.v6, edge.v7);
+		AddQuadColor(color);
+		AddQuad(S4, c2_A, edge.v7, edge.v8);
+		AddQuadColor(color);
+
+		AddQuad(c1_B, S1, S3, S5);
+		AddQuadColor(color);
+		AddQuad(S1, C2, S5, C1);
+		AddQuadColor(color);
+		AddQuad(C2, S2, C1, S6);
+		AddQuadColor(color);
+		AddQuad(S2, c2_B, S6, S4);
+		AddQuadColor(color);
+	}
+
+	// TODO: use for hills and mountains
+	public void TriangulateCenterInner(HexCell cell, Direction dir, Color color) {
+		var side_points = dir.Points();
+		var c1_points = dir.CornerLeft().Points();
+		var c2_points = dir.CornerRight().Points();
+
+		var c1 = dir.CornerLeft();
+		var c2 = dir.CornerRight();
+		var c1_A = cell.GetCornerPoint(cell.Center, c1, CornerPoint.A);
+		var c2_A = cell.GetCornerPoint(cell.Center, c2, CornerPoint.A);
+		var c1_B = cell.GetCornerPoint(cell.Center, c1, CornerPoint.B);
+		var c2_B = cell.GetCornerPoint(cell.Center, c2, CornerPoint.B);
+		var c1_C = cell.GetCornerPoint(cell.Center, c1, CornerPoint.C);
+		var c2_C = cell.GetCornerPoint(cell.Center, c2, CornerPoint.C);
+
+		var S1 = cell.GetSidePoint(cell.Center, dir, SidePoint.S1);
+		var S2 = cell.GetSidePoint(cell.Center, dir, SidePoint.S2);
+		var S3 = cell.GetSidePoint(cell.Center, dir, SidePoint.S3);
+		var S4 = cell.GetSidePoint(cell.Center, dir, SidePoint.S4);
+		var S5 = cell.GetSidePoint(cell.Center, dir, SidePoint.S5);
+		var S6 = cell.GetSidePoint(cell.Center, dir, SidePoint.S6);
+		var C1 = cell.GetSidePoint(cell.Center, dir, SidePoint.C1);
+		var C2 = cell.GetSidePoint(cell.Center, dir, SidePoint.C2);
+		var C3 = cell.GetSidePoint(cell.Center, dir, SidePoint.C3);
+
+		// triangles on both sides
+		AddTriangle(c1_B, S1, c1_C);
 		AddTriangleColor(color);
-		AddTriangle(edge.v4, edge.v5, b2);
+		AddTriangle(S2, c2_B, c2_C);
 		AddTriangleColor(color);
+		AddTriangle(c1_C, C3, cell.Center);
+		AddTriangleColor(color);
+		AddTriangle(C3, c2_C, cell.Center);
+		AddTriangleColor(color);
+
+		// TODO: add quads
 	}
 
 	public void TriangulateEdgeStrip(
@@ -219,6 +305,37 @@ public class HexMesh : Spatial {
 		AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
 		AddQuadColor(c1, c2);
 		AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v5, e1.v6, e2.v5, e2.v6);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v6, e1.v7, e2.v6, e2.v7);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v7, e1.v8, e2.v7, e2.v8);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v8, e1.v9, e2.v8, e2.v9);
+		AddQuadColor(c1, c2);
+	}
+
+	public void TriangulateEdgeStripRiver(
+		EdgeVertices e1, Color c1,
+		EdgeVertices e2, Color c2,
+		Vector3 riverBank, Vector3 river
+	) {
+		AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v3, e1.v4 - river, e2.v3, e2.v4 - river);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v4 - river, e1.v5 - riverBank, e2.v4 - river, e2.v5 - riverBank);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v5 - riverBank, e1.v6 - river, e2.v5 - riverBank, e2.v6 - river);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v6 - river, e1.v7, e2.v6 - river, e2.v7);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v7, e1.v8, e2.v7, e2.v8);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v8, e1.v9, e2.v8, e2.v9);
 		AddQuadColor(c1, c2);
 	}
 

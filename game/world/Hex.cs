@@ -74,10 +74,9 @@ namespace Hex {
 
 	public enum SidePoint {
 		C1, C2, C3, C4,
-		S1, S2,
-		D1, D2,
+		S1, S2, S3, S4, S5, S6,
 		L1, R1,
-		E1, E2, E3, E4, E5
+		E1, E2, E3, E4, E5, E6, E7
 	}
 
 	/// <summary>Offset coordinates in odd-q style</summary>
@@ -435,8 +434,12 @@ namespace Hex {
 			var E3 = c2_point.LinearInterpolate(E1, 0.5f);
 			var E4 = E1.LinearInterpolate(E2, 0.5f);
 			var E5 = E1.LinearInterpolate(E3, 0.5f);
-			var D1 = E2.LinearInterpolate(c1_points[CornerPoint.B], 0.5f);
-			var D2 = E3.LinearInterpolate(c2_points[CornerPoint.B], 0.5f);
+			var E6 = c1_point.LinearInterpolate(E2, 0.5f);
+			var E7 = c2_point.LinearInterpolate(E3, 0.5f);
+			var S3 = E2.LinearInterpolate(c1_points[CornerPoint.B], 0.5f);
+			var S4 = E3.LinearInterpolate(c2_points[CornerPoint.B], 0.5f);
+			var S5 = C1.LinearInterpolate(S3, 0.5f);
+			var S6 = C1.LinearInterpolate(S4, 0.5f);
 			results.Add(SidePoint.C1, C1);
 			results.Add(SidePoint.C2, C2);
 			results.Add(SidePoint.C3, C3);
@@ -450,8 +453,12 @@ namespace Hex {
 			results.Add(SidePoint.E3, E3);
 			results.Add(SidePoint.E4, E4);
 			results.Add(SidePoint.E5, E5);
-			results.Add(SidePoint.D1, D1);
-			results.Add(SidePoint.D2, D2);
+			results.Add(SidePoint.E6, E6);
+			results.Add(SidePoint.E7, E7);
+			results.Add(SidePoint.S3, S3);
+			results.Add(SidePoint.S4, S4);
+			results.Add(SidePoint.S5, S5);
+			results.Add(SidePoint.S6, S6);
 
 			return results;
 		}

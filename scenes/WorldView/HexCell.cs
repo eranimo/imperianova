@@ -76,4 +76,12 @@ public class HexCell {
 			(OutgoingRivers.Contains(dir1) && OutgoingRivers.Contains(dir2))
 		);
 	}
+
+	public Vector3 GetCornerPoint(Vector3 offset, HexCorner corner, CornerPoint cornerPoint) {
+		return corner.Points()[cornerPoint] + offset;
+	}
+
+	public Vector3 GetSidePoint(Vector3 offset, Direction dir, SidePoint sidePoint) {
+		return dir.Points()[sidePoint] + offset;
+	}
 }

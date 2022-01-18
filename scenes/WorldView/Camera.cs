@@ -3,7 +3,7 @@ using System;
 
 public class Camera : Godot.Camera {
 	const float PanningSpeed = 1.0f;
-	const float ZoomSpeed = 25.0f;
+	const float ZoomSpeed = 15.0f;
 	const float MoveSpeed = 25.0f;
 
 	bool panning = false;
